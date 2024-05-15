@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//run "npx prisma migrate dev" command to update schema 
+
+generator client {
+  provider = "prisma-client-js" 
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AuthToken {
+  id          String @id @default(cuid())
+  user_id     String @unique
+  User        User   @relation(fields: [user_id], references:[id])
+  created_on  DateTime
+  expires_on  DateTime
+  token       String
+}
+
+model User {
+  id                String        @id @default(cuid())
+  user_name         String?
+  email             String        @unique
+  password          String
+  role              UserRole
+  status            UserStatus
+  created_on        DateTime      @default(now())
+  updated_on        DateTime?  
+  AuthToken         AuthToken?
+  Guild             Guild?
+}
+
+model Guild {
+  id                String        @id @default(cuid())
+  name              String        @unique
+  region            String
+  language          String
+  bio               String
+  guild_leader      String         @unique
+  User              User?          @relation(fields: [guild_leader], references:[id])    
+}
+
+enum UserRole {
+  user
+  moderator
+  admin
+}
+
+enum UserStatus {
+  inactive
+  active
+  banned
+  deleted
+}
+
+
+
