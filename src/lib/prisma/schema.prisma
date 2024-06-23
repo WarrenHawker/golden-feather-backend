@@ -13,25 +13,24 @@ datasource db {
 }
 
 model AuthToken {
-  id          String @id @default(cuid())
-  user_id     String @unique
-  User        User   @relation(fields: [user_id], references:[id])
-  created_on  DateTime
-  expires_on  DateTime
-  token       String
+  id                String        @id @default(cuid())
+  user_id           String        @unique
+  User              User          @relation(fields: [user_id], references:[id])
+  created_on        DateTime
+  expires_on        DateTime
+  token             String
 }
 
 model User {
   id                String        @id @default(cuid())
   user_name         String?
   email             String        @unique
-  password          String
+  password          String?
   role              UserRole
   status            UserStatus
   created_on        DateTime      @default(now())
   updated_on        DateTime?  
   AuthToken         AuthToken?
-  Guild             Guild?
 }
 
 model Guild {
@@ -40,8 +39,22 @@ model Guild {
   region            String
   language          String
   bio               String
-  guild_leader      String         @unique
-  User              User?          @relation(fields: [guild_leader], references:[id])    
+  guild_leader      String?       @unique
+  created_on        DateTime
+  updated_on        DateTime?    
+  status            ContentStatus
+}
+
+model ContentCreator {
+  id                String          @id @default(cuid())
+  name              String
+  description       String
+  categories        String[]
+  socials           Json?
+  videoUrl          String
+  created_on        DateTime
+  updated_on        DateTime?    
+  status            ContentStatus
 }
 
 enum UserRole {
@@ -54,6 +67,12 @@ enum UserStatus {
   inactive
   active
   banned
+  deleted
+}
+
+enum ContentStatus {
+  public
+  private
   deleted
 }
 

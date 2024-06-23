@@ -1,12 +1,25 @@
 //import packages
 import { app } from './app';
+import { redisClient } from './lib/redis/client.redis';
+import mongoose from 'mongoose';
 
-const port = 5000;
+//port and database variables - imported from .env file
+const port = process.env.PORT || 5000;
 
+//currently active environment (development or production), used by email templates
+export let activeEnvironment: string;
+
+const mongodb = process.env.MONGO_DB || 'mongodb://localhost:8080';
+
+//start server
 app.listen(port, async () => {
-  try {
-    console.log(`server running on port ${port}`);
-  } catch (error) {
-    console.error(error);
-  }
+  // await redisClient.connect(); //opens connection to redis database
+  // await mongoose.connect(mongodb, {
+  //   dbName: 'golden_feather_logs',
+  // });
+  console.log(
+    `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`
+  );
+  console.log('environment: ', app.get('env'));
+  activeEnvironment = app.get('env');
 });
