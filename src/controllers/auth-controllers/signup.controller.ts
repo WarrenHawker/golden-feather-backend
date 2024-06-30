@@ -1,7 +1,7 @@
 /*
-  "signin user" controller function
+  "signup user" controller function
 
-  Signs the user in using their email and password.
+  registers a new user, using their chosen name, email and password.
 */
 
 //import packages
@@ -9,25 +9,31 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { prismaClient } from '../../lib/prisma/client.prisma';
-import { ISession } from '../../types/express-session';
+import { UserRole, UserStatus } from '@prisma/client';
 import { ErrorReturn } from '../../types/error-return';
-import { UserObjectStripped } from '../../types/user';
 import { createLog } from '../../services/logger.service';
+import { UserObjectStripped } from '../../types/user';
 
 const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
   validator;
 
-export const signInUser = async (req: Request, res: Response) => {
-  //get email and password from body params
-  let { email, password } = req.body;
+export const signUpUser = async (req: Request, res: Response) => {
+  //get name, email, password and repeatPassword from body params
+  let { name, email, password, repeatPassword } = req.body;
 
   //check all params exist
   const missingParams = [];
+  if (!name) {
+    missingParams.push('name');
+  }
   if (!email) {
     missingParams.push('email');
   }
   if (!password) {
     missingParams.push('password');
+  }
+  if (!repeatPassword) {
+    missingParams.push('repeat password');
   }
   if (missingParams.length > 0) {
     const error: ErrorReturn = {
@@ -42,11 +48,17 @@ export const signInUser = async (req: Request, res: Response) => {
 
   //check empty fields
   const emptyFields = [];
+  if (isEmpty(name, { ignore_whitespace: true })) {
+    emptyFields.push('name');
+  }
   if (isEmpty(email, { ignore_whitespace: true })) {
     emptyFields.push('email');
   }
   if (isEmpty(password, { ignore_whitespace: true })) {
     emptyFields.push('password');
+  }
+  if (isEmpty(repeatPassword, { ignore_whitespace: true })) {
+    emptyFields.push('repeat password');
   }
   if (emptyFields.length > 0) {
     const error: ErrorReturn = {
@@ -83,55 +95,62 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //sanitise inputs
-  email = escape(email).trim();
-  email = normalizeEmail(email, { gmail_remove_dots: false });
-  password = password.trim();
-
-  //check if user exists in database
-  const userDB = await prismaClient.user.findUnique({
-    where: { email: email },
-  });
-  if (!userDB) {
-    const error: ErrorReturn = {
-      code: 404,
-      message: 'User not found',
-      params: ['email'],
-    };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
-  }
-
-  //check password is correct
-  const match = await bcrypt.compare(password, userDB.password);
-  if (!match) {
+  //check passwords match
+  if (password != repeatPassword) {
     const error: ErrorReturn = {
       code: 400,
-      message: 'Wrong password',
-      params: ['password'],
+      message: 'Passwords do not match',
+      params: ['password', 'repeatPassword'],
     };
     res.status(400).json(error);
     createLog('error', req, res, error);
     return;
   }
 
-  //create session and store in Redis
-  try {
-    (req.session as ISession).role = userDB.role;
-    (req.session as ISession).status = userDB.status;
-    (req.session as ISession).email = userDB.email;
+  //sanitise inputs
+  name = escape(name).trim();
+  email = escape(email).trim();
+  email = normalizeEmail(email, { gmail_remove_dots: false });
+  password = password.trim();
+  repeatPassword = repeatPassword.trim();
 
-    //user object to be sent to client
-    const user: UserObjectStripped = {
-      id: userDB.id,
-      name: userDB.name,
-      email: userDB.email,
-      role: userDB.role,
-      status: userDB.status,
+  //check user with email doesn't already exist in database
+  const user = await prismaClient.user.findUnique({ where: { email: email } });
+  if (user) {
+    const error: ErrorReturn = {
+      code: 409,
+      message: 'User with that email already exists',
+      params: ['email'],
     };
+    res.status(409).json(error);
+    createLog('error', req, res, error);
+    return;
+  }
 
-    res.status(200).json(user);
+  //hash password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUserData = {
+    name: name,
+    email: email,
+    password: hashedPassword,
+    created_on: new Date(),
+    role: 'user' as UserRole,
+    status: 'inactive' as UserStatus,
+  };
+
+  //try creating user in database
+  try {
+    const newUser = await prismaClient.user.create({ data: newUserData });
+    //user object sent to the client
+    const user: UserObjectStripped = {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      status: newUser.status,
+    };
+    res.status(201).json(user);
     createLog('info', req, res);
     return;
   } catch (err) {

@@ -13,10 +13,10 @@ const mongodb = process.env.MONGO_DB || 'mongodb://localhost:8080';
 
 //start server
 app.listen(port, async () => {
-  // await redisClient.connect(); //opens connection to redis database
-  // await mongoose.connect(mongodb, {
-  //   dbName: 'golden_feather_logs',
-  // });
+  await redisClient.connect(); //opens connection to redis database
+  await mongoose.connect(mongodb, {
+    dbName: 'golden_feather_logs',
+  });
   console.log(
     `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`
   );

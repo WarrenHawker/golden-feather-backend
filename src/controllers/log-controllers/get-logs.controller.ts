@@ -7,24 +7,21 @@
 //import packages
 import { Request, Response } from 'express';
 import { Log } from '../../lib/mongoose/log-model.mongoose';
-import { LogLevel, LogSearchData, ReqMethod, ResCode } from '../../types/log';
+import { LogLevel, LogSearchData } from '../../types/log';
 import validator from 'validator';
 import {
-  isEndpoint,
   isLogLevel,
   isNumber,
-  isReqMethod,
   isResCode,
 } from '../../utils/functions/validate-input.function';
 import { createLog } from '../../services/logger.service';
 import { ErrorReturn } from '../../types/error-return';
 
-const { isEmpty, isIP, isDate, escape } = validator;
+const { isEmpty, isDate, escape } = validator;
 
 export const getLogs = async (req: Request, res: Response) => {
   //get search params from url
-  let { level, method, before, after, code, endpoint, ip, page, limit } =
-    req.query;
+  let { level, before, after, code, page, limit } = req.query;
 
   //object used to store sanitised search params
   const searchData: LogSearchData = {};
@@ -50,30 +47,6 @@ export const getLogs = async (req: Request, res: Response) => {
       }
     }
   }
-
-  // if (method) {
-  //   if (!isReqMethod(method as string)) {
-  //     const error: ErrorReturn = {
-  //       code: 400,
-  //       message: 'Invalid "method" search parameter.',
-  //       params: ['method'],
-  //     };
-  //     res.status(400).json(error);
-  //     createLog('error', req, res, error);
-  //     return;
-  //   } else {
-  //     method = escape(method as string).trim();
-  //     if (!isEmpty(method, { ignore_whitespace: true })) {
-  //       if (searchData.request) {
-  //         searchData.request.method = method as ReqMethod;
-  //       } else {
-  //         searchData.request = {
-  //           $match: { method: method.toUpperCase() as ReqMethod },
-  //         };
-  //       }
-  //     }
-  //   }
-  // }
 
   if (before) {
     if (!isDate(before as string)) {
@@ -136,55 +109,6 @@ export const getLogs = async (req: Request, res: Response) => {
       }
     }
   }
-
-  // if (endpoint) {
-  //   if (!isEndpoint(endpoint as string)) {
-  //     const error: ErrorReturn = {
-  //       code: 400,
-  //       message: 'Invalid "endpoint" search parameter.',
-  //       params: ['endpoint'],
-  //     };
-  //     res.status(400).json(error);
-  //     createLog('error', req, res, error);
-  //     return;
-  //   } else {
-  //     endpoint = escape(endpoint as string).trim();
-  //     if (!isEmpty(endpoint, { ignore_whitespace: true })) {
-  //       if (searchData.request) {
-  //         searchData.request.url = {
-  //           $regex: new RegExp(endpoint),
-  //           $options: 'i',
-  //         };
-  //       } else {
-  //         searchData.request = {
-  //           url: { $regex: new RegExp(endpoint), $options: 'i' },
-  //         };
-  //       }
-  //     }
-  //   }
-  // }
-
-  // if (ip) {
-  //   if (!isIP(ip as string)) {
-  //     const error: ErrorReturn = {
-  //       code: 400,
-  //       message: 'Invalid "ip" search parameter.',
-  //       params: ['ip'],
-  //     };
-  //     res.status(400).json(error);
-  //     await createLog('error', req, res, error);
-  //     return;
-  //   } else {
-  //     ip = escape(ip as string).trim();
-  //     if (!isEmpty(ip, { ignore_whitespace: true })) {
-  //       if (searchData.request) {
-  //         searchData.request.ip = ip;
-  //       } else {
-  //         searchData.request = { ip: ip };
-  //       }
-  //     }
-  //   }
-  // }
 
   //validate and set the correct page number for page pagination
   let pageNum: number = 1;

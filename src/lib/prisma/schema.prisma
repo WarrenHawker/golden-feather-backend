@@ -12,25 +12,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AuthToken {
-  id                String        @id @default(cuid())
-  user_id           String        @unique
-  User              User          @relation(fields: [user_id], references:[id])
-  created_on        DateTime
-  expires_on        DateTime
-  token             String
-}
-
 model User {
   id                String        @id @default(cuid())
-  user_name         String?
+  name              String
   email             String        @unique
-  password          String?
+  password          String
   role              UserRole
   status            UserStatus
   created_on        DateTime      @default(now())
   updated_on        DateTime?  
-  AuthToken         AuthToken?
 }
 
 model Guild {
@@ -68,6 +58,7 @@ enum UserStatus {
   active
   banned
   deleted
+  locked
 }
 
 enum ContentStatus {

@@ -7,21 +7,20 @@
 
 //import packages
 import { NextFunction, Request, Response } from 'express';
-import { ISession } from '../types/express-session';
 import { createLog } from '../services/logger.service';
 import { ErrorReturn } from '../types/error-return';
+import { redisClient } from '../lib/redis/client.redis';
 
 interface ResError extends Error {
   statusCode?: number;
 }
 
-//TODO add check for status and role - return 403 error if invalid
 export const authenticate = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.session || !(req.session as ISession).clientId) {
+  if (!req.session) {
     const err = new Error('Unauthenticated user') as ResError;
     err.statusCode = 401;
     const error: ErrorReturn = {
