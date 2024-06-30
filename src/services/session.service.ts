@@ -14,7 +14,7 @@ import 'dotenv/config';
 
 export default session({
   store: redisStore,
-  secret: process.env.SECRET || '',
+  secret: process.env.SECRET || ';jhjhfngfd',
   saveUninitialized: false,
   resave: false,
   name: 'sessionId',
