@@ -13,6 +13,7 @@ const mongodb = process.env.MONGO_DB || 'mongodb://localhost:8080';
 
 //start server
 app.listen(port, async () => {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   await redisClient.connect(); //opens connection to redis database
   await mongoose.connect(mongodb, {
     dbName: 'golden_feather_logs',
