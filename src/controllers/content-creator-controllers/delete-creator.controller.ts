@@ -4,7 +4,6 @@
   Deletes an existing content creator from the database by the id property. 
 */
 
-//import packages
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
 import validator from 'validator';

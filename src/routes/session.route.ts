@@ -1,10 +1,8 @@
-//import packages
 import express from 'express';
 import { deleteSession } from '../controllers/session-controllers/delete-session.controller';
 import { getSessions } from '../controllers/session-controllers/get-sessions.controller';
 import { authenticate } from '../middleware/require-auth.middleware';
 
-//initialise express router
 export const router = express.Router();
 
 //all routes that come after this middleware are protected.
@@ -12,5 +10,5 @@ export const router = express.Router();
 router.use(authenticate);
 
 //get sessions route - Move to protected (admins only) in production
-router.get('/', getSessions); //TODO implement page pagination
+router.get('/', getSessions);
 router.delete('/:id', deleteSession);

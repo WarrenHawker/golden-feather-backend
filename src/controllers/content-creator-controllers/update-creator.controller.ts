@@ -4,7 +4,6 @@
   Updates an existing content creator from the database by the id property, using data from the body params. 
 */
 
-//import packages
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
 import validator from 'validator';

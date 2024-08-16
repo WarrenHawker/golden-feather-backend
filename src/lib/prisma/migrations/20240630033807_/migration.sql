@@ -2,7 +2,7 @@
 CREATE TYPE "UserRole" AS ENUM ('user', 'moderator', 'admin');
 
 -- CreateEnum
-CREATE TYPE "UserStatus" AS ENUM ('inactive', 'active', 'banned', 'deleted');
+CREATE TYPE "UserStatus" AS ENUM ('inactive', 'active', 'banned', 'deleted', 'locked');
 
 -- CreateEnum
 CREATE TYPE "ContentStatus" AS ENUM ('public', 'private', 'deleted');

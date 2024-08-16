@@ -4,7 +4,6 @@
   Creates a new content creator in the database. 
 */
 
-//import packages
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
 import { createLog } from '../../services/logger.service';
