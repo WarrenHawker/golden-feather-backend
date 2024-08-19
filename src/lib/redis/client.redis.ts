@@ -1,23 +1,34 @@
-//import packages
 import { createClient } from 'redis';
 import RedisStore from 'connect-redis';
 import 'dotenv/config';
 import IORedis from 'ioredis';
 
-//initialise redis client
+const redisUrl = process.env.REDIS_URL || '';
+
+// Initialise redis client (node-redis)
 export const redisClient = createClient({
-  url: process.env.REDIS_URL || '',
+  url: redisUrl,
   socket: {
     connectTimeout: 50000,
   },
 });
 
-//ioredis instance used by bullmq
-const url = process.env.REDIS_URL || '';
-export const IOredisClient = new IORedis(url, {
+// Handle redis client connection events
+redisClient.on('error', (err) => console.error('Redis Client Error', err));
+redisClient.on('connect', () => console.log('Redis Client Connected'));
+
+// Connect the redis client
+redisClient.connect().catch(console.error);
+
+// Initialise ioredis instance (for BullMQ)
+export const IOredisClient = new IORedis(redisUrl, {
   connectTimeout: 50000,
-  maxRetriesPerRequest: null,
+  maxRetriesPerRequest: null, // Prevents max retries from being set to 20 by default
 });
 
-//initialise redis store
+// Handle ioredis client connection events
+IOredisClient.on('error', (err) => console.error('IORedis Client Error', err));
+IOredisClient.on('connect', () => console.log('IORedis Client Connected'));
+
+// Initialise redis store (used by sessions, etc.)
 export const redisStore = new RedisStore({ client: redisClient });
