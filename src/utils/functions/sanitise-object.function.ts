@@ -8,8 +8,8 @@ export const sanitiseObject = <T extends Record<string, any>>(obj: T): T => {
     if (obj.hasOwnProperty(key)) {
       const value = obj[key];
       if (typeof value === 'string') {
-        if (isURL(newObj[key])) {
-          newObj[key] = value.trim();
+        if (isURL(value)) {
+          newObj[key] = value.trim() as T[typeof key];
         } else {
           newObj[key] = '' as T[typeof key];
         }

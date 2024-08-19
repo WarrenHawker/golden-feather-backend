@@ -63,17 +63,16 @@ export const createCreator = async (req: Request, res: Response) => {
     return;
   }
 
-  const creatorData = {
-    name: escape(name).trim(),
-    description: escape(description).trim(),
-    categories: sanitiseArray(categories),
-    socials: sanitiseObject(socials),
-    videoUrl: isURL(videoUrl) ? videoUrl.trim() : '',
-    created_on: new Date(),
-    status: 'public' as ContentStatus,
-  };
-
   try {
+    const creatorData = {
+      name: escape(name).trim(),
+      description: escape(description).trim(),
+      categories: sanitiseArray(categories),
+      socials: sanitiseObject(socials),
+      videoUrl: isURL(videoUrl) ? videoUrl.trim() : '',
+      created_on: new Date(),
+      status: 'public' as ContentStatus,
+    };
     const creator = await prismaClient.contentCreator.create({
       data: creatorData,
     });

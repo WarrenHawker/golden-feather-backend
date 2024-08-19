@@ -17,6 +17,8 @@ import { getCreators } from '../controllers/content-creator-controllers/get-crea
 export const router = express.Router();
 
 router.get('/', getCreators);
+router.post('/', createCreator);
+router.patch('/:id', updateCreator);
 
 /*
 all routes that come after this middleware are protected.
@@ -24,6 +26,4 @@ can only be access if the user is logged in and has the correct role and status.
 */
 router.use(authenticate);
 
-router.post('/', createCreator);
-router.patch('/:id', updateCreator);
 router.delete('/', deleteCreator);

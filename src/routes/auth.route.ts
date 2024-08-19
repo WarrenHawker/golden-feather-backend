@@ -10,12 +10,14 @@ import express from 'express';
 import { authenticate } from '../middleware/require-auth.middleware';
 import { signInUser } from '../controllers/auth-controllers/signin.controller';
 import { signUpUser } from '../controllers/auth-controllers/signup.controller';
+import { checkAuth } from '../controllers/auth-controllers/check-auth.controller';
 
 //initialise express router
 export const router = express.Router();
 
 //sign in route
 router.post('/signin', signInUser);
+router.get('/check', checkAuth);
 
 /*
 all routes that come after this middleware are protected.
