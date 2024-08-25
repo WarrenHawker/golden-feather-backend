@@ -1,13 +1,14 @@
-/*
-  "automated logging" service
-
-  Creates a log and stores it in MongoDB database. 
-*/
-
-import { Log } from '../lib/mongoose/log-model.mongoose';
+import mongoose from 'mongoose';
+import { logSchema } from '../lib/mongoose/log-model.mongoose';
 import { ErrorReturn } from '../types/error-return';
 import { LogData, LogLevel, ReqMethod, ResCode } from '../types/log';
 import { Request, Response } from 'express';
+import moment from 'moment';
+
+const getLogModelForMonth = (year: string, month: string) => {
+  const collectionName = `logs_${year}_${month}`;
+  return mongoose.model(collectionName, logSchema, collectionName);
+};
 
 export const createLog = async (
   level: LogLevel,
@@ -36,8 +37,16 @@ export const createLog = async (
       ip: req.socket.remoteAddress,
     },
   };
-  const log = await Log.create(data);
+
+  //place log in collection for the current month
+  const now = moment();
+  const year = now.format('YYYY');
+  const month = now.format('MM');
+
+  const Log = getLogModelForMonth(year, month);
+  const logEntry = new Log(data);
+  await logEntry.save();
 
   //TODO if log is critical, email admins
-  return log;
+  return logEntry;
 };

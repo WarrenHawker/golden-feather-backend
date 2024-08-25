@@ -1,4 +1,4 @@
-import { Queue, tryCatch, Worker } from 'bullmq';
+import { Queue, Worker } from 'bullmq';
 import { IOredisClient, redisClient } from '../lib/redis/client.redis';
 import axios from 'axios';
 
@@ -41,10 +41,14 @@ export const generateTwitchToken = async () => {
   }
 };
 
-const maintainTwitchToken = async () => {
+export const maintainTwitchToken = async () => {
   const hour = 60 * 60 * 1000;
   const maintainToken = new Queue('maintainToken', redisConnect);
-  await maintainToken.add('tasks', {}, { repeat: { every: hour } });
+  await maintainToken.add(
+    'tasks',
+    {},
+    { repeat: { every: hour }, removeOnComplete: true }
+  );
 
   new Worker(
     'maintainToken',
@@ -69,5 +73,3 @@ const maintainTwitchToken = async () => {
     redisConnect
   );
 };
-
-export default maintainTwitchToken;

@@ -11,9 +11,8 @@ import { authenticate } from '../middleware/require-auth.middleware';
 import { createCreator } from '../controllers/content-creator-controllers/create-creator.controller';
 import { deleteCreator } from '../controllers/content-creator-controllers/delete-creator.controller';
 import { updateCreator } from '../controllers/content-creator-controllers/update-creator.controller';
-import { getCreators } from '../controllers/content-creator-controllers/get-creator.controller';
+import { getCreators } from '../controllers/content-creator-controllers/get-creators.controller';
 
-//initialise express router
 export const router = express.Router();
 
 router.get('/', getCreators);

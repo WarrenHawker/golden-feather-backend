@@ -1,6 +1,7 @@
 import mongoose, { model } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 import { LogRequestData, LogData } from '../../types/log';
+import moment from 'moment';
 const { Schema } = mongoose;
 
 const logRequestDataSchema = new Schema<LogRequestData>(
@@ -18,7 +19,7 @@ const logRequestDataSchema = new Schema<LogRequestData>(
   { _id: false }
 );
 
-const logSchema = new Schema(
+export const logSchema = new Schema(
   {
     level: {
       type: String,
@@ -47,10 +48,32 @@ const logSchema = new Schema(
 
 logSchema.plugin(paginate);
 
-interface LogDocument extends mongoose.Document, LogData {}
+export const getLogModelForMonth = async (collectionName: string) => {
+  const db = mongoose.connection.db;
 
-export const Log = model<LogDocument, mongoose.PaginateModel<LogDocument>>(
-  'Log',
-  logSchema,
-  'logs'
-);
+  // Check if the collection exists
+  const collections = await db
+    .listCollections({ name: collectionName })
+    .toArray();
+
+  if (collections.length === 0) {
+    // Create the collection with zstd compression
+    await db.createCollection(collectionName, {
+      storageEngine: {
+        wiredTiger: {
+          configString: 'block_compressor=zstd',
+        },
+      },
+    });
+    console.log(`Created collection ${collectionName} with zstd compression.`);
+  }
+
+  // Return the Mongoose model for the collection
+  return model<LogDocument, mongoose.PaginateModel<LogDocument>>(
+    collectionName,
+    logSchema,
+    collectionName
+  );
+};
+
+interface LogDocument extends mongoose.Document, LogData {}

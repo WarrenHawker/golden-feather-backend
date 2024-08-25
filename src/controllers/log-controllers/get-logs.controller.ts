@@ -1,114 +1,30 @@
 /*
   "get logs" controller function
 
-  Gets all logs from the database that match the search criteria.  
+  Logs are sorted into collections by month. To get logs from a specific month, use the 
+  "month" query param. This param needs to be in the format "YYYY_MM", for example:
+
+  http://localhost:5000/api/v1/log?month=2024_08
+
+  will get all the logs from the August 2024 collection. If no month is specified, it defaults
+  to getting the logs from the current month.
 */
 
 //import packages
 import { Request, Response } from 'express';
-import { Log } from '../../lib/mongoose/log-model.mongoose';
-import { LogLevel, LogSearchData } from '../../types/log';
+import { getLogModelForMonth } from '../../lib/mongoose/log-model.mongoose';
+import { LogSearchData } from '../../types/log';
 import validator from 'validator';
-import {
-  isLogLevel,
-  isNumber,
-  isResCode,
-} from '../../utils/functions/validate-input.function';
+import { isNumber } from '../../utils/functions/validate-input.function';
 import { createLog } from '../../services/logger.service';
 import { ErrorReturn } from '../../types/error-return';
+import moment from 'moment';
 
-const { isEmpty, isDate, escape } = validator;
+const { escape } = validator;
 
 export const getLogs = async (req: Request, res: Response) => {
-  //get search params from url
-  let { level, before, after, code, page, limit } = req.query;
-
-  //object used to store sanitised search params
+  let { page, limit, month } = req.query;
   const searchData: LogSearchData = {};
-
-  /*
-    validate and sanitise search params. 
-    If param passes all tests it goes into the searchData object
-  */
-  if (level) {
-    if (!isLogLevel(level as string)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid "level" search parameter.',
-        params: ['level'],
-      };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
-    } else {
-      level = escape(level as string).trim();
-      if (!isEmpty(level, { ignore_whitespace: true })) {
-        searchData.level = level as LogLevel;
-      }
-    }
-  }
-
-  if (before) {
-    if (!isDate(before as string)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid "before" search parameter.',
-        params: ['before'],
-      };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
-    } else {
-      before = escape(before as string).trim();
-      if (!isEmpty(before, { ignore_whitespace: true })) {
-        if (searchData.timestamp) {
-          searchData.timestamp.$lte = new Date(before as string);
-        } else {
-          searchData.timestamp = { $lte: new Date(before as string) };
-        }
-      }
-    }
-  }
-
-  if (after) {
-    if (!isDate(after as string)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid "after" search parameter.',
-        params: ['after'],
-      };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
-    } else {
-      after = escape(after as string).trim();
-      if (!isEmpty(after, { ignore_whitespace: true })) {
-        if (searchData.timestamp) {
-          searchData.timestamp.$gte = new Date(after as string);
-        } else {
-          searchData.timestamp = { $gte: new Date(after as string) };
-        }
-      }
-    }
-  }
-
-  if (code) {
-    if (!isResCode(code as string)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid "code" search parameter.',
-        params: ['code'],
-      };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
-    } else {
-      code = escape(code as string).trim();
-      if (!isEmpty(code, { ignore_whitespace: true })) {
-        searchData.responseCode = code;
-      }
-    }
-  }
 
   //validate and set the correct page number for page pagination
   let pageNum: number = 1;
@@ -148,6 +64,33 @@ export const getLogs = async (req: Request, res: Response) => {
     }
   }
 
+  // Validate and set the correct month (collection name) parameter
+  let collectionName: string;
+  if (month) {
+    const monthString = escape(month as string).trim();
+    const monthRegex = /^\d{4}_\d{2}$/; // Matches YYYY_MM format
+
+    if (!monthRegex.test(monthString)) {
+      const error: ErrorReturn = {
+        code: 400,
+        message:
+          'Invalid "month" search parameter. Expected format is "YYYY_MM".',
+        params: ['month'],
+      };
+      res.status(400).json(error);
+      createLog('error', req, res, error);
+      return;
+    } else {
+      collectionName = `logs_${monthString}`;
+    }
+  } else {
+    // Default to the current month if no "month" parameter is provided
+    const now = moment();
+    const year = now.format('YYYY');
+    const month = now.format('MM');
+    collectionName = `logs_${year}_${month}`;
+  }
+
   //fetch logs from database
   try {
     const options = {
@@ -159,7 +102,18 @@ export const getLogs = async (req: Request, res: Response) => {
       Query uses mongoose-paginate-v2 plugin. 
       For more details see https://www.npmjs.com/package/mongoose-paginate-v2
      */
-    const logs = await Log.paginate(searchData, options);
+    console.log('collection name:', collectionName);
+    const collection = await getLogModelForMonth(collectionName);
+    const logs = await collection.paginate(searchData, options);
+
+    if (logs.docs.length == 0) {
+      const error: ErrorReturn = {
+        code: 404,
+        message: 'no logs found',
+      };
+      res.status(404).json(error);
+      return;
+    }
 
     const result = {
       currentPage: pageNum,

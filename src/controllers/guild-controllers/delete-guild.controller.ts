@@ -13,37 +13,4 @@ import { createLog } from '../../services/logger.service';
 
 const { escape, isEmpty } = validator;
 
-export const deleteGuild = async (req: Request, res: Response) => {
-  let id = req.params.id;
-
-  //check ID param exists
-  if (!id || isEmpty(id, { ignore_whitespace: true })) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'no ID given',
-      params: ['id'],
-    };
-    res.status(400).json(error);
-    return;
-  }
-
-  //sanitise ID param
-  id = escape(id).trim();
-
-  //try deleting entry
-  try {
-    const deletedEntry = await prismaClient.guild.delete({
-      where: { id: id },
-    });
-    res.status(200).json(deletedEntry);
-    createLog('info', req, res);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: 500,
-      message: (err as Error).message,
-    };
-    res.status(500).json(error);
-    createLog('critical', req, res, error);
-    return;
-  }
-};
+export const deleteGuild = async (req: Request, res: Response) => {};

@@ -4,7 +4,6 @@
 
 generator client {
   provider = "prisma-client-js" 
-  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -21,30 +20,150 @@ model User {
   status            UserStatus
   created_on        DateTime      @default(now())
   updated_on        DateTime?  
+
+  @@index(fields: [created_on])
+  @@index(fields: [email])
 }
 
-model Guild {
+model PublicGuild {
   id                String        @id @default(cuid())
   name              String        @unique
-  region            String
-  language          String
-  bio               String
+  description       String
   guild_leader      String?       @unique
   created_on        DateTime
   updated_on        DateTime?    
   status            ContentStatus
+
+  languageId        String
+  language          Language      @relation(fields: [languageId], references: [id])
+
+  regionId          String
+  region            Region        @relation(fields: [regionId], references: [id])
+
+  @@index(fields: [created_on])
+  @@index(fields: [created_on, name])
+  @@index(fields: [name])
+  @@index(fields:[regionId])
+  @@index(fields:[languageId])
 }
 
-model ContentCreator {
-  id                String          @id @default(cuid())
-  name              String
+model AdminGuild {
+  id                String        @id @default(cuid())
+  name              String        @unique
   description       String
-  categories        String[]
-  socials           Json?
-  videoUrl          String
+  guild_leader      String?       @unique
   created_on        DateTime
   updated_on        DateTime?    
   status            ContentStatus
+
+  regionId          String
+  region            Region        @relation(fields: [regionId], references: [id])
+
+  languageId        String
+  language          Language      @relation(fields: [languageId], references: [id])
+
+  @@index(fields: [created_on])
+  @@index(fields: [created_on, name])
+  @@index(fields: [name])
+  @@index(fields:[regionId])
+  @@index(fields:[languageId])
+}
+
+model PublicContentCreator {
+  id                String           @id @default(uuid())
+  name              String           
+  description       String
+  videoUrl          String           
+  created_on        DateTime        
+  updated_on        DateTime? 
+  status            ContentStatus   
+  socials           Json?
+
+  categories        ContentCategory[] @relation("PublicContentCategory")
+  languageId        String
+  language          Language      @relation(fields: [languageId], references: [id])
+  
+  @@index(fields: [created_on])
+  @@index(fields: [created_on, name])
+  @@index(fields: [name])
+  @@index(fields:[languageId])
+}
+
+model AdminContentCreator {
+  id                String           @id @default(uuid())
+  name              String           
+  description       String
+  videoUrl          String           
+  created_on        DateTime         
+  updated_on        DateTime?     
+  status            ContentStatus    
+  socials           Json?
+
+  categories        ContentCategory[] @relation("AdminContentCategory")
+  languageId        String
+  language          Language      @relation(fields: [languageId], references: [id])
+  
+  @@index(fields: [created_on])
+  @@index(fields:[languageId])
+}
+
+model Category {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+
+  contentCreators ContentCategory[]
+}
+
+model ContentCategory {
+  contentCreatorId String
+  categoryId       String
+  creatorType      ContentCreatorType // Enum to differentiate between public and admin creators
+
+  // Relations to the corresponding content creator and category tables
+  publicContentCreator   PublicContentCreator? @relation(fields: [contentCreatorId], references: [id], name: "PublicContentCategory", map: "PublicContentCategory_FK")
+  adminContentCreator    AdminContentCreator?  @relation(fields: [contentCreatorId], references: [id], name: "AdminContentCategory", map: "AdminContentCategory_FK")
+  category               Category              @relation(fields: [categoryId], references: [id])
+
+  @@id([contentCreatorId, categoryId, creatorType])
+  @@index(fields: [categoryId, contentCreatorId])
+}
+
+model Language {
+  id                String        @id @default(uuid())
+  name              String        @unique
+
+  publicGuilds      PublicGuild[]
+  adminGuilds       AdminGuild[]
+  publicCreators    PublicContentCreator[]
+  adminCreators     AdminContentCreator[]
+}
+
+model Region {
+  id                String        @id @default(cuid())
+  name              String        @unique
+
+  publicGuilds      PublicGuild[]
+  adminGuilds       AdminGuild[]
+}
+
+enum EntityType {
+  PUBLIC_GUILD
+  ADMIN_GUILD
+  PUBLIC_CONTENT_CREATOR
+  ADMIN_CONTENT_CREATOR
+}
+
+enum ContentCreatorType {
+  PUBLIC_CONTENT_CREATOR
+  ADMIN_CONTENT_CREATOR
+}
+
+
+enum ContentStatus {
+  public
+  private
+  deleted
 }
 
 enum UserRole {
@@ -59,12 +178,6 @@ enum UserStatus {
   banned
   deleted
   locked
-}
-
-enum ContentStatus {
-  public
-  private
-  deleted
 }
 
 
