@@ -102,7 +102,6 @@ export const getLogs = async (req: Request, res: Response) => {
       Query uses mongoose-paginate-v2 plugin. 
       For more details see https://www.npmjs.com/package/mongoose-paginate-v2
      */
-    console.log('collection name:', collectionName);
     const collection = await getLogModelForMonth(collectionName);
     const logs = await collection.paginate(searchData, options);
 

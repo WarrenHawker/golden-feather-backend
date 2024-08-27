@@ -1,5 +1,5 @@
 import { Queue, Worker } from 'bullmq';
-import { IOredisClient, redisClient } from '../lib/redis/client.redis';
+import { IOredisClient, redisClient } from '../../lib/redis/client.redis';
 import axios from 'axios';
 
 const redisConnect = {
@@ -35,7 +35,7 @@ export const generateTwitchToken = async () => {
         },
       }
     );
-    return response.data.access_token;
+    redisClient.hSet('twitch_token', 'token_id', response.data.access_token);
   } catch (error) {
     throw error;
   }
@@ -60,13 +60,11 @@ export const maintainTwitchToken = async () => {
           const isTokenValid = await validateTwitchToken(token);
           if (!isTokenValid) {
             //if the token is invalid, generate a new token and store in redis
-            const newToken = await generateTwitchToken();
-            redisClient.hSet('twitch_token', 'token_id', newToken);
+            await generateTwitchToken();
           }
         } else {
           //if there's no token in redis, generate a new token and store in redis
-          const newToken = await generateTwitchToken();
-          redisClient.hSet('twitch_token', 'token_id', newToken);
+          await generateTwitchToken();
         }
       }
     },

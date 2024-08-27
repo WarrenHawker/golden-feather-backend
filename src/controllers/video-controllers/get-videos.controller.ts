@@ -2,7 +2,7 @@ const { google } = require('googleapis');
 import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';
 import { createLog } from '../../services/logger.service';
-import { generateTwitchToken } from '../../services/twitch-token.service';
+import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
 import { ErrorReturn } from '../../types/error-return';
 import { Request, Response } from 'express';
 
@@ -48,8 +48,7 @@ const getLatestTwitch = async (channelId: string) => {
     //check for token in redis database - if token doesn't exist then generate a new token
     const token = await redisClient.HGET('twitch_token', 'token_id');
     if (!token) {
-      const newToken = await generateTwitchToken();
-      redisClient.hSet('twitch_token', 'token_id', newToken);
+      await generateTwitchToken();
     }
     //use token to send post request to twitch api to get latest vod
     const response = await axios.get('https://api.twitch.tv/helix/videos', {

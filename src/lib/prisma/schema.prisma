@@ -43,8 +43,8 @@ model PublicGuild {
   @@index(fields: [created_on])
   @@index(fields: [created_on, name])
   @@index(fields: [name])
-  @@index(fields:[regionId])
-  @@index(fields:[languageId])
+  @@index(fields: [regionId])
+  @@index(fields: [languageId])
 }
 
 model AdminGuild {
@@ -65,8 +65,8 @@ model AdminGuild {
   @@index(fields: [created_on])
   @@index(fields: [created_on, name])
   @@index(fields: [name])
-  @@index(fields:[regionId])
-  @@index(fields:[languageId])
+  @@index(fields: [regionId])
+  @@index(fields: [languageId])
 }
 
 model PublicContentCreator {
@@ -79,14 +79,14 @@ model PublicContentCreator {
   status            ContentStatus   
   socials           Json?
 
-  categories        ContentCategory[] @relation("PublicContentCategory")
+  categories        PublicContentCreatorCategory[]
   languageId        String
   language          Language      @relation(fields: [languageId], references: [id])
   
   @@index(fields: [created_on])
   @@index(fields: [created_on, name])
   @@index(fields: [name])
-  @@index(fields:[languageId])
+  @@index(fields: [languageId])
 }
 
 model AdminContentCreator {
@@ -99,12 +99,13 @@ model AdminContentCreator {
   status            ContentStatus    
   socials           Json?
 
-  categories        ContentCategory[] @relation("AdminContentCategory")
+  categories        AdminContentCreatorCategory[]
   languageId        String
   language          Language      @relation(fields: [languageId], references: [id])
   
   @@index(fields: [created_on])
-  @@index(fields:[languageId])
+  @@index(fields: [languageId])
+
 }
 
 model Category {
@@ -112,21 +113,36 @@ model Category {
   name        String           @unique
   description String?
 
-  contentCreators ContentCategory[]
+  publicContentCreators PublicContentCreatorCategory[]
+  AdminContentCategory AdminContentCreatorCategory[]
 }
 
-model ContentCategory {
-  contentCreatorId String
-  categoryId       String
-  creatorType      ContentCreatorType // Enum to differentiate between public and admin creators
+model PublicContentCreatorCategory {
+  id                  String                @id @default(uuid())
+  publicContentCreatorId  String
+  categoryId            String
 
-  // Relations to the corresponding content creator and category tables
-  publicContentCreator   PublicContentCreator? @relation(fields: [contentCreatorId], references: [id], name: "PublicContentCategory", map: "PublicContentCategory_FK")
-  adminContentCreator    AdminContentCreator?  @relation(fields: [contentCreatorId], references: [id], name: "AdminContentCategory", map: "AdminContentCategory_FK")
-  category               Category              @relation(fields: [categoryId], references: [id])
+  publicContentCreator PublicContentCreator @relation(fields: [publicContentCreatorId], references: [id])
+  category             Category             @relation(fields: [categoryId], references: [id])
 
-  @@id([contentCreatorId, categoryId, creatorType])
-  @@index(fields: [categoryId, contentCreatorId])
+  @@unique([publicContentCreatorId, categoryId]) 
+
+  @@index([categoryId])
+  @@index([publicContentCreatorId])
+}
+
+model AdminContentCreatorCategory {
+  id                      String                @id @default(uuid()) 
+  adminContentCreatorId   String
+  categoryId              String
+
+  adminContentCreator AdminContentCreator     @relation(fields: [adminContentCreatorId], references: [id])
+  category             Category               @relation(fields: [categoryId], references: [id])
+
+  @@unique([adminContentCreatorId, categoryId]) 
+
+  @@index([categoryId])
+  @@index([adminContentCreatorId])
 }
 
 model Language {
@@ -146,19 +162,6 @@ model Region {
   publicGuilds      PublicGuild[]
   adminGuilds       AdminGuild[]
 }
-
-enum EntityType {
-  PUBLIC_GUILD
-  ADMIN_GUILD
-  PUBLIC_CONTENT_CREATOR
-  ADMIN_CONTENT_CREATOR
-}
-
-enum ContentCreatorType {
-  PUBLIC_CONTENT_CREATOR
-  ADMIN_CONTENT_CREATOR
-}
-
 
 enum ContentStatus {
   public
