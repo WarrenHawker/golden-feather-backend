@@ -12,12 +12,14 @@ import { createCreator } from '../controllers/creator-controllers/create-creator
 import { deleteCreator } from '../controllers/creator-controllers/delete-creator.controller';
 import { updateCreator } from '../controllers/creator-controllers/update-creator.controller';
 import { getCreators } from '../controllers/creator-controllers/get-creators.controller';
+import { getCreatorBySlug } from '../controllers/creator-controllers/get-creator-by-slug.controller';
 
 export const router = express.Router();
 
 router.get('/', getCreators);
 router.post('/', createCreator);
 router.patch('/:id', updateCreator);
+router.get('/:slug', getCreatorBySlug);
 
 /*
 all routes that come after this middleware are protected.

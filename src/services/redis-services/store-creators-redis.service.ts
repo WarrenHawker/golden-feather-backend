@@ -1,6 +1,6 @@
 import { redisClient } from '../../lib/redis/client.redis';
 import { Pagination } from '../../types/pagination';
-import { getPublicCreators } from '../creator-db-services/get-public-creators.service';
+import { getPublicCreatorsDB } from '../creator-db-services/get-public-creators.service';
 
 type Params = {
   pagination?: Pagination;
@@ -12,7 +12,7 @@ export const storeCreatorsRedis = async (options: Params = {}) => {
 
   try {
     if (!options.creators || !options.pagination) {
-      const { pagination, creators } = await getPublicCreators();
+      const { pagination, creators } = await getPublicCreatorsDB();
       creators.forEach((creator: any) => {
         redisClient.hSet('creators', creator.id, JSON.stringify(creator));
       });

@@ -1,7 +1,10 @@
+import validator from 'validator';
 import { prismaClient } from '../../lib/prisma/client.prisma';
 import { CreatorCreationData } from '../../types/creator';
 
-export const createCreator = async (
+const { unescape } = validator;
+
+export const createCreatorDB = async (
   table: 'public' | 'admin',
   options: CreatorCreationData
 ) => {
@@ -14,6 +17,10 @@ export const createCreator = async (
 
     const newCreatorData = {
       name: options.name,
+      slug: unescape(options.name)
+        .toLowerCase()
+        .replace(/\//g, '-')
+        .replace(/\s+/g, '-'),
       description: options.description,
       videoUrl: options.videoUrl,
       created_on: new Date(),

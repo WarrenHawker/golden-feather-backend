@@ -23,7 +23,7 @@
 import { prismaClient } from '../../lib/prisma/client.prisma';
 import { GetCreatorSearchParams } from '../../types/creator';
 
-export const getPublicCreators = async (
+export const getPublicCreatorsDB = async (
   options: GetCreatorSearchParams = {}
 ) => {
   const { page = 1, limit = 10, name, language, tags } = options;

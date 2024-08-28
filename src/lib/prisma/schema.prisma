@@ -28,6 +28,7 @@ model User {
 model PublicGuild {
   id                  String                        @id @default(cuid())
   name                String                        @unique
+  slug                String                        @unique 
   description         String
   guild_leader        String?                       @unique
   created_on          DateTime
@@ -51,6 +52,7 @@ model PublicGuild {
 model AdminGuild {
   id                  String                        @id @default(cuid())
   name                String                        @unique
+  slug                String                        @unique 
   description         String
   guild_leader        String?                       @unique
   created_on          DateTime
@@ -110,7 +112,8 @@ model AdminGuildTag {
 
 model PublicCreator {
   id                  String                        @id @default(uuid())
-  name                String           
+  name                String                        @unique
+  slug                String                        @unique
   description         String
   videoUrl            String           
   created_on          DateTime        
@@ -130,7 +133,8 @@ model PublicCreator {
 
 model AdminCreator {
   id                  String                        @id @default(uuid())
-  name                String           
+  name                String                        @unique
+  slug                String                        @unique        
   description         String
   videoUrl            String           
   created_on          DateTime         

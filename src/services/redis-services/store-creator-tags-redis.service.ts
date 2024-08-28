@@ -1,4 +1,3 @@
-import { prismaClient } from '../../lib/prisma/client.prisma';
 import { redisClient } from '../../lib/redis/client.redis';
 import { getCreatorTagsDB } from '../creator-db-services/get-creator-tags.service';
 

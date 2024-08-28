@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
-import { getAdminCreators } from '../../services/creator-db-services/get-admin-creators.service';
+import { getAdminCreatorsDB } from '../../services/creator-db-services/get-admin-creators.service';
 import { getCreatorsRedis } from '../../services/redis-services/get-creators-redis.service';
 import { storeCreatorsRedis } from '../../services/redis-services/store-creators-redis.service';
-import { getPublicCreators } from '../../services/creator-db-services/get-public-creators.service';
+import { getPublicCreatorsDB } from '../../services/creator-db-services/get-public-creators.service';
 import { GetCreatorSearchParams } from '../../types/creator';
 import { isNumber } from '../../utils/functions/validate-input.function';
 import validator from 'validator';
@@ -20,7 +20,7 @@ export const getCreators = async (req: Request, res: Response) => {
     } catch (error) {
       //if fetching data from redis fails, try fetching data from main database
       try {
-        const { pagination, creators } = await getPublicCreators();
+        const { pagination, creators } = await getPublicCreatorsDB();
         await storeCreatorsRedis({ pagination, creators });
         return res.status(200).json({
           currentPage: pagination.currentPage,
@@ -91,7 +91,7 @@ export const getCreators = async (req: Request, res: Response) => {
   //fetch admin creators, otherwise fetch public creators
   try {
     if (admin && admin == 'true') {
-      const { pagination, creators } = await getAdminCreators(searchParams);
+      const { pagination, creators } = await getAdminCreatorsDB(searchParams);
       return res.status(200).json({
         currentPage: pagination.currentPage,
         totalPages: pagination.totalPages,
@@ -100,7 +100,7 @@ export const getCreators = async (req: Request, res: Response) => {
         creators,
       });
     } else {
-      const { pagination, creators } = await getPublicCreators(searchParams);
+      const { pagination, creators } = await getPublicCreatorsDB(searchParams);
       return res.status(200).json({
         currentPage: pagination.currentPage,
         totalPages: pagination.totalPages,
