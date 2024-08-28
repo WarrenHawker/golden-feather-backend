@@ -10,6 +10,7 @@ import { storeCreatorsRedis } from './services/redis-services/store-creators-red
 import { storeGuildsRedis } from './services/redis-services/store-guilds-redis.service';
 import { dummyCreators } from './utils/dummy-creators';
 import { createCreator } from './services/creator-db-services/create-creator.service';
+import { storeCreatorTagsRedis } from './services/redis-services/store-creator-tags-redis.service';
 
 const port = process.env.PORT || 5000;
 
@@ -42,16 +43,17 @@ app.listen(port, async () => {
     //create new twitch API token and store in redis
     await generateTwitchToken();
 
-    //get the 10 first public content creators and guilds and store them in redis
+    //get the tags and 10 first public creators and guilds and store them in redis
     await storeCreatorsRedis();
     await storeGuildsRedis();
+    await storeCreatorTagsRedis();
 
     //scheduled tasks
     maintainTwitchToken();
     syncDatabase();
 
     //test add dummy content creators
-    // setDummyCreators();
+    //setDummyCreators();
 
     console.log(
       `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`

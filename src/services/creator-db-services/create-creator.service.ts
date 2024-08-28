@@ -6,7 +6,7 @@ export const createCreator = async (
   options: CreatorCreationData
 ) => {
   try {
-    if (options.categories.length == 0) {
+    if (options.tags.length == 0) {
       throw new Error(
         'you must include at least one category in the categories array'
       );
@@ -27,14 +27,14 @@ export const createCreator = async (
         },
       },
       status: options.status,
-      categories: {
-        create: options.categories.map((category) => ({
-          category: {
+      tags: {
+        create: options.tags.map((tag) => ({
+          tag: {
             connectOrCreate: {
-              where: { name: category },
+              where: { name: tag },
               create: {
-                name: category,
-                description: `${category} related content.`,
+                name: tag,
+                description: `${tag} related content.`,
               },
             },
           },
@@ -43,12 +43,12 @@ export const createCreator = async (
     };
 
     if (table === 'public') {
-      const newCreator = await prismaClient.publicContentCreator.create({
+      const newCreator = await prismaClient.publicCreator.create({
         data: newCreatorData,
       });
       return newCreator;
     } else if (table === 'admin') {
-      const newCreator = await prismaClient.adminContentCreator.create({
+      const newCreator = await prismaClient.adminCreator.create({
         data: newCreatorData,
       });
       return newCreator;

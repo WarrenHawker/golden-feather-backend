@@ -8,33 +8,21 @@ type Params = {
 };
 
 export const storeCreatorsRedis = async (options: Params = {}) => {
-  redisClient.del('content_creators');
+  redisClient.del('creators');
 
   try {
     if (!options.creators || !options.pagination) {
       const { pagination, creators } = await getPublicCreators();
       creators.forEach((creator: any) => {
-        redisClient.hSet(
-          'content_creators',
-          creator.id,
-          JSON.stringify(creator)
-        );
+        redisClient.hSet('creators', creator.id, JSON.stringify(creator));
       });
-      redisClient.hSet(
-        'content_creators',
-        'pagination',
-        JSON.stringify(pagination)
-      );
+      redisClient.hSet('creators', 'pagination', JSON.stringify(pagination));
     } else {
       options.creators.forEach((creator: any) => {
-        redisClient.hSet(
-          'content_creators',
-          creator.id,
-          JSON.stringify(creator)
-        );
+        redisClient.hSet('creators', creator.id, JSON.stringify(creator));
       });
       redisClient.hSet(
-        'content_creators',
+        'creators',
         'pagination',
         JSON.stringify(options.pagination)
       );

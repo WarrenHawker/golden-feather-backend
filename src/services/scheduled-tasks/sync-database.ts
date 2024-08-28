@@ -2,6 +2,7 @@ import { Queue, Worker } from 'bullmq';
 import { IOredisClient } from '../../lib/redis/client.redis';
 import { storeGuildsRedis } from '../redis-services/store-guilds-redis.service';
 import { storeCreatorsRedis } from '../redis-services/store-creators-redis.service';
+import { storeCreatorTagsRedis } from '../redis-services/store-creator-tags-redis.service';
 
 const redisConnect = {
   connection: IOredisClient,
@@ -22,6 +23,7 @@ export const syncDatabase = async () => {
       if (job.name == 'tasks') {
         await storeCreatorsRedis();
         await storeGuildsRedis();
+        await storeCreatorTagsRedis();
       }
     },
     redisConnect

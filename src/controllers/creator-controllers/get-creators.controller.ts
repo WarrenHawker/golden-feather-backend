@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
-import { JsonValue } from '@prisma/client/runtime/library';
 import { getAdminCreators } from '../../services/creator-db-services/get-admin-creators.service';
 import { getCreatorsRedis } from '../../services/redis-services/get-creators-redis.service';
 import { storeCreatorsRedis } from '../../services/redis-services/store-creators-redis.service';
@@ -41,7 +40,7 @@ export const getCreators = async (req: Request, res: Response) => {
   }
 
   //if there are any search params, validate and sanitise, then fetch data from main database
-  let { page, limit, name, language, category, admin } = req.query;
+  let { page, limit, name, language, tag, admin } = req.query;
   let searchParams: GetCreatorSearchParams = {};
   try {
     if (page) {
@@ -76,9 +75,9 @@ export const getCreators = async (req: Request, res: Response) => {
       searchParams.language = escape(language as string).trim();
     }
 
-    if (category) {
-      const categories = (category as string).split(' ');
-      searchParams.categories = sanitiseArray(categories);
+    if (tag) {
+      const tags = (tag as string).split(' ');
+      searchParams.tags = sanitiseArray(tags);
     }
   } catch (err) {
     const error: ErrorReturn = {

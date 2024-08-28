@@ -26,10 +26,10 @@ import { GetCreatorSearchParams } from '../../types/creator';
 export const getAdminCreators = async (
   options: GetCreatorSearchParams = {}
 ) => {
-  const { page = 1, limit = 10, name, language, categories } = options;
+  const { page = 1, limit = 10, name, language, tags } = options;
 
   try {
-    const creators = await prismaClient.adminContentCreator.findMany({
+    const creators = await prismaClient.adminCreator.findMany({
       where: {
         ...(name && {
           name: {
@@ -45,14 +45,14 @@ export const getAdminCreators = async (
             },
           },
         }),
-        ...(categories &&
-          categories.length > 0 && {
-            AND: categories.map((categoryName) => ({
-              categories: {
+        ...(tags &&
+          tags.length > 0 && {
+            AND: tags.map((tag) => ({
+              tags: {
                 some: {
-                  category: {
+                  tag: {
                     name: {
-                      equals: categoryName,
+                      equals: tag,
                       mode: 'insensitive',
                     },
                   },
@@ -78,9 +78,9 @@ export const getAdminCreators = async (
             name: true,
           },
         },
-        categories: {
+        tags: {
           select: {
-            category: {
+            tag: {
               select: {
                 name: true,
               },
@@ -94,11 +94,11 @@ export const getAdminCreators = async (
       return {
         ...creator,
         language: creator.language.name,
-        categories: creator.categories.map((c) => c.category.name),
+        categories: creator.tags.map((c) => c.tag.name),
       };
     });
 
-    const totalEntries = await prismaClient.adminContentCreator.count({
+    const totalEntries = await prismaClient.adminCreator.count({
       where: {
         ...(name && {
           name: {
@@ -114,14 +114,14 @@ export const getAdminCreators = async (
             },
           },
         }),
-        ...(categories &&
-          categories.length > 0 && {
-            AND: categories.map((categoryName) => ({
-              categories: {
+        ...(tags &&
+          tags.length > 0 && {
+            AND: tags.map((tag) => ({
+              tags: {
                 some: {
-                  category: {
+                  tag: {
                     name: {
-                      equals: categoryName,
+                      equals: tag,
                       mode: 'insensitive',
                     },
                   },

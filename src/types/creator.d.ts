@@ -14,7 +14,7 @@ export type CreatorCreationData = {
   description: string;
   videoUrl: string;
   socials: SocialLinks;
-  categories: string[];
+  tags: string[];
   language: string;
   status: ContentStatus;
 };
@@ -24,5 +24,5 @@ export type GetCreatorSearchParams = {
   limit?: number;
   name?: string;
   language?: string;
-  categories?: string[];
+  tags?: string[];
 };

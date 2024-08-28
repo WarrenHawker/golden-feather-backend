@@ -12,33 +12,34 @@ datasource db {
 }
 
 model User {
-  id                String        @id @default(cuid())
-  name              String
-  email             String        @unique
-  password          String
-  role              UserRole
-  status            UserStatus
-  created_on        DateTime      @default(now())
-  updated_on        DateTime?  
+  id                  String                        @id @default(cuid())
+  name                String
+  email               String                        @unique
+  password            String
+  role                UserRole
+  status              UserStatus
+  created_on          DateTime                      @default(now())
+  updated_on          DateTime?  
 
   @@index(fields: [created_on])
   @@index(fields: [email])
 }
 
 model PublicGuild {
-  id                String        @id @default(cuid())
-  name              String        @unique
-  description       String
-  guild_leader      String?       @unique
-  created_on        DateTime
-  updated_on        DateTime?    
-  status            ContentStatus
+  id                  String                        @id @default(cuid())
+  name                String                        @unique
+  description         String
+  guild_leader        String?                       @unique
+  created_on          DateTime
+  updated_on          DateTime?    
+  status              ContentStatus
 
-  languageId        String
-  language          Language      @relation(fields: [languageId], references: [id])
+  languageId          String
+  language            Language                      @relation(fields: [languageId], references: [id])
 
-  regionId          String
-  region            Region        @relation(fields: [regionId], references: [id])
+  regionId            String
+  region              Region                        @relation(fields: [regionId], references: [id])
+  tags                PublicGuildTag[]
 
   @@index(fields: [created_on])
   @@index(fields: [created_on, name])
@@ -48,19 +49,20 @@ model PublicGuild {
 }
 
 model AdminGuild {
-  id                String        @id @default(cuid())
-  name              String        @unique
-  description       String
-  guild_leader      String?       @unique
-  created_on        DateTime
-  updated_on        DateTime?    
-  status            ContentStatus
+  id                  String                        @id @default(cuid())
+  name                String                        @unique
+  description         String
+  guild_leader        String?                       @unique
+  created_on          DateTime
+  updated_on          DateTime?    
+  status              ContentStatus
 
-  regionId          String
-  region            Region        @relation(fields: [regionId], references: [id])
+  regionId            String
+  region              Region                        @relation(fields: [regionId], references: [id])
 
-  languageId        String
-  language          Language      @relation(fields: [languageId], references: [id])
+  languageId          String
+  language            Language                      @relation(fields: [languageId], references: [id])
+  tags                AdminGuildTag[]
 
   @@index(fields: [created_on])
   @@index(fields: [created_on, name])
@@ -69,19 +71,56 @@ model AdminGuild {
   @@index(fields: [languageId])
 }
 
-model PublicContentCreator {
-  id                String           @id @default(uuid())
-  name              String           
-  description       String
-  videoUrl          String           
-  created_on        DateTime        
-  updated_on        DateTime? 
-  status            ContentStatus   
-  socials           Json?
+model GuildTag {
+  id                  String                        @id @default(uuid())
+  name                String                        @unique
+  description         String?
 
-  categories        PublicContentCreatorCategory[]
-  languageId        String
-  language          Language      @relation(fields: [languageId], references: [id])
+  publicGuildTags     PublicGuildTag[]
+  AdminGuildTags      AdminGuildTag[]
+}
+
+model PublicGuildTag {
+  id                  String                        @id @default(uuid())
+  publicGuildId       String
+  tagId               String
+
+  publicGuild         PublicGuild                   @relation(fields: [publicGuildId], references: [id])
+  tag                 GuildTag                      @relation(fields: [tagId], references: [id])
+
+  @@unique([publicGuildId, tagId]) 
+
+  @@index([tagId])
+  @@index([publicGuildId])
+}
+
+model AdminGuildTag {
+  id                  String                        @id @default(uuid()) 
+  adminGuildId        String
+  tagId               String
+
+  adminGuild          AdminGuild                    @relation(fields: [adminGuildId], references: [id])
+  tag                 GuildTag                      @relation(fields: [tagId], references: [id])
+
+  @@unique([adminGuildId, tagId]) 
+
+  @@index([tagId])
+  @@index([adminGuildId])
+}
+
+model PublicCreator {
+  id                  String                        @id @default(uuid())
+  name                String           
+  description         String
+  videoUrl            String           
+  created_on          DateTime        
+  updated_on          DateTime? 
+  status              ContentStatus   
+  socials             Json?
+
+  tags                PublicCreatorTag[]
+  languageId          String
+  language            Language                      @relation(fields: [languageId], references: [id])
   
   @@index(fields: [created_on])
   @@index(fields: [created_on, name])
@@ -89,78 +128,78 @@ model PublicContentCreator {
   @@index(fields: [languageId])
 }
 
-model AdminContentCreator {
-  id                String           @id @default(uuid())
-  name              String           
-  description       String
-  videoUrl          String           
-  created_on        DateTime         
-  updated_on        DateTime?     
-  status            ContentStatus    
-  socials           Json?
+model AdminCreator {
+  id                  String                        @id @default(uuid())
+  name                String           
+  description         String
+  videoUrl            String           
+  created_on          DateTime         
+  updated_on          DateTime?     
+  status              ContentStatus    
+  socials             Json?
 
-  categories        AdminContentCreatorCategory[]
-  languageId        String
-  language          Language      @relation(fields: [languageId], references: [id])
+  tags                AdminCreatorTag[]
+  languageId          String
+  language            Language                      @relation(fields: [languageId], references: [id])
   
   @@index(fields: [created_on])
   @@index(fields: [languageId])
 
 }
 
-model Category {
-  id          String           @id @default(uuid())
-  name        String           @unique
-  description String?
+model CreatorTag {
+  id                  String                        @id @default(uuid())
+  name                String                        @unique
+  description         String?
 
-  publicContentCreators PublicContentCreatorCategory[]
-  AdminContentCategory AdminContentCreatorCategory[]
+  publicCreatorTags   PublicCreatorTag[]
+  AdminCreatorTags    AdminCreatorTag[]
 }
 
-model PublicContentCreatorCategory {
-  id                  String                @id @default(uuid())
-  publicContentCreatorId  String
-  categoryId            String
+model PublicCreatorTag {
+  id                  String                        @id @default(uuid())
+  publicCreatorId     String
+  tagId               String
 
-  publicContentCreator PublicContentCreator @relation(fields: [publicContentCreatorId], references: [id])
-  category             Category             @relation(fields: [categoryId], references: [id])
+  publicCreator       PublicCreator                 @relation(fields: [publicCreatorId], references: [id])
+  tag                 CreatorTag                    @relation(fields: [tagId], references: [id])
 
-  @@unique([publicContentCreatorId, categoryId]) 
+  @@unique([publicCreatorId, tagId]) 
 
-  @@index([categoryId])
-  @@index([publicContentCreatorId])
+  @@index([tagId])
+  @@index([publicCreatorId])
 }
 
-model AdminContentCreatorCategory {
-  id                      String                @id @default(uuid()) 
-  adminContentCreatorId   String
-  categoryId              String
+model AdminCreatorTag {
+  id                    String                      @id @default(uuid()) 
+  adminCreatorId        String
+  tagId                 String
 
-  adminContentCreator AdminContentCreator     @relation(fields: [adminContentCreatorId], references: [id])
-  category             Category               @relation(fields: [categoryId], references: [id])
+  adminCreator          AdminCreator                @relation(fields: [adminCreatorId], references: [id])
+  tag                   CreatorTag                  @relation(fields: [tagId], references: [id])
 
-  @@unique([adminContentCreatorId, categoryId]) 
+  @@unique([adminCreatorId, tagId]) 
 
-  @@index([categoryId])
-  @@index([adminContentCreatorId])
+  @@index([tagId])
+  @@index([adminCreatorId])
 }
 
 model Language {
-  id                String        @id @default(uuid())
-  name              String        @unique
+  id                      String                    @id @default(uuid())
+  name                    String                    @unique
 
-  publicGuilds      PublicGuild[]
-  adminGuilds       AdminGuild[]
-  publicCreators    PublicContentCreator[]
-  adminCreators     AdminContentCreator[]
+  publicGuilds            PublicGuild[]
+  adminGuilds             AdminGuild[]
+  publicCreators          PublicCreator[]
+  adminCreators           AdminCreator[]
 }
 
 model Region {
-  id                String        @id @default(cuid())
-  name              String        @unique
+  id                      String                    @id @default(cuid())
+  name                    String                    @unique
 
-  publicGuilds      PublicGuild[]
-  adminGuilds       AdminGuild[]
+  publicGuilds            PublicGuild[]
+  adminGuilds             AdminGuild[]
 }
 
 enum ContentStatus {
