@@ -29,6 +29,7 @@ import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
 import { getCreatorTagsRedis } from '../../services/redis-services/get-creator-tags-redis.service';
 import { getCreatorTagsDB } from '../../services/creator-db-services/get-creator-tags.service';
+import { ISession } from '../../types/express-session';
 
 export const getCreatorTags = async (req: Request, res: Response) => {
   const { admin } = req.query;
@@ -36,7 +37,12 @@ export const getCreatorTags = async (req: Request, res: Response) => {
   try {
     const { publicTags, allTags } = await getCreatorTagsRedis();
 
-    if (admin && admin == 'true') {
+    if (
+      admin &&
+      admin == 'true' &&
+      ((req.session as ISession).role != 'admin' ||
+        (req.session as ISession).status != 'active')
+    ) {
       return res.status(200).json(allTags);
     } else {
       return res.status(200).json(publicTags);
@@ -48,7 +54,16 @@ export const getCreatorTags = async (req: Request, res: Response) => {
       const public_tags = publicTags.map((tag) => tag.name);
       const all_tags = allTags.map((tag) => tag.name);
 
-      if (admin && admin == 'true') {
+      /*
+        all tags will only be sent if the admin query is true and there 
+        is a valid active admin session.  
+      */
+      if (
+        admin &&
+        admin == 'true' &&
+        ((req.session as ISession).role != 'admin' ||
+          (req.session as ISession).status != 'active')
+      ) {
         return res.status(200).json(all_tags);
       } else {
         return res.status(200).json(public_tags);

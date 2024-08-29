@@ -1,19 +1,15 @@
 import express from 'express';
-import { authenticate } from '../middleware/require-auth.middleware';
 import { deleteGuild } from '../controllers/guild-controllers/delete-guild.controller';
 import { createGuild } from '../controllers/guild-controllers/create-guild.controller';
 import { updateGuild } from '../controllers/guild-controllers/update-guild.controller';
 import { getGuilds } from '../controllers/guild-controllers/get-guilds.controller';
+import { checkRole, checkStatus } from '../middleware/require-auth.middleware';
 
 export const router = express.Router();
 
 router.get('/', getGuilds);
-/*
-  all routes that come after this middleware are protected.
-  can only be access if the user is logged in and has the correct role and status.
-*/
-router.use(authenticate);
-
-router.post('/', createGuild);
+router.post('/', checkRole('admin'), checkStatus('active'), createGuild);
 router.patch('/:id', updateGuild);
-router.delete('/:id', deleteGuild);
+router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteGuild);
+
+//TODO fill out controller functions for all guild routes

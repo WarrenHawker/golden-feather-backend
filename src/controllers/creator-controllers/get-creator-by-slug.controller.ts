@@ -28,6 +28,7 @@
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
 import { getCreatorBySlugDB } from '../../services/creator-db-services/get-creator-by-slug.service';
+import { ISession } from '../../types/express-session';
 
 export const getCreatorBySlug = async (req: Request, res: Response) => {
   const { slug } = req.params;
@@ -42,6 +43,24 @@ export const getCreatorBySlug = async (req: Request, res: Response) => {
 
   try {
     const creator = await getCreatorBySlugDB(slug as string);
+
+    /*
+      If the creator is not "public" it can only be accessed by admins.
+      Check if there is a valid active admin session before returning 
+      the creator object. If the session is invalid, return a 404 not found.
+    */
+
+    if (
+      (req.session as ISession).role != 'admin' ||
+      (req.session as ISession).status != 'active'
+    ) {
+      const error: ErrorReturn = {
+        code: 404,
+        message: 'creator not found',
+      };
+      return res.status(404).json(error);
+    }
+
     return res.status(200).json(creator);
   } catch (err) {
     const error: ErrorReturn = {

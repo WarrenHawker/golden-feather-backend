@@ -44,6 +44,7 @@ import { GetCreatorSearchParams } from '../../types/creator';
 import { isNumber } from '../../utils/functions/validate-input.function';
 import validator from 'validator';
 import { sanitiseArray } from '../../utils/functions/sanitise-array.function';
+import { ISession } from '../../types/express-session';
 
 const { escape } = validator;
 
@@ -125,8 +126,20 @@ export const getCreators = async (req: Request, res: Response) => {
 
   //fetch data from main database. If admin search param is true,
   //fetch admin creators, otherwise fetch public creators
+  //fetching admin creators can only be done if there is a valid active admin session
   try {
     if (admin && admin == 'true') {
+      if (
+        (req.session as ISession).role != 'admin' ||
+        (req.session as ISession).status != 'active'
+      ) {
+        const error: ErrorReturn = {
+          code: 403,
+          message: 'Forbidden: Admin access required',
+        };
+        return res.status(403).json(error);
+      }
+
       const { pagination, creators } = await getAdminCreatorsDB(searchParams);
       return res.status(200).json({
         currentPage: pagination.currentPage,

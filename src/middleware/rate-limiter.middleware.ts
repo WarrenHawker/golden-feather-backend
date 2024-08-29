@@ -1,15 +1,3 @@
-/*
-  "rate limiter" middleware
-
-  All endpoints are rate limited to 10 requests per IP address per 60 seconds.
-  If the limit is reached, any subsequent requests will return a 429 ("too many requests") error.  
-
-  the signin user endpoint is rate limited to 3 requests per email. 
-  If the limit is reached, the account status will be changed to "locked" and cannot be unlocked
-  until the user has re-verified their email and changed their password. 
-*/
-
-//import packages
 import { NextFunction, Request, Response } from 'express';
 import { redisClient } from '../lib/redis/client.redis';
 import { createLog } from '../services/logger.service';
@@ -20,7 +8,6 @@ export const rateLimiter = async (
   res: Response,
   next: NextFunction
 ) => {
-  //get IP address of device making the request
   const ip = req.socket.remoteAddress;
   if (ip) {
     //if there's a valid ip address, update total number of request attempts and check if the limit has been reached

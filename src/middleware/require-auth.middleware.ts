@@ -1,34 +1,53 @@
-/*
-  "require user authentication" middleware
-
-  Runs before allowing access to any protected routes. 
-  Checks both for a valid session as well as the user's current role and status.  
-*/
-
-//import packages
 import { NextFunction, Request, Response } from 'express';
-import { createLog } from '../services/logger.service';
+import { UserRole, UserStatus } from '@prisma/client';
+import { ISession } from '../types/express-session';
 import { ErrorReturn } from '../types/error-return';
+import { createLog } from '../services/logger.service';
 
-interface ResError extends Error {
-  statusCode?: number;
-}
+export const checkRole = (requiredRole: UserRole) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.session) {
+      const error: ErrorReturn = {
+        code: 401,
+        message: 'session not found',
+      };
+      createLog('error', req, res, error);
+      return res.status(401).json(error);
+    }
 
-export const authenticate = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (!req.session) {
-    const err = new Error('Unauthenticated user') as ResError;
-    err.statusCode = 401;
-    const error: ErrorReturn = {
-      code: 401,
-      message: 'No valid session found',
-    };
-    createLog('error', req, res, error);
-    next(err);
-  } else {
+    if ((req.session as ISession).role !== requiredRole) {
+      const error: ErrorReturn = {
+        code: 403,
+        message: 'user does not have the required role',
+      };
+      createLog('error', req, res, error);
+      return res.status(403).json(error);
+    }
+
     next();
-  }
+  };
+};
+
+export const checkStatus = (requiredStatus: UserStatus) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.session) {
+      const error: ErrorReturn = {
+        code: 401,
+        message: 'session not found',
+      };
+      createLog('error', req, res, error);
+      return res.status(401).json(error);
+    }
+
+    if ((req.session as ISession).status !== requiredStatus) {
+      const error: ErrorReturn = {
+        code: 403,
+        message: 'user does not have the required status',
+      };
+      createLog('error', req, res, error);
+      return res.status(403).json(error);
+    }
+
+    next();
+  };
 };

@@ -11,6 +11,6 @@ export default session({
   cookie: {
     secure: false, //if true, only transmit cookie over https
     httpOnly: true, //if true, prevents client side JS from reading cookie
-    maxAge: 1000 * 60 * 30, //session max age in milliseconds
+    maxAge: 1000 * 60 * 60, //session lasts 1 hour
   },
 });
