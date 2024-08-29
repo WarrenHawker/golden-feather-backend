@@ -24,17 +24,17 @@ export const getCreatorTagsRedis = async () => {
   try {
     const result = await redisClient.hGetAll('creator_tags');
     const publicTags = JSON.parse(result.public_tags);
-    const adminTags = JSON.parse(result.admin_tags);
+    const allTags = JSON.parse(result.all_tags);
 
     if (publicTags.length == 0) {
       throw new Error('no public tags found');
     }
 
-    if (adminTags.length == 0) {
-      throw new Error('no admin tags found');
+    if (allTags.length == 0) {
+      throw new Error('no all tags found');
     }
 
-    return { publicTags, adminTags };
+    return { publicTags, allTags };
   } catch (error) {
     throw error;
   }

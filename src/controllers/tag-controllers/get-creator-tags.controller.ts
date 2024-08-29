@@ -34,19 +34,19 @@ export const getCreatorTags = async (req: Request, res: Response) => {
   const { admin } = req.query;
   //try fetching tags from redis. If that fails, get tags from main database
   try {
-    const { publicTags, adminTags } = await getCreatorTagsRedis();
+    const { publicTags, allTags } = await getCreatorTagsRedis();
 
     if (admin && admin == 'true') {
-      return res.status(200).json(adminTags);
+      return res.status(200).json(allTags);
     } else {
       return res.status(200).json(publicTags);
     }
   } catch (error) {
     //fetch tags from main database
     try {
-      const { publicTags, adminTags } = await getCreatorTagsDB();
+      const { publicTags, allTags } = await getCreatorTagsDB();
       if (admin && admin == 'true') {
-        return res.status(200).json(adminTags);
+        return res.status(200).json(allTags);
       } else {
         return res.status(200).json(publicTags);
       }
