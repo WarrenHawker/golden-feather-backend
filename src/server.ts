@@ -32,7 +32,7 @@ app.listen(port, async () => {
     redisClient.flushAll();
 
     //add dummy content creators
-    // await setDummyCreators();
+    //await setDummyCreators();
 
     //create new twitch API token and store in redis
     await generateTwitchToken();

@@ -45,10 +45,13 @@ export const getCreatorTags = async (req: Request, res: Response) => {
     //fetch tags from main database
     try {
       const { publicTags, allTags } = await getCreatorTagsDB();
+      const public_tags = publicTags.map((tag) => tag.name);
+      const all_tags = allTags.map((tag) => tag.name);
+
       if (admin && admin == 'true') {
-        return res.status(200).json(allTags);
+        return res.status(200).json(all_tags);
       } else {
-        return res.status(200).json(publicTags);
+        return res.status(200).json(public_tags);
       }
     } catch (err) {
       const error: ErrorReturn = {
