@@ -1,3 +1,32 @@
+/**
+ * @file get-homepage-videos.controller.ts
+ * @description Controller for retrieving the latest YouTube and Twitch videos for the homepage. This controller
+ *              fetches the most recent video from a specified YouTube channel and the latest VOD from a specified
+ *              Twitch channel. The YouTube video is retrieved using the YouTube Data API, while the Twitch video
+ *              is retrieved using the Twitch API, with authentication handled via a token stored in Redis.
+ *
+ * @module controllers/videos
+ *
+ * @function getHomepageVideos - Express middleware function to handle GET requests for retrieving the latest
+ *                               YouTube and Twitch videos for the homepage.
+ *
+ * @param {Request} req - The Express request object, used to initiate the video retrieval process.
+ * @param {Response} res - The Express response object used to send the JSON response with the URLs of the latest videos.
+ *
+ * @returns {Promise<Response>} - A promise that resolves with an HTTP response containing the URLs of the latest
+ *                                YouTube and Twitch videos, or an error message.
+ *
+ * @throws {Error} - Throws a 500 error if there is an issue retrieving the videos from either YouTube or Twitch.
+ *                   All errors are logged accordingly.
+ *
+ * @requires googleapis - The official Node.js client library for accessing Google APIs, used to interact with the YouTube Data API.
+ * @requires axios - A promise-based HTTP client used to make requests to the Twitch API.
+ * @requires ../../lib/redis/client.redis - Redis client for accessing the token stored in the Redis database.
+ * @requires ../../services/logger.service - Service to log critical errors and actions.
+ * @requires ../../services/scheduled-tasks/twitch-token.service - Service to generate a new Twitch token if one is not available.
+ * @requires ../../types/error-return - Type definition for the structure of error responses.
+ */
+
 const { google } = require('googleapis');
 import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';

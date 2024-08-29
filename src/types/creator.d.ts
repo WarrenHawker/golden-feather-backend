@@ -25,4 +25,5 @@ export type GetCreatorSearchParams = {
   name?: string;
   language?: string;
   tags?: string[];
+  status?: ContentStatus;
 };

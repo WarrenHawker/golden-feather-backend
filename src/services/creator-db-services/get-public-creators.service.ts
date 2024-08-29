@@ -1,25 +1,34 @@
 /**
- * Fetches a paginated list of public content creators from the database based on optional search parameters.
+ * @file get-public-creators-db.service.ts
+ * @description Service function for retrieving a paginated list of public creators from the database based on various
+ *              optional search parameters. This function supports filtering by name, language, and tags, and it enforces
+ *              that only creators with a status of "public" are retrieved. The function also supports pagination by
+ *              specifying the page number and the number of results per page.
+ *              The retrieved creators are returned with selected fields and formatted to include their associated
+ *              language and tags.
  *
- * The function allows filtering by name, language, and categories. It returns the creators' information along with
- * pagination details such as the current page, total pages, number of entries on the current page, and total entries
- * matching the search criteria.
+ * @module services/creator
  *
- * ANY DATA PASSED INTO THIS FUNCTION SHOULD BE FULLY VALIDATED AND SANITISED FIRST
+ * @function getPublicCreatorsDB - Asynchronous function to query the database for public creators, applying optional filters
+ *                                 and pagination. The results are sorted by creation date in descending order.
  *
- * @param {SearchParams} options - Optional search parameters:
- *   - page (number): The page number to retrieve. Defaults to 1.
- *   - limit (number): The number of results per page. Defaults to 10.
- *   - name (string): Filter creators by name (case-insensitive, partial match).
- *   - language (string): Filter creators by language name (case-insensitive, exact match).
- *   - categories (string[]): Filter creators by categories (case-insensitive, exact match).
+ * @param {GetCreatorSearchParams} [options] - An object containing optional search parameters such as name, language,
+ *                                             tags, page number, and limit for pagination.
  *
- * @returns {Promise<{pagination: {currentPage: number, totalPages: number, entries: number, totalEntries: number}, creators: Array}>}
- *   - An object containing pagination details and the list of filtered creators.
+ * @returns {Promise<{pagination: object, creators: object[]}>} - A promise that resolves with an object containing
+ *                                                                pagination details and the list of formatted public creators.
  *
- * @throws Will throw an error if the database query fails.
+ * @throws {Error} - Throws an error if there is an issue with the database query.
+ *
+ * @warning All data passed to this function must be properly validated and sanitized before being passed in
+ *          to avoid potential security risks, such as SQL injection or XSS attacks. This function assumes
+ *          that validation and sanitization have been handled externally.
+ *
+ * @requires ../../lib/prisma/client.prisma - Prisma client for interacting with the database.
+ * @requires ../../types/creator - Type definition for the structure of the creator search parameters.
  */
 
+import { Prisma } from '@prisma/client';
 import { prismaClient } from '../../lib/prisma/client.prisma';
 import { GetCreatorSearchParams } from '../../types/creator';
 
@@ -28,39 +37,42 @@ export const getPublicCreatorsDB = async (
 ) => {
   const { page = 1, limit = 10, name, language, tags } = options;
 
-  try {
-    const creators = await prismaClient.publicCreator.findMany({
-      where: {
-        ...(name && {
-          name: {
-            contains: name,
-            mode: 'insensitive',
-          },
-        }),
-        ...(language && {
-          language: {
-            name: {
-              equals: language,
-              mode: 'insensitive',
-            },
-          },
-        }),
-        ...(tags &&
-          tags.length > 0 && {
-            AND: tags.map((tag) => ({
-              tags: {
-                some: {
-                  tag: {
-                    name: {
-                      equals: tag,
-                      mode: 'insensitive',
-                    },
-                  },
+  const searchData: Prisma.CreatorWhereInput = {
+    ...(name && {
+      name: {
+        contains: name,
+        mode: 'insensitive',
+      },
+    }),
+    ...(language && {
+      language: {
+        name: {
+          equals: language,
+          mode: 'insensitive',
+        },
+      },
+    }),
+    ...(tags &&
+      tags.length > 0 && {
+        AND: tags.map((tag) => ({
+          tags: {
+            some: {
+              tag: {
+                name: {
+                  equals: tag,
+                  mode: 'insensitive',
                 },
               },
-            })),
-          }),
-      },
+            },
+          },
+        })),
+      }),
+    status: 'public',
+  };
+
+  try {
+    const creators = await prismaClient.creator.findMany({
+      where: searchData,
       orderBy: { created_on: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
@@ -95,38 +107,8 @@ export const getPublicCreatorsDB = async (
       };
     });
 
-    const totalEntries = await prismaClient.publicCreator.count({
-      where: {
-        ...(name && {
-          name: {
-            contains: name,
-            mode: 'insensitive',
-          },
-        }),
-        ...(language && {
-          language: {
-            name: {
-              equals: language,
-              mode: 'insensitive',
-            },
-          },
-        }),
-        ...(tags &&
-          tags.length > 0 && {
-            AND: tags.map((tag) => ({
-              tags: {
-                some: {
-                  tag: {
-                    name: {
-                      equals: tag,
-                      mode: 'insensitive',
-                    },
-                  },
-                },
-              },
-            })),
-          }),
-      },
+    const totalEntries = await prismaClient.creator.count({
+      where: searchData,
     });
 
     const pagination = {

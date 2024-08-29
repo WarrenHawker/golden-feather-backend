@@ -1,10 +1,3 @@
-/*
-  "signin user" controller function
-
-  Signs the user in using their email and password.
-*/
-
-//import packages
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
@@ -18,10 +11,8 @@ const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
   validator;
 
 export const signInUser = async (req: Request, res: Response) => {
-  //get email and password from body params
   let { email, password } = req.body;
 
-  //check all params exist
   const missingParams = [];
   if (!email) {
     missingParams.push('email');
@@ -40,7 +31,6 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check empty fields
   const emptyFields = [];
   if (isEmpty(email, { ignore_whitespace: true })) {
     emptyFields.push('email');
@@ -59,7 +49,6 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check email is valid
   if (!isEmail(email)) {
     const error: ErrorReturn = {
       code: 400,
@@ -71,7 +60,6 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check password is valid
   if (!isStrongPassword(password)) {
     const error: ErrorReturn = {
       code: 400,
@@ -83,12 +71,10 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //sanitise inputs
   email = escape(email).trim();
   email = normalizeEmail(email, { gmail_remove_dots: false });
   password = password.trim();
 
-  //check if user exists in database
   const userDB = await prismaClient.user.findUnique({
     where: { email: email },
   });
@@ -103,7 +89,6 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check password is correct
   const match = await bcrypt.compare(password, userDB.password);
   if (!match) {
     const error: ErrorReturn = {
@@ -116,13 +101,11 @@ export const signInUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //create session and store in Redis
   try {
     (req.session as ISession).role = userDB.role;
     (req.session as ISession).status = userDB.status;
     (req.session as ISession).email = userDB.email;
 
-    //user object to be sent to client
     const user: UserObjectStripped = {
       id: userDB.id,
       name: userDB.name,

@@ -4,7 +4,7 @@ import { redisClient } from '../../lib/redis/client.redis';
 export const storeGuildsRedis = async () => {
   redisClient.del('guilds');
   try {
-    const guilds = await prismaClient.publicGuild.findMany({
+    const guilds = await prismaClient.guild.findMany({
       orderBy: { created_on: 'desc' },
       take: 10,
       select: {
@@ -19,7 +19,7 @@ export const storeGuildsRedis = async () => {
     guilds.forEach((guild) => {
       redisClient.hSet('guilds', guild.id, JSON.stringify(guild));
     });
-    const count = await prismaClient.publicGuild.count();
+    const count = await prismaClient.guild.count();
     const pageination = {
       currentPage: 1,
       totalPages: count < 10 ? 1 : Math.ceil(count / 10),

@@ -9,7 +9,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { createLog } from '../services/logger.service';
 import { ErrorReturn } from '../types/error-return';
-import { redisClient } from '../lib/redis/client.redis';
 
 interface ResError extends Error {
   statusCode?: number;

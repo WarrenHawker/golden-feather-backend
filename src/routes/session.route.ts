@@ -9,6 +9,5 @@ export const router = express.Router();
 //can only be access if the user is logged in.
 router.use(authenticate);
 
-//get sessions route - Move to protected (admins only) in production
 router.get('/', getSessions);
 router.delete('/:id', deleteSession);

@@ -1,6 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 //run "npx prisma migrate dev" command to update schema 
+//run "npx prisma migrate reset" command to wipe database
 
 generator client {
   provider = "prisma-client-js" 
@@ -20,190 +21,115 @@ model User {
   status              UserStatus
   created_on          DateTime                      @default(now())
   updated_on          DateTime?  
+  guild               Guild?
+  creator             Creator?
 
-  @@index(fields: [created_on])
-  @@index(fields: [email])
+  @@index([created_on])
+  @@index([email])
+  @@index([name])
 }
 
-model PublicGuild {
+model Guild {
   id                  String                        @id @default(cuid())
   name                String                        @unique
   slug                String                        @unique 
   description         String
-  guild_leader        String?                       @unique
-  created_on          DateTime
+  guild_leader        String?                      
+  created_on          DateTime                      @default(now())
   updated_on          DateTime?    
   status              ContentStatus
-
   languageId          String
   language            Language                      @relation(fields: [languageId], references: [id])
-
   regionId            String
   region              Region                        @relation(fields: [regionId], references: [id])
-  tags                PublicGuildTag[]
+  tags                GuildTagRelation[]
+  userId              String?                       @unique
+  user                User?                         @relation(fields: [userId], references: [id]) 
 
-  @@index(fields: [created_on])
-  @@index(fields: [created_on, name])
-  @@index(fields: [name])
-  @@index(fields: [regionId])
-  @@index(fields: [languageId])
-}
-
-model AdminGuild {
-  id                  String                        @id @default(cuid())
-  name                String                        @unique
-  slug                String                        @unique 
-  description         String
-  guild_leader        String?                       @unique
-  created_on          DateTime
-  updated_on          DateTime?    
-  status              ContentStatus
-
-  regionId            String
-  region              Region                        @relation(fields: [regionId], references: [id])
-
-  languageId          String
-  language            Language                      @relation(fields: [languageId], references: [id])
-  tags                AdminGuildTag[]
-
-  @@index(fields: [created_on])
-  @@index(fields: [created_on, name])
-  @@index(fields: [name])
-  @@index(fields: [regionId])
-  @@index(fields: [languageId])
+  @@index([created_on])
+  @@index([slug])
+  @@index([status])
+  @@index([languageId])
+  @@index([regionId])
+  @@index([userId])
+  @@index([name])
 }
 
 model GuildTag {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   description         String?
-
-  publicGuildTags     PublicGuildTag[]
-  AdminGuildTags      AdminGuildTag[]
+  guildTags           GuildTagRelation[]
 }
 
-model PublicGuildTag {
+model GuildTagRelation {
   id                  String                        @id @default(uuid())
-  publicGuildId       String
+  guildId             String
   tagId               String
-
-  publicGuild         PublicGuild                   @relation(fields: [publicGuildId], references: [id])
+  guild               Guild                         @relation(fields: [guildId], references: [id])
   tag                 GuildTag                      @relation(fields: [tagId], references: [id])
 
-  @@unique([publicGuildId, tagId]) 
-
+  @@index([guildId])
   @@index([tagId])
-  @@index([publicGuildId])
 }
 
-model AdminGuildTag {
-  id                  String                        @id @default(uuid()) 
-  adminGuildId        String
-  tagId               String
-
-  adminGuild          AdminGuild                    @relation(fields: [adminGuildId], references: [id])
-  tag                 GuildTag                      @relation(fields: [tagId], references: [id])
-
-  @@unique([adminGuildId, tagId]) 
-
-  @@index([tagId])
-  @@index([adminGuildId])
-}
-
-model PublicCreator {
+model Creator {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   slug                String                        @unique
   description         String
   videoUrl            String           
-  created_on          DateTime        
+  created_on          DateTime                      @default(now())
   updated_on          DateTime? 
   status              ContentStatus   
   socials             Json?
-
-  tags                PublicCreatorTag[]
+  tags                CreatorTagRelation[]
   languageId          String
   language            Language                      @relation(fields: [languageId], references: [id])
-  
-  @@index(fields: [created_on])
-  @@index(fields: [created_on, name])
-  @@index(fields: [name])
-  @@index(fields: [languageId])
-}
+  userId              String?                       @unique
+  user                User?                         @relation(fields: [userId], references: [id])
 
-model AdminCreator {
-  id                  String                        @id @default(uuid())
-  name                String                        @unique
-  slug                String                        @unique        
-  description         String
-  videoUrl            String           
-  created_on          DateTime         
-  updated_on          DateTime?     
-  status              ContentStatus    
-  socials             Json?
-
-  tags                AdminCreatorTag[]
-  languageId          String
-  language            Language                      @relation(fields: [languageId], references: [id])
-  
-  @@index(fields: [created_on])
-  @@index(fields: [languageId])
-
+  @@index([created_on])
+  @@index([slug])
+  @@index([status])
+  @@index([languageId])
+  @@index([userId])
+  @@index([name])
 }
 
 model CreatorTag {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   description         String?
-
-  publicCreatorTags   PublicCreatorTag[]
-  AdminCreatorTags    AdminCreatorTag[]
+  creatorTags         CreatorTagRelation[]
 }
 
-model PublicCreatorTag {
+model CreatorTagRelation {
   id                  String                        @id @default(uuid())
-  publicCreatorId     String
+  creatorId           String
   tagId               String
-
-  publicCreator       PublicCreator                 @relation(fields: [publicCreatorId], references: [id])
+  creator             Creator                       @relation(fields: [creatorId], references: [id])
   tag                 CreatorTag                    @relation(fields: [tagId], references: [id])
 
-  @@unique([publicCreatorId, tagId]) 
-
+  @@index([creatorId])
   @@index([tagId])
-  @@index([publicCreatorId])
-}
-
-model AdminCreatorTag {
-  id                    String                      @id @default(uuid()) 
-  adminCreatorId        String
-  tagId                 String
-
-  adminCreator          AdminCreator                @relation(fields: [adminCreatorId], references: [id])
-  tag                   CreatorTag                  @relation(fields: [tagId], references: [id])
-
-  @@unique([adminCreatorId, tagId]) 
-
-  @@index([tagId])
-  @@index([adminCreatorId])
 }
 
 model Language {
-  id                      String                    @id @default(uuid())
-  name                    String                    @unique
+  id                  String                        @id @default(uuid())
+  name                String                        @unique
+  guilds              Guild[]
+  creators            Creator[]
 
-  publicGuilds            PublicGuild[]
-  adminGuilds             AdminGuild[]
-  publicCreators          PublicCreator[]
-  adminCreators           AdminCreator[]
+  @@index([name])
 }
 
 model Region {
-  id                      String                    @id @default(cuid())
-  name                    String                    @unique
+  id                  String                        @id @default(cuid())
+  name                String                        @unique
+  guilds              Guild[]
 
-  publicGuilds            PublicGuild[]
-  adminGuilds             AdminGuild[]
+  @@index([name])
 }
 
 enum ContentStatus {

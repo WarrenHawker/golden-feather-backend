@@ -1,13 +1,3 @@
-/*
-  "session creation" service
-
-  Uses the express-session package to store user signin session 
-  in the redis database. 
-
-  For more information, go to https://expressjs.com/en/resources/middleware/session.html
-*/
-
-//import packages
 import session from 'express-session';
 import { redisStore } from '../lib/redis/client.redis';
 import 'dotenv/config';

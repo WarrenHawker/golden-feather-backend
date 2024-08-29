@@ -1,7 +1,6 @@
 import mongoose, { model } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 import { LogRequestData, LogData } from '../../types/log';
-import moment from 'moment';
 const { Schema } = mongoose;
 
 const logRequestDataSchema = new Schema<LogRequestData>(

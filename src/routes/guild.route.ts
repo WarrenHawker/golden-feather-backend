@@ -1,10 +1,3 @@
-/*
-  "guild" routes
-
-  declares the endpoints for guild CRUD operations.   
-*/
-
-//import packages
 import express from 'express';
 import { authenticate } from '../middleware/require-auth.middleware';
 import { deleteGuild } from '../controllers/guild-controllers/delete-guild.controller';
@@ -12,7 +5,6 @@ import { createGuild } from '../controllers/guild-controllers/create-guild.contr
 import { updateGuild } from '../controllers/guild-controllers/update-guild.controller';
 import { getGuilds } from '../controllers/guild-controllers/get-guilds.controller';
 
-//initialise express router
 export const router = express.Router();
 
 router.get('/', getGuilds);

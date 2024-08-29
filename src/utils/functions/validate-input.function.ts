@@ -1,9 +1,3 @@
-/*
-  "input validation" functions
-
-  The following functions are used to validate various user inputs.
-*/
-
 //returns true if the input is a valid user role, else returns false
 export const isUserRole = (input: string): boolean => {
   if (input == 'user' || input == 'moderator' || input == 'admin') {

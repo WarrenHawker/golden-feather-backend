@@ -1,10 +1,3 @@
-/*
-  "signup user" controller function
-
-  registers a new user, using their chosen name, email and password.
-*/
-
-//import packages
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
@@ -18,10 +11,8 @@ const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
   validator;
 
 export const signUpUser = async (req: Request, res: Response) => {
-  //get name, email, password and repeatPassword from body params
   let { name, email, password, repeatPassword } = req.body;
 
-  //check all params exist
   const missingParams = [];
   if (!name) {
     missingParams.push('name');
@@ -46,7 +37,6 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check empty fields
   const emptyFields = [];
   if (isEmpty(name, { ignore_whitespace: true })) {
     emptyFields.push('name');
@@ -71,7 +61,6 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check email is valid
   if (!isEmail(email)) {
     const error: ErrorReturn = {
       code: 400,
@@ -83,7 +72,6 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check password is valid
   if (!isStrongPassword(password)) {
     const error: ErrorReturn = {
       code: 400,
@@ -95,7 +83,6 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //check passwords match
   if (password != repeatPassword) {
     const error: ErrorReturn = {
       code: 400,
@@ -107,14 +94,12 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //sanitise inputs
   name = escape(name).trim();
   email = escape(email).trim();
   email = normalizeEmail(email, { gmail_remove_dots: false });
   password = password.trim();
   repeatPassword = repeatPassword.trim();
 
-  //check user with email doesn't already exist in database
   const user = await prismaClient.user.findUnique({ where: { email: email } });
   if (user) {
     const error: ErrorReturn = {
@@ -127,7 +112,6 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 
-  //hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUserData = {
@@ -139,10 +123,8 @@ export const signUpUser = async (req: Request, res: Response) => {
     status: 'inactive' as UserStatus,
   };
 
-  //try creating user in database
   try {
     const newUser = await prismaClient.user.create({ data: newUserData });
-    //user object sent to the client
     const user: UserObjectStripped = {
       id: newUser.id,
       name: newUser.name,

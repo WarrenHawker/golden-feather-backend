@@ -1,11 +1,28 @@
-/*
-  "automated email" service
+/**
+ * @file send-email.service.ts
+ * @description Service function for sending emails using the SendGrid API. This function utilizes the SendGrid
+ *              Node.js library to send an email to a specified recipient. The function requires an API key and a
+ *              sender address, both of which are retrieved from environment variables. If either is missing, an
+ *              error is thrown. The function supports plain text and HTML email content.
+ *
+ * @module services/email
+ *
+ * @function sendEmail - Asynchronous function to send an email using SendGrid. It constructs an email object with the
+ *                       recipient, subject, text, and HTML content, and sends it via the SendGrid API.
+ *
+ * @param {string} recipient - The email address of the recipient.
+ * @param {string} subject - The subject line of the email.
+ * @param {string} text - The plain text content of the email.
+ * @param {string} html - The HTML content of the email.
+ *
+ * @returns {Promise<object>} - A promise that resolves with the email object if the email is successfully sent.
+ *
+ * @throws {Error} - Throws an error if the API key or sender address is missing, or if there is an issue with sending the email.
+ *
+ * @requires @sendgrid/mail - SendGrid's official Node.js library for sending emails.
+ * @requires dotenv/config - Loads environment variables from a `.env` file into `process.env`.
+ */
 
-  Uses sendgrid to send automated emails to users.
-  For more information, go to https://docs.sendgrid.com/
-*/
-
-//import packages
 import sgMail from '@sendgrid/mail';
 import 'dotenv/config';
 
@@ -15,7 +32,6 @@ export const sendEmail = async (
   text: string,
   html: string
 ) => {
-  //validates environment variables from .env file
   const apiKey = process.env.SENDGRID_API_KEY;
   const fromAddress = process.env.SENDGRID_SENDER;
   if (!apiKey) {
@@ -26,7 +42,6 @@ export const sendEmail = async (
   }
   sgMail.setApiKey(apiKey);
 
-  //send email to user
   const email = {
     to: recipient,
     from: fromAddress,

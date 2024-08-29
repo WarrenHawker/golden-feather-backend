@@ -1,12 +1,4 @@
-/*
-  "content creator" routes
-
-  declares the endpoints for content creator CRUD operations.   
-*/
-
-//import packages
 import express from 'express';
-
 import { authenticate } from '../middleware/require-auth.middleware';
 import { createCreator } from '../controllers/creator-controllers/create-creator.controller';
 import { deleteCreator } from '../controllers/creator-controllers/delete-creator.controller';

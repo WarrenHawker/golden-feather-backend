@@ -14,19 +14,10 @@ import { creators } from './utils/dummy-creators-2';
 
 const port = process.env.PORT || 5000;
 
-const doCreation = async (creator: any) => {
-  if (creator.status == 'public') {
-    await createCreatorDB('public', creator);
-    await createCreatorDB('admin', creator);
-  } else if (creator.status == 'private') {
-    await createCreatorDB('admin', creator);
-  }
-};
-
 const setDummyCreators = async () => {
   try {
     for (const creator of creators) {
-      await doCreation(creator);
+      await createCreatorDB(creator);
     }
   } catch (error) {
     throw error;

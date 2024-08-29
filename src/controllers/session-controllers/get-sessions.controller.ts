@@ -1,16 +1,33 @@
-/*
-  "get sessions" controller function
+/**
+ * @file get-sessions.controller.ts
+ * @description Controller for retrieving all active user sessions from the session store. This controller
+ *              checks for the presence of a session store and attempts to retrieve all sessions. If the
+ *              session store is not found or an error occurs during retrieval, an appropriate error response
+ *              is returned. The controller also logs any errors or critical issues encountered during the process.
+ *
+ * @module controllers/session
+ *
+ * @function getSessions - Express middleware function to handle GET requests for retrieving all active sessions
+ *                         from the session store.
+ *
+ * @param {Request} req - The Express request object, used to access the session store.
+ * @param {Response} res - The Express response object used to send the HTTP response with session data or an error message.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the session retrieval process is complete, sending an HTTP
+ *                            response with either the session data or an appropriate error message.
+ *
+ * @throws {Error} - Throws a 404 error if the session store is not found, a 404 error if no sessions are found,
+ *                   and a 500 error for any issues during the retrieval process. All errors are logged accordingly.
+ *
+ * @requires ../../types/error-return - Type definition for the structure of error responses.
+ * @requires ../../services/logger.service - Service to log errors and critical issues.
+ */
 
-  Gets all the active user sessions. 
-*/
-
-//import packages
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
 import { createLog } from '../../services/logger.service';
 
 export const getSessions = async (req: Request, res: Response) => {
-  //check session store exists
   if (!req.sessionStore) {
     const error: ErrorReturn = {
       code: 404,
@@ -20,7 +37,7 @@ export const getSessions = async (req: Request, res: Response) => {
     createLog('error', req, res, error);
     return;
   }
-  //get all active user sessions
+
   req.sessionStore.all!((err, sessions) => {
     if (err) {
       const error: ErrorReturn = {
