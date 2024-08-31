@@ -15,7 +15,7 @@ export const checkRole = (requiredRole: UserRole) => {
       return res.status(401).json(error);
     }
 
-    if ((req.session as ISession).role !== requiredRole) {
+    if ((req.session as ISession).role != requiredRole) {
       const error: ErrorReturn = {
         code: 403,
         message: 'user does not have the required role',
@@ -39,7 +39,7 @@ export const checkStatus = (requiredStatus: UserStatus) => {
       return res.status(401).json(error);
     }
 
-    if ((req.session as ISession).status !== requiredStatus) {
+    if ((req.session as ISession).status != requiredStatus) {
       const error: ErrorReturn = {
         code: 403,
         message: 'user does not have the required status',
