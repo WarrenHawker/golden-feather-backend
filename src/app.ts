@@ -15,6 +15,7 @@ export const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:3000',
   'https://incredible-pithivier-e5551f.netlify.app/',
   'https://incredible-pithivier-e5551f.netlify.app',
   'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app/',
