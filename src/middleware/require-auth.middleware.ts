@@ -6,7 +6,7 @@ import { createLog } from '../services/logger.service';
 
 export const checkRole = (requiredRole: UserRole) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session) {
+    if (!(req.session as ISession).clientId) {
       const error: ErrorReturn = {
         code: 401,
         message: 'session not found',
@@ -30,7 +30,7 @@ export const checkRole = (requiredRole: UserRole) => {
 
 export const checkStatus = (requiredStatus: UserStatus) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session) {
+    if (!(req.session as ISession).clientId) {
       const error: ErrorReturn = {
         code: 401,
         message: 'session not found',

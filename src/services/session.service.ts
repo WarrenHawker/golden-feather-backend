@@ -9,7 +9,7 @@ export default session({
   resave: false,
   name: 'sessionId',
   cookie: {
-    secure: false, //if true, only transmit cookie over https
+    secure: process.env.NODE_ENV === 'production', //if true, only transmit cookie over https - true in production
     httpOnly: true, //if true, prevents client side JS from reading cookie
     maxAge: 1000 * 60 * 60, //session lasts 1 hour
   },
