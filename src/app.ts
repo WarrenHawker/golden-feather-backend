@@ -55,7 +55,7 @@ app.use(
 );
 app.use(express.json());
 app.use(session);
-app.use(rateLimiter);
+// app.use(rateLimiter);
 
 const apiBasePath = '/api/v1';
 

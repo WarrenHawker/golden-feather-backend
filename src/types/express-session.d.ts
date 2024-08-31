@@ -5,6 +5,8 @@ export interface ISession extends Session {
   role: UserRole;
   status: UserStatus;
   email: string;
+  clientId: string;
+  agent: string;
 }
 
 export type SessionSearchData = {

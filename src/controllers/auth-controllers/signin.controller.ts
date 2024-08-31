@@ -105,6 +105,8 @@ export const signInUser = async (req: Request, res: Response) => {
     (req.session as ISession).role = userDB.role;
     (req.session as ISession).status = userDB.status;
     (req.session as ISession).email = userDB.email;
+    (req.session as ISession).clientId = req.socket.remoteAddress || '';
+    (req.session as ISession).agent = req.headers['user-agent'] || '';
 
     const user: UserObjectStripped = {
       id: userDB.id,
