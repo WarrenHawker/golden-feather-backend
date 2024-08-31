@@ -12,5 +12,5 @@ router.post('/signout', signoutUser);
 
 //the "admin" route searches for a valid session with admin role - used to access the admin dashboard
 router.get('/admin', checkRole('admin'), checkStatus('active'), (req, res) => {
-  res.status(200);
+  res.status(200).json({ message: 'Welcome to the admin area!' });
 });
