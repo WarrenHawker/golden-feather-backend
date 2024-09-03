@@ -68,7 +68,7 @@ app.use(
     secret: process.env.SECRET || '',
     saveUninitialized: false,
     resave: false,
-    name: 'sessionId',
+    // name: 'sessionId',
     // cookie: {
     //   secure: false,
     //   httpOnly: true, //if true, prevents client side JS from reading cookie
