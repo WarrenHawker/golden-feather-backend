@@ -119,6 +119,10 @@ export const signInUser = async (req: Request, res: Response) => {
       status: userDB.status,
     };
 
+    res.on('header', () => {
+      console.log('Response Headers:', res.getHeaders());
+    });
+
     res.status(200).json(user);
     createLog('info', req, res);
     return;

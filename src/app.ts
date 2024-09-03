@@ -71,7 +71,7 @@ app.use(
     resave: false,
     name: 'sessionId',
     cookie: {
-      secure: true, //if true, only transmit cookie over https - true in production
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true, //if true, prevents client side JS from reading cookie
       maxAge: 1000 * 60 * 60, //session lasts 1 hour
       sameSite: 'none',
