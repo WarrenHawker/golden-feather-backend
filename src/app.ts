@@ -45,23 +45,6 @@ const allowedOrigins = [
   'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app',
 ];
 
-// const corsOptions: CorsOptions = {
-//   origin: (
-//     origin: string | undefined,
-//     callback: (err: Error | null, allow?: boolean) => void
-//   ) => {
-//     // Allow requests with no origin (like mobile apps or curl requests)
-//     if (!origin) return callback(null, true);
-
-//     if (allowedOrigins.includes(origin)) {
-//       callback(null, true); // Origin is allowed
-//     } else {
-//       callback(new Error('Not allowed by CORS')); // Origin is not allowed
-//     }
-//   },
-//   credentials: true, // Allow cookies and other credentials
-// };
-
 app.set('trust proxy', 1);
 
 const corsOptions: CorsOptions = {
@@ -71,7 +54,7 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.use(
   session({
-    store: redisStore,
+    // store: redisStore,
     secret: process.env.SECRET || '',
     saveUninitialized: false,
     resave: false,
@@ -80,7 +63,7 @@ app.use(
       httpOnly: true, //if true, prevents client side JS from reading cookie
       maxAge: 1000 * 60 * 60, //session lasts 1 hour
       sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
     },
   })
 );
