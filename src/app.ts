@@ -22,6 +22,9 @@ const allowedOrigins = [
   'https://incredible-pithivier-e5551f.netlify.app',
   'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app/',
   'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app',
+  'https://golden-feather-frontend-nextjs-drab.vercel.app/',
+  'https://golden-feather-frontend-nextjs-warrenhawkers-projects.vercel.app/',
+  'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app/',
 ];
 
 app.use(
