@@ -126,7 +126,8 @@ export const signInUser = async (req: Request, res: Response) => {
     res.cookie('sessionId', req.session.id, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60,
-      sameSite: 'lax',
+      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
     });
 
     console.log('Response Headers:', res.getHeaders());
