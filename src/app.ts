@@ -43,6 +43,7 @@ const allowedOrigins = [
   'https://golden-feather-frontend-nextjs-drab.vercel.app',
   'https://golden-feather-frontend-nextjs-warrenhawkers-projects.vercel.app',
   'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app',
+  'https://66d79e42473d9ae9b5ddf2d2--fabulous-sunburst-77eacd.netlify.app/',
 ];
 
 const corsOptions: CorsOptions = {
