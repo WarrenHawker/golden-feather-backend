@@ -7,9 +7,11 @@ import { router as creatorRoutes } from './routes/creator.route';
 import { router as guildRoutes } from './routes/guild.route';
 import { router as videoRoutes } from './routes/video.route';
 import { router as tagRoutes } from './routes/tag.route';
-import session from './services/session.service';
 import { rateLimiter } from './middleware/rate-limiter.middleware';
 import compression from 'compression';
+import session from 'express-session';
+import { redisStore } from './lib/redis/client.redis';
+import { ErrorReturn } from './types/error-return';
 
 export const app = express();
 
@@ -54,7 +56,20 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(session);
+app.use(
+  session({
+    store: redisStore,
+    secret: process.env.SECRET || '',
+    saveUninitialized: false,
+    resave: false,
+    name: 'sessionId',
+    cookie: {
+      secure: false, //if true, only transmit cookie over https - true in production
+      httpOnly: true, //if true, prevents client side JS from reading cookie
+      maxAge: 1000 * 60 * 60, //session lasts 1 hour
+    },
+  })
+);
 // app.use(rateLimiter);
 
 const apiBasePath = '/api/v1';
@@ -66,3 +81,12 @@ app.use(`${apiBasePath}/guild`, guildRoutes);
 app.use(`${apiBasePath}/creator`, creatorRoutes);
 app.use(`${apiBasePath}/video`, videoRoutes);
 app.use(`${apiBasePath}/tag`, tagRoutes);
+
+//catch-all if the requested route or method doesn't exist.
+app.use((req, res, next) => {
+  const error: ErrorReturn = {
+    code: 404,
+    message: `There is no ${req.method} endpoint at ${req.originalUrl}`,
+  };
+  return res.status(404).json(error);
+});

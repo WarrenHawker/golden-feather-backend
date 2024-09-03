@@ -6,6 +6,7 @@ import { ISession } from '../../types/express-session';
 import { ErrorReturn } from '../../types/error-return';
 import { UserObjectStripped } from '../../types/user';
 import { createLog } from '../../services/logger.service';
+import { redisClient } from '../../lib/redis/client.redis';
 
 const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
   validator;
@@ -107,6 +108,8 @@ export const signInUser = async (req: Request, res: Response) => {
     (req.session as ISession).email = userDB.email;
     (req.session as ISession).clientId = req.socket.remoteAddress || '';
     (req.session as ISession).agent = req.headers['user-agent'] || '';
+
+    redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
     const user: UserObjectStripped = {
       id: userDB.id,
