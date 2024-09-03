@@ -33,6 +33,8 @@ function shouldCompress(req: Request, res: Response) {
   return compression.filter(req, res);
 }
 
+const isProd = () => process.env.NODE_ENV === 'production';
+
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -75,6 +77,7 @@ app.use(
       httpOnly: true, //if true, prevents client side JS from reading cookie
       maxAge: 1000 * 60 * 60, //session lasts 1 hour
       sameSite: 'none',
+      domain: isProd() ? '.railway.app' : undefined,
     },
   })
 );
