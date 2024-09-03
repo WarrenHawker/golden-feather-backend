@@ -56,12 +56,11 @@ app.use(
     secret: process.env.SECRET || '',
     saveUninitialized: false,
     resave: false,
-    // name: 'sessionId',
-    // cookie: {
-    //   maxAge: 1000 * 60 * 60, //session lasts 1 hour
-    //   sameSite: 'none',
-    //   secure: false,
-    // },
+    name: 'sessionId',
+    cookie: {
+      secure: false, //if true, only transmit cookie over https - true in production
+      maxAge: 1000 * 60 * 60, //session lasts 1 hour
+    },
   })
 );
 app.use(express.json());
