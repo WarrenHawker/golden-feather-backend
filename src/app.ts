@@ -53,6 +53,11 @@ app.use(cors(corsOptions));
 
 app.set('trust proxy', 1);
 app.use(json());
+app.use((req, res, next) => {
+  console.log('Incoming Cookies:', req.headers.cookie);
+  next();
+});
+
 app.use(
   session({
     store: redisStore,
