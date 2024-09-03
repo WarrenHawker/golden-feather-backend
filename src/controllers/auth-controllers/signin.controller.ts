@@ -103,32 +103,15 @@ export const signInUser = async (req: Request, res: Response) => {
   }
 
   try {
-    (req.session as ISession).role = userDB.role;
-    (req.session as ISession).status = userDB.status;
-    (req.session as ISession).email = userDB.email;
-    (req.session as ISession).clientId = req.socket.remoteAddress || '';
-    (req.session as ISession).agent = req.headers['user-agent'] || '';
+    (req.session as ISession).user = {
+      role: userDB.role,
+      status: userDB.status,
+      email: userDB.email,
+      clientId: req.socket.remoteAddress || '',
+      agent: req.headers['user-agent'] || '',
+    };
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
-
-    // req.session.save((err) => {
-    //   if (err) {
-    //     console.error('Session save error', err);
-    //     const error: ErrorReturn = {
-    //       code: 500,
-    //       message: (err as Error).message,
-    //     };
-    //     createLog('critical', req, res, error);
-    //     return res.status(500).json(error);
-    //   }
-    // });
-
-    res.cookie('sessionId', req.session.id, {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60,
-      sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
-    });
 
     console.log('Response Headers:', res.getHeaders());
 
