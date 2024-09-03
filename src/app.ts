@@ -68,13 +68,13 @@ app.use(
     secret: process.env.SECRET || '',
     saveUninitialized: false,
     resave: false,
-    name: 'sessionId',
-    cookie: {
-      httpOnly: true, //if true, prevents client side JS from reading cookie
-      maxAge: 1000 * 60 * 60, //session lasts 1 hour
-      sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
-    },
+    // name: 'sessionId',
+    // cookie: {
+    //   httpOnly: true, //if true, prevents client side JS from reading cookie
+    //   maxAge: 1000 * 60 * 60, //session lasts 1 hour
+    //   sameSite: 'none',
+    //   secure: process.env.NODE_ENV === 'production',
+    // },
   })
 );
 app.use(express.json());
