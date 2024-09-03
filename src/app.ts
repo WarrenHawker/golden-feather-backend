@@ -45,8 +45,6 @@ const allowedOrigins = [
   'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app',
 ];
 
-app.set('trust proxy', 1);
-
 const corsOptions: CorsOptions = {
   origin: allowedOrigins,
   credentials: true,
@@ -54,7 +52,7 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.use(
   session({
-    // store: redisStore,
+    store: redisStore,
     secret: process.env.SECRET || '',
     saveUninitialized: false,
     resave: false,
