@@ -61,9 +61,9 @@ app.use(
     resave: false,
     name: 'sessionId',
     cookie: {
-      secure: process.env.NODE_ENV === 'PROD' ? true : 'auto',
+      secure: process.env.NODE_ENV == 'production' ? true : 'auto',
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      sameSite: process.env.NODE_ENV === 'PROD' ? 'none' : 'lax',
+      sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'lax',
     },
   })
 );
