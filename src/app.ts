@@ -1,4 +1,4 @@
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import express, { Request, Response } from 'express';
 import { router as authRoutes } from './routes/auth.route';
 import { router as sessionRoutes } from './routes/session.route';
@@ -14,18 +14,6 @@ import { redisStore } from './lib/redis/client.redis';
 import { ErrorReturn } from './types/error-return';
 
 export const app = express();
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'https://incredible-pithivier-e5551f.netlify.app/',
-  'https://incredible-pithivier-e5551f.netlify.app',
-  'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app/',
-  'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app',
-  'https://golden-feather-frontend-nextjs-drab.vercel.app/',
-  'https://golden-feather-frontend-nextjs-warrenhawkers-projects.vercel.app/',
-  'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app/',
-];
 
 app.use(
   compression({
@@ -45,19 +33,35 @@ function shouldCompress(req: Request, res: Response) {
   return compression.filter(req, res);
 }
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://incredible-pithivier-e5551f.netlify.app',
+  'https://incredible-pithivier-e5551f.netlify.app',
+  'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app',
+  'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app',
+  'https://golden-feather-frontend-nextjs-drab.vercel.app',
+  'https://golden-feather-frontend-nextjs-warrenhawkers-projects.vercel.app',
+  'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app',
+];
+
+const corsOptions: CorsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true); // Origin is allowed
+    } else {
+      callback(new Error('Not allowed by CORS')); // Origin is not allowed
+    }
+  },
+  credentials: true, // Allow cookies and other credentials
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(
   session({
