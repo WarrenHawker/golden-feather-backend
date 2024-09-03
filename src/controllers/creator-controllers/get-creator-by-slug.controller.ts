@@ -59,10 +59,8 @@ export const getCreatorBySlug = async (req: Request, res: Response) => {
     */
 
     if (creator.status != 'public') {
-      if (
-        (req.session as ISession).role != 'admin' ||
-        (req.session as ISession).status != 'active'
-      ) {
+      const sessionUser = (req.session as ISession).user;
+      if (sessionUser.role != 'admin' || sessionUser.status != 'active') {
         const error: ErrorReturn = {
           code: 404,
           message: 'creator not found!!!',

@@ -8,7 +8,7 @@ export const checkRole = (requiredRole: UserRole) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const session = req.session as ISession;
 
-    if (!session || !session.email) {
+    if (!session || !session.user) {
       const error: ErrorReturn = {
         code: 401,
         message: 'session not found',
@@ -17,7 +17,7 @@ export const checkRole = (requiredRole: UserRole) => {
       return res.status(401).json(error);
     }
 
-    if (session.role != requiredRole) {
+    if (session.user.role != requiredRole) {
       const error: ErrorReturn = {
         code: 403,
         message: 'user does not have the required role',
@@ -32,7 +32,7 @@ export const checkRole = (requiredRole: UserRole) => {
 export const checkStatus = (requiredStatus: UserStatus) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const session = req.session as ISession;
-    if (!session || !session.email) {
+    if (!session || !session.user) {
       const error: ErrorReturn = {
         code: 401,
         message: 'session not found',
@@ -41,7 +41,7 @@ export const checkStatus = (requiredStatus: UserStatus) => {
       return res.status(401).json(error);
     }
 
-    if (session.status != requiredStatus) {
+    if (session.user.status != requiredStatus) {
       const error: ErrorReturn = {
         code: 403,
         message: 'user does not have the required status',

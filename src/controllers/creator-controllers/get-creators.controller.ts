@@ -129,10 +129,8 @@ export const getCreators = async (req: Request, res: Response) => {
   //fetching admin creators can only be done if there is a valid active admin session
   try {
     if (admin && admin == 'true') {
-      if (
-        (req.session as ISession).role != 'admin' ||
-        (req.session as ISession).status != 'active'
-      ) {
+      const sessionUser = (req.session as ISession).user;
+      if (sessionUser.role != 'admin' || sessionUser.status != 'active') {
         const error: ErrorReturn = {
           code: 403,
           message: 'Forbidden: Admin access required',
