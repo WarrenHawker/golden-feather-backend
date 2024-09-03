@@ -58,7 +58,6 @@ app.use(
     resave: false,
     name: 'sessionId',
     cookie: {
-      httpOnly: true, //if true, prevents client side JS from reading cookie
       maxAge: 1000 * 60 * 60, //session lasts 1 hour
       sameSite: 'none',
       secure: false,

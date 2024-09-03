@@ -111,6 +111,13 @@ export const signInUser = async (req: Request, res: Response) => {
       agent: req.headers['user-agent'] || '',
     };
 
+    req.session.save(function (err) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
+
     // res.cookie('sessionId', req.session.id, {
     //   httpOnly: true,
     //   maxAge: 1000 * 60 * 60,
