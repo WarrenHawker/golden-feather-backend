@@ -46,6 +46,7 @@ app.listen(port, async () => {
     maintainTwitchToken();
     syncDatabase();
 
+    console.log('dev or prod: ', process.env.NODE_ENV);
     console.log(
       `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`
     );

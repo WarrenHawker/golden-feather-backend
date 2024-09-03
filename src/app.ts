@@ -62,7 +62,6 @@ app.use(
     name: 'sessionId',
     cookie: {
       secure: process.env.NODE_ENV === 'PROD' ? true : 'auto',
-      httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
       sameSite: process.env.NODE_ENV === 'PROD' ? 'none' : 'lax',
     },
