@@ -40,8 +40,8 @@ export const getCreatorTags = async (req: Request, res: Response) => {
     if (
       admin &&
       admin == 'true' &&
-      ((req.session as ISession).role != 'admin' ||
-        (req.session as ISession).status != 'active')
+      ((req.session as ISession).user.role != 'admin' ||
+        (req.session as ISession).user.status != 'active')
     ) {
       return res.status(200).json(allTags);
     } else {
@@ -61,8 +61,8 @@ export const getCreatorTags = async (req: Request, res: Response) => {
       if (
         admin &&
         admin == 'true' &&
-        ((req.session as ISession).role != 'admin' ||
-          (req.session as ISession).status != 'active')
+        ((req.session as ISession).user.role != 'admin' ||
+          (req.session as ISession).user.status != 'active')
       ) {
         return res.status(200).json(all_tags);
       } else {
