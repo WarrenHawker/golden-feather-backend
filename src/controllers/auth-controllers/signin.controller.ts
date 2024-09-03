@@ -111,12 +111,12 @@ export const signInUser = async (req: Request, res: Response) => {
       agent: req.headers['user-agent'] || '',
     };
 
-    res.cookie('sessionId', req.session.id, {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60,
-      sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
-    });
+    // res.cookie('sessionId', req.session.id, {
+    //   httpOnly: true,
+    //   maxAge: 1000 * 60 * 60,
+    //   sameSite: 'none',
+    //   secure: process.env.NODE_ENV === 'production',
+    // });
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
