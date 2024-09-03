@@ -62,6 +62,8 @@ const allowedOrigins = [
 //   credentials: true, // Allow cookies and other credentials
 // };
 
+app.set('trust proxy', 1);
+
 const corsOptions: CorsOptions = {
   origin: allowedOrigins,
   credentials: true,
