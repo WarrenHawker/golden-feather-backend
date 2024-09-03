@@ -71,9 +71,10 @@ app.use(
     resave: false,
     name: 'sessionId',
     cookie: {
-      secure: false, //if true, only transmit cookie over https - true in production
+      secure: true, //if true, only transmit cookie over https - true in production
       httpOnly: true, //if true, prevents client side JS from reading cookie
       maxAge: 1000 * 60 * 60, //session lasts 1 hour
+      sameSite: 'none',
     },
   })
 );
