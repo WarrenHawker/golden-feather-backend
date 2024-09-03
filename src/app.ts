@@ -33,8 +33,6 @@ function shouldCompress(req: Request, res: Response) {
   return compression.filter(req, res);
 }
 
-const isProd = () => process.env.NODE_ENV === 'production';
-
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -64,7 +62,6 @@ const corsOptions: CorsOptions = {
   credentials: true, // Allow cookies and other credentials
 };
 app.use(cors(corsOptions));
-app.use(express.json());
 app.use(
   session({
     store: redisStore,
@@ -72,15 +69,16 @@ app.use(
     saveUninitialized: false,
     resave: false,
     name: 'sessionId',
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true, //if true, prevents client side JS from reading cookie
-      maxAge: 1000 * 60 * 60, //session lasts 1 hour
-      sameSite: 'none',
-      domain: isProd() ? '.railway.app' : undefined,
-    },
+    // cookie: {
+    //   secure: false,
+    //   httpOnly: true, //if true, prevents client side JS from reading cookie
+    //   maxAge: 1000 * 60 * 60, //session lasts 1 hour
+    //   sameSite: 'none',
+    // },
   })
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // app.use(rateLimiter);
 
 const apiBasePath = '/api/v1';

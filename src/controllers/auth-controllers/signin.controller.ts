@@ -111,6 +111,26 @@ export const signInUser = async (req: Request, res: Response) => {
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error', err);
+        const error: ErrorReturn = {
+          code: 500,
+          message: (err as Error).message,
+        };
+        createLog('critical', req, res, error);
+        return res.status(500).json(error);
+      }
+    });
+
+    res.cookie('sessionId', req.session.id, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60,
+      sameSite: 'lax',
+    });
+
+    console.log('Response Headers:', res.getHeaders());
+
     const user: UserObjectStripped = {
       id: userDB.id,
       name: userDB.name,
@@ -119,16 +139,14 @@ export const signInUser = async (req: Request, res: Response) => {
       status: userDB.status,
     };
 
-    res.status(200).json(user);
     createLog('info', req, res);
-    return;
+    return res.status(200).json(user);
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,
       message: (err as Error).message,
     };
-    res.status(500).json(error);
     createLog('critical', req, res, error);
-    return;
+    return res.status(500).json(error);
   }
 };
