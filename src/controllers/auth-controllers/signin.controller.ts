@@ -111,24 +111,24 @@ export const signInUser = async (req: Request, res: Response) => {
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error', err);
-        const error: ErrorReturn = {
-          code: 500,
-          message: (err as Error).message,
-        };
-        createLog('critical', req, res, error);
-        return res.status(500).json(error);
-      }
-    });
-
-    // res.cookie('sessionId', req.session.id, {
-    //   httpOnly: true,
-    //   maxAge: 1000 * 60 * 60,
-    //   sameSite: 'none',
-    //   secure: process.env.NODE_ENV === 'production',
+    // req.session.save((err) => {
+    //   if (err) {
+    //     console.error('Session save error', err);
+    //     const error: ErrorReturn = {
+    //       code: 500,
+    //       message: (err as Error).message,
+    //     };
+    //     createLog('critical', req, res, error);
+    //     return res.status(500).json(error);
+    //   }
     // });
+
+    res.cookie('sessionId', req.session.id, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60,
+      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+    });
 
     console.log('Response Headers:', res.getHeaders());
 
