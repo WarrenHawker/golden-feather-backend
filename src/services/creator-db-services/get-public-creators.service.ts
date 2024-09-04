@@ -80,6 +80,7 @@ export const getPublicCreatorsDB = async (
         id: true,
         name: true,
         description: true,
+        slug: true,
         socials: true,
         videoUrl: true,
         language: {

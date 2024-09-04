@@ -55,6 +55,7 @@ export const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         region: {
           select: {

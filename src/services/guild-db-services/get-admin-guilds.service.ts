@@ -68,6 +68,7 @@ export const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
         id: true,
         name: true,
         description: true,
+        slug: true,
         socials: true,
         created_on: true,
         updated_on: true,

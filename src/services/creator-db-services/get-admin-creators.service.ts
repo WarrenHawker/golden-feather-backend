@@ -83,6 +83,7 @@ export const getAdminCreatorsDB = async (
         id: true,
         name: true,
         description: true,
+        slug: true,
         socials: true,
         videoUrl: true,
         created_on: true,
