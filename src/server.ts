@@ -14,8 +14,26 @@ import { storeGuildTagsRedis } from './services/redis-services/guild-redis-servi
 import { storeGuildsRedis } from './services/redis-services/guild-redis-services/store-guilds-redis.service';
 import { creators } from './utils/dummy-creators-2';
 import { guilds } from './utils/dummy-guilds';
+import { users } from './utils/dummy-users';
+import { createUserDB } from './services/user-db-services/create-user.service';
+import bcrypt from 'bcrypt';
 
 const port = process.env.PORT || 5000;
+
+const setDummyUsers = async () => {
+  try {
+    for (const user of users) {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      const userWithHashedPassword = {
+        ...user,
+        password: hashedPassword,
+      };
+      await createUserDB(userWithHashedPassword);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 
 const setDummyCreators = async () => {
   try {
@@ -47,6 +65,7 @@ app.listen(port, async () => {
     //add dummy creators and guilds
     //await setDummyCreators();
     //await setDummyGuilds();
+    //await setDummyUsers();
 
     //create new twitch API token and store in redis
     await generateTwitchToken();

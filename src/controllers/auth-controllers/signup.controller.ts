@@ -5,7 +5,7 @@ import { prismaClient } from '../../lib/prisma/client.prisma';
 import { UserRole, UserStatus } from '@prisma/client';
 import { ErrorReturn } from '../../types/error-return';
 import { createLog } from '../../services/logger.service';
-import { UserObjectStripped } from '../../types/user';
+import { createUserDB } from '../../services/user-db-services/create-user.service';
 
 const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
   validator;
@@ -124,14 +124,7 @@ export const signUpUser = async (req: Request, res: Response) => {
   };
 
   try {
-    const newUser = await prismaClient.user.create({ data: newUserData });
-    const user: UserObjectStripped = {
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      role: newUser.role,
-      status: newUser.status,
-    };
+    const user = await createUserDB(newUserData);
     res.status(201).json(user);
     createLog('info', req, res);
     return;

@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import { prismaClient } from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
 import { ErrorReturn } from '../../types/error-return';
-import { UserObjectStripped } from '../../types/user';
 import { createLog } from '../../services/logger.service';
 import { redisClient } from '../../lib/redis/client.redis';
 
@@ -113,7 +112,7 @@ export const signInUser = async (req: Request, res: Response) => {
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
-    const user: UserObjectStripped = {
+    const user = {
       id: userDB.id,
       name: userDB.name,
       email: userDB.email,
