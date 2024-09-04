@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
-import { getUserByEmailDB } from '../../services/user-db-services/get-user-by-email.service';
+import { getUserByIdDB } from '../../services/user-db-services/get-user-by-id.service';
 
-export const getUserByEmail = async (req: Request, res: Response) => {
-  const { email } = req.params;
+export const getUserById = async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-  if (!email) {
+  if (!id) {
     const error: ErrorReturn = {
       code: 400,
-      message: 'no email search param found',
+      message: 'no id search param found',
     };
     return res.status(400).json(error);
   }
 
   try {
-    const user = await getUserByEmailDB(email as string);
+    const user = await getUserByIdDB(id as string);
     if (!user) {
       const error: ErrorReturn = {
         code: 404,
