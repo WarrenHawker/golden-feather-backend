@@ -98,6 +98,13 @@ export const getGuilds = async (req: Request, res: Response) => {
   try {
     if (admin && admin == 'true') {
       const sessionUser = (req.session as ISession).user;
+      if (!sessionUser) {
+        const error: ErrorReturn = {
+          code: 401,
+          message: 'Unorthorised: Must be signed in',
+        };
+        return res.status(401).json(error);
+      }
       if (sessionUser.role != 'admin' || sessionUser.status != 'active') {
         const error: ErrorReturn = {
           code: 403,

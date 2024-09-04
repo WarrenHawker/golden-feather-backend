@@ -37,7 +37,6 @@
 import { Request, Response } from 'express';
 import validator from 'validator';
 import { getCreatorsRedis } from '../../services/redis-services/creator-redis-services/get-creators-redis.service';
-import { isNumber } from 'util';
 import { getAdminCreatorsDB } from '../../services/creator-db-services/get-admin-creators.service';
 import { getPublicCreatorsDB } from '../../services/creator-db-services/get-public-creators.service';
 import { storeCreatorsRedis } from '../../services/redis-services/creator-redis-services/store-creators-redis.service';
@@ -45,6 +44,7 @@ import { GetCreatorSearchParams } from '../../types/creator';
 import { ErrorReturn } from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import { sanitiseArray } from '../../utils/functions/sanitise-array.function';
+import { isNumber } from '../../utils/functions/validate-input.function';
 
 const { escape } = validator;
 
@@ -130,6 +130,13 @@ export const getCreators = async (req: Request, res: Response) => {
   try {
     if (admin && admin == 'true') {
       const sessionUser = (req.session as ISession).user;
+      if (!sessionUser) {
+        const error: ErrorReturn = {
+          code: 401,
+          message: 'Unorthorised: Must be signed in',
+        };
+        return res.status(401).json(error);
+      }
       if (sessionUser.role != 'admin' || sessionUser.status != 'active') {
         const error: ErrorReturn = {
           code: 403,
