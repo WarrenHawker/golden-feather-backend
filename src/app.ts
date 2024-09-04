@@ -33,19 +33,7 @@ function shouldCompress(req: Request, res: Response) {
   return compression.filter(req, res);
 }
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'https://incredible-pithivier-e5551f.netlify.app',
-  'https://incredible-pithivier-e5551f.netlify.app',
-  'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app',
-  'https://66c358ae210d060c49154acc--incredible-pithivier-e5551f.netlify.app',
-  'https://golden-feather-frontend-nextjs-drab.vercel.app',
-  'https://golden-feather-frontend-nextjs-warrenhawkers-projects.vercel.app',
-  'https://golden-feather-frontend-nextj-git-6b33bb-warrenhawkers-projects.vercel.app',
-  'https://66d79e42473d9ae9b5ddf2d2--fabulous-sunburst-77eacd.netlify.app/',
-  'https://fabulous-sunburst-77eacd.netlify.app/',
-];
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
 
 const corsOptions: CorsOptions = {
   origin: allowedOrigins,
@@ -55,10 +43,6 @@ app.use(cors(corsOptions));
 
 app.set('trust proxy', 1);
 app.use(json());
-app.use((req, res, next) => {
-  console.log('Incoming Cookies:', req.headers.cookie);
-  next();
-});
 
 app.use(
   session({
@@ -74,7 +58,6 @@ app.use(
     },
   })
 );
-// app.use(express.json());
 // app.use(rateLimiter);
 
 const apiBasePath = '/api/v1';

@@ -113,8 +113,6 @@ export const signInUser = async (req: Request, res: Response) => {
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
-    console.log('Response Headers:', res.getHeaders());
-
     const user: UserObjectStripped = {
       id: userDB.id,
       name: userDB.name,
