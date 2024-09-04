@@ -35,16 +35,16 @@
  */
 
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import { getAdminCreatorsDB } from '../../services/creator-db-services/get-admin-creators.service';
-import { getCreatorsRedis } from '../../services/redis-services/get-creators-redis.service';
-import { storeCreatorsRedis } from '../../services/redis-services/store-creators-redis.service';
-import { getPublicCreatorsDB } from '../../services/creator-db-services/get-public-creators.service';
-import { GetCreatorSearchParams } from '../../types/creator';
-import { isNumber } from '../../utils/functions/validate-input.function';
 import validator from 'validator';
-import { sanitiseArray } from '../../utils/functions/sanitise-array.function';
+import { getCreatorsRedis } from '../../services/redis-services/creator-redis-services/get-creators-redis.service';
+import { isNumber } from 'util';
+import { getAdminCreatorsDB } from '../../services/creator-db-services/get-admin-creators.service';
+import { getPublicCreatorsDB } from '../../services/creator-db-services/get-public-creators.service';
+import { storeCreatorsRedis } from '../../services/redis-services/creator-redis-services/store-creators-redis.service';
+import { GetCreatorSearchParams } from '../../types/creator';
+import { ErrorReturn } from '../../types/error-return';
 import { ISession } from '../../types/express-session';
+import { sanitiseArray } from '../../utils/functions/sanitise-array.function';
 
 const { escape } = validator;
 

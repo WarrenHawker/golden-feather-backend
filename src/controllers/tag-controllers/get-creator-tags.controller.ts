@@ -27,8 +27,8 @@
 
 import { Request, Response } from 'express';
 import { ErrorReturn } from '../../types/error-return';
-import { getCreatorTagsRedis } from '../../services/redis-services/get-creator-tags-redis.service';
 import { getCreatorTagsDB } from '../../services/creator-db-services/get-creator-tags.service';
+import { getCreatorTagsRedis } from '../../services/redis-services/creator-redis-services/get-creator-tags-redis.service';
 import { ISession } from '../../types/express-session';
 
 export const getCreatorTags = async (req: Request, res: Response) => {

@@ -36,7 +36,8 @@ model Guild {
   description         String
   guild_leader        String?                      
   created_on          DateTime                      @default(now())
-  updated_on          DateTime?    
+  updated_on          DateTime?
+  socials             Json?    
   status              ContentStatus
   languageId          String
   language            Language                      @relation(fields: [languageId], references: [id])

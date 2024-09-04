@@ -23,9 +23,9 @@
  * @requires ../creator-db-services/get-public-creators.service - Service to retrieve public creators from the database.
  */
 
-import { redisClient } from '../../lib/redis/client.redis';
-import { Pagination } from '../../types/pagination';
-import { getPublicCreatorsDB } from '../creator-db-services/get-public-creators.service';
+import { redisClient } from '../../../lib/redis/client.redis';
+import { Pagination } from '../../../types/pagination';
+import { getPublicCreatorsDB } from '../../creator-db-services/get-public-creators.service';
 
 type Params = {
   pagination?: Pagination;

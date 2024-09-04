@@ -71,10 +71,10 @@ app.use(`${apiBasePath}/video`, videoRoutes);
 app.use(`${apiBasePath}/tag`, tagRoutes);
 
 //catch-all if the requested route or method doesn't exist.
-app.use((req, res, next) => {
+app.use((req: Request, res: Response) => {
   const error: ErrorReturn = {
-    code: 404,
+    code: 405,
     message: `There is no ${req.method} endpoint at ${req.originalUrl}`,
   };
-  return res.status(404).json(error);
+  return res.status(405).json(error);
 });

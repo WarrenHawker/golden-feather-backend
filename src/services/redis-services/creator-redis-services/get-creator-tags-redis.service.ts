@@ -18,7 +18,7 @@
  * @requires ../../lib/redis/client.redis - Redis client for interacting with the Redis database.
  */
 
-import { redisClient } from '../../lib/redis/client.redis';
+import { redisClient } from '../../../lib/redis/client.redis';
 
 export const getCreatorTagsRedis = async () => {
   try {

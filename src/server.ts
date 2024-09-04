@@ -6,11 +6,14 @@ import {
 } from './services/scheduled-tasks/twitch-token.service';
 import { syncDatabase } from './services/scheduled-tasks/sync-database';
 import { initializeMongoDatabase } from './lib/mongoose/config.mongoose';
-import { storeCreatorsRedis } from './services/redis-services/store-creators-redis.service';
-import { storeGuildsRedis } from './services/redis-services/store-guilds-redis.service';
 import { createCreatorDB } from './services/creator-db-services/create-creator.service';
-import { storeCreatorTagsRedis } from './services/redis-services/store-creator-tags-redis.service';
+import { createGuildDB } from './services/guild-db-services/create-guild.service';
+import { storeCreatorTagsRedis } from './services/redis-services/creator-redis-services/store-creator-tags-redis.service';
+import { storeCreatorsRedis } from './services/redis-services/creator-redis-services/store-creators-redis.service';
+import { storeGuildTagsRedis } from './services/redis-services/guild-redis-services/store-guild-tags-redis.service';
+import { storeGuildsRedis } from './services/redis-services/guild-redis-services/store-guilds-redis.service';
 import { creators } from './utils/dummy-creators-2';
+import { guilds } from './utils/dummy-guilds';
 
 const port = process.env.PORT || 5000;
 
@@ -24,6 +27,16 @@ const setDummyCreators = async () => {
   }
 };
 
+const setDummyGuilds = async () => {
+  try {
+    for (const guild of guilds) {
+      await createGuildDB(guild);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 app.listen(port, async () => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -31,8 +44,9 @@ app.listen(port, async () => {
     //clear redis database
     redisClient.flushAll();
 
-    //add dummy content creators
+    //add dummy creators and guilds
     //await setDummyCreators();
+    //await setDummyGuilds();
 
     //create new twitch API token and store in redis
     await generateTwitchToken();
@@ -40,6 +54,7 @@ app.listen(port, async () => {
     //get the tags and 10 first public creators and guilds and store them in redis
     await storeCreatorsRedis();
     await storeGuildsRedis();
+    await storeGuildTagsRedis();
     await storeCreatorTagsRedis();
 
     //scheduled tasks

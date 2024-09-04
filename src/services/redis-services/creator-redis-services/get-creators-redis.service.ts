@@ -21,8 +21,8 @@
  * @requires ../../types/pagination - Type definition for the pagination structure.
  */
 
-import { redisClient } from '../../lib/redis/client.redis';
-import { Pagination } from '../../types/pagination';
+import { redisClient } from '../../../lib/redis/client.redis';
+import { Pagination } from '../../../types/pagination';
 
 export const getCreatorsRedis = async () => {
   try {

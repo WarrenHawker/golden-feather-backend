@@ -1,13 +1,5 @@
 import { ContentStatus } from '@prisma/client';
-
-export type SocialLinks = {
-  discord?: string;
-  youtube?: string;
-  twitch?: string;
-  twitter?: string;
-  facebook?: string;
-  instagram?: string;
-};
+import { SocialLinks } from './social-links';
 
 export type CreatorCreationData = {
   name: string;
@@ -17,6 +9,7 @@ export type CreatorCreationData = {
   tags: string[];
   language: string;
   status: ContentStatus;
+  userId?: string;
 };
 
 export type GetCreatorSearchParams = {

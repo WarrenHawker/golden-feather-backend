@@ -17,8 +17,8 @@
  * @requires ../creator-db-services/get-creator-tags.service - Service to retrieve creator tags from the database.
  */
 
-import { redisClient } from '../../lib/redis/client.redis';
-import { getCreatorTagsDB } from '../creator-db-services/get-creator-tags.service';
+import { redisClient } from '../../../lib/redis/client.redis';
+import { getCreatorTagsDB } from '../../creator-db-services/get-creator-tags.service';
 
 export const storeCreatorTagsRedis = async () => {
   redisClient.del('creator_tags');

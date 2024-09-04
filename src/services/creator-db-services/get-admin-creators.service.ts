@@ -93,6 +93,7 @@ export const getAdminCreatorsDB = async (
             name: true,
           },
         },
+        userId: true,
         tags: {
           select: {
             tag: {
