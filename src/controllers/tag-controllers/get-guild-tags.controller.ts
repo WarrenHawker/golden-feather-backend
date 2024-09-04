@@ -4,7 +4,7 @@ import { getGuildTagsDB } from '../../services/guild-db-services/get-guild-tags.
 import { getGuildTagsRedis } from '../../services/redis-services/guild-redis-services/get-guild-tags.service';
 import { ISession } from '../../types/express-session';
 
-export const getCreatorTags = async (req: Request, res: Response) => {
+export const getGuildTags = async (req: Request, res: Response) => {
   const { admin } = req.query;
   //try fetching tags from redis. If that fails, get tags from main database
   try {
