@@ -45,6 +45,7 @@ import { GetCreatorSearchParams } from '../../types/creator';
 import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
+import createLog from '../../services/logger.service';
 
 const getCreators = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default creators from redis.
@@ -69,6 +70,7 @@ const getCreators = async (req: Request, res: Response) => {
           code: 500,
           message: (err as Error).message,
         };
+        createLog('critical', req, res, error);
         return res.status(500).json(error);
       }
     }
@@ -119,6 +121,7 @@ const getCreators = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
+    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 
@@ -166,6 +169,7 @@ const getCreators = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
+    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

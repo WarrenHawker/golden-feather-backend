@@ -33,9 +33,7 @@ const getSessions = async (req: Request, res: Response) => {
       code: 404,
       message: 'Session store not found.',
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   req.sessionStore.all!((err, sessions) => {
@@ -44,18 +42,15 @@ const getSessions = async (req: Request, res: Response) => {
         code: 500,
         message: (err as Error).message,
       };
-      res.json(error);
       createLog('critical', req, res, error);
-      return;
+      return res.status(500).json(error);
     }
     if (!sessions?.length) {
       const error: ErrorReturn = {
         code: 404,
         message: 'No sessions found.',
       };
-      res.status(404).json(error);
-      createLog('error', req, res, error);
-      return;
+      return res.status(404).json(error);
     }
     res.status(200).json(sessions);
   });

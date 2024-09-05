@@ -9,6 +9,7 @@ import { ISession } from '../../types/express-session';
 import { GetGuildSearchParams } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import { isNumber } from '../../utils/functions/validate-input.function';
+import createLog from '../../services/logger.service';
 
 const getGuilds = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default guilds from redis.
@@ -33,6 +34,7 @@ const getGuilds = async (req: Request, res: Response) => {
           code: 500,
           message: (err as Error).message,
         };
+        createLog('critical', req, res, error);
         return res.status(500).json(error);
       }
     }
@@ -87,6 +89,7 @@ const getGuilds = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
+    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 
@@ -134,6 +137,7 @@ const getGuilds = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
+    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

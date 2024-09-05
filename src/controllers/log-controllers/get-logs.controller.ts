@@ -52,9 +52,7 @@ const getLogs = async (req: Request, res: Response) => {
         message: 'Invalid "page" search parameter.',
         params: ['page'],
       };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
+      return res.status(400).json(error);
     } else {
       pageNum = parseInt(escape(page as string).trim());
     }
@@ -68,9 +66,7 @@ const getLogs = async (req: Request, res: Response) => {
         message: 'Invalid "limit" search parameter.',
         params: ['limit'],
       };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
+      return res.status(400).json(error);
     } else {
       if (parseInt(escape(limit as string).trim()) > 10) {
         limitNum = 10;
@@ -92,9 +88,7 @@ const getLogs = async (req: Request, res: Response) => {
           'Invalid "month" search parameter. Expected format is "YYYY_MM".',
         params: ['month'],
       };
-      res.status(400).json(error);
-      createLog('error', req, res, error);
-      return;
+      return res.status(400).json(error);
     } else {
       collectionName = `logs_${monthString}`;
     }
@@ -123,8 +117,7 @@ const getLogs = async (req: Request, res: Response) => {
         code: 404,
         message: 'no logs found',
       };
-      res.status(404).json(error);
-      return;
+      return res.status(404).json(error);
     }
 
     const result = {
@@ -134,15 +127,14 @@ const getLogs = async (req: Request, res: Response) => {
       totalNumberOfResults: logs.totalDocs,
       logs: logs.docs,
     };
-    res.status(200).json(result);
-    return;
+    return res.status(200).json(result);
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,
       message: (err as Error).message,
     };
     createLog('critical', req, res, error);
-    return;
+    return res.status(500).json(error);
   }
 };
 

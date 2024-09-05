@@ -22,9 +22,7 @@ const createCreator = async (req: Request, res: Response) => {
       message: 'videoUrl must be a valid url',
       params: ['videoUrl'],
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   if (!isContentStatus(status)) {
@@ -33,9 +31,7 @@ const createCreator = async (req: Request, res: Response) => {
       message: 'invalid content status',
       params: ['status'],
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   if (!isValidCuid(userId)) {
@@ -44,9 +40,7 @@ const createCreator = async (req: Request, res: Response) => {
       message: 'invalid userId',
       params: ['userId'],
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   const createData: CreatorCreationData = {

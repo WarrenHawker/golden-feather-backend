@@ -41,9 +41,7 @@ const deleteSession = async (req: Request, res: Response) => {
       message: 'Missing url parameters',
       params: missingParams,
     };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(400).json(error);
   }
 
   if (!req.sessionStore) {
@@ -51,14 +49,19 @@ const deleteSession = async (req: Request, res: Response) => {
       code: 404,
       message: 'Session store not found.',
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   req.sessionStore.destroy(sessionId, (err) => {
-    res.sendStatus(200);
-    createLog('info', req, res);
+    if (err) {
+      const error: ErrorReturn = {
+        code: 500,
+        message: (err as Error).message,
+      };
+      createLog('critical', req, res, error);
+      return res.status(500).json(error);
+    }
+    res.sendStatus(200).json({ message: 'session destroyed successfully' });
   });
 };
 

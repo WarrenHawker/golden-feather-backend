@@ -30,9 +30,7 @@ const createGuild = async (req: Request, res: Response) => {
       message: 'invalid content status',
       params: ['status'],
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   if (!isValidCuid(userId)) {
@@ -41,9 +39,7 @@ const createGuild = async (req: Request, res: Response) => {
       message: 'invalid userId',
       params: ['userId'],
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   const createData: GuildCreationData = {

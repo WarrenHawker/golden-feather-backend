@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import deleteGuildDB from '../../services/guild-db-services/delete-guild.service';
 import ErrorReturn from '../../types/error-return';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
+import createLog from '../../services/logger.service';
 
 const deleteGuild = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -23,6 +24,7 @@ const deleteGuild = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
+    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

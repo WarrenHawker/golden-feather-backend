@@ -18,9 +18,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'Invalid email',
       params: ['email'],
     };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(400).json(error);
   }
 
   if (!isStrongPassword(password)) {
@@ -29,9 +27,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'Password not strong enough',
       params: ['password'],
     };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(400).json(error);
   }
 
   email = escape(email).trim();
@@ -47,9 +43,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'User not found',
       params: ['email'],
     };
-    res.status(404).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(404).json(error);
   }
 
   const match = await bcrypt.compare(password, userDB.password);
@@ -59,9 +53,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'Wrong password',
       params: ['password'],
     };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
+    return res.status(400).json(error);
   }
 
   try {
@@ -82,8 +74,6 @@ const signInUser = async (req: Request, res: Response) => {
       role: userDB.role,
       status: userDB.status,
     };
-
-    createLog('info', req, res);
     return res.status(200).json(user);
   } catch (err) {
     const error: ErrorReturn = {
