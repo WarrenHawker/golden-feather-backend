@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
-import getUserByIdDB from '../../services/user-db-services/get-user-by-id.service';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
+import deleteUserDB from '../../services/user-db-services/delete-user.service';
 
-const getUserById = async (req: Request, res: Response) => {
+const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!isValidCuid(id)) {
@@ -16,15 +16,8 @@ const getUserById = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await getUserByIdDB(id as string);
-    if (!user) {
-      const error: ErrorReturn = {
-        code: 404,
-        message: 'user not found',
-      };
-      return res.status(404).json(error);
-    }
-    return res.status(200).json(user);
+    const deletedUser = await deleteUserDB(id as string);
+    return res.status(200).json(deletedUser);
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,
@@ -34,4 +27,4 @@ const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-export default getUserById;
+export default deleteUser;
