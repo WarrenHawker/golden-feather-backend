@@ -1,6 +1,6 @@
 import { CreatorCreationData } from '../types/creator';
 
-export const creators: CreatorCreationData[] = [
+const creators: CreatorCreationData[] = [
   {
     name: 'ChillGamer',
     description:
@@ -675,3 +675,5 @@ export const creators: CreatorCreationData[] = [
     status: 'public',
   },
 ];
+
+export default creators;

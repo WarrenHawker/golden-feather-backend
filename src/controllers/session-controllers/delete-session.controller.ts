@@ -25,10 +25,10 @@
  */
 
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import { createLog } from '../../services/logger.service';
+import ErrorReturn from '../../types/error-return';
+import createLog from '../../services/logger.service';
 
-export const deleteSession = async (req: Request, res: Response) => {
+const deleteSession = async (req: Request, res: Response) => {
   const sessionId = req.params.id;
 
   const missingParams = [];
@@ -61,3 +61,5 @@ export const deleteSession = async (req: Request, res: Response) => {
     createLog('info', req, res);
   });
 };
+
+export default deleteSession;

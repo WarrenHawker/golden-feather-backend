@@ -1,6 +1,6 @@
 import { UserCreationData } from '../types/user';
 
-export const users: UserCreationData[] = [
+const users: UserCreationData[] = [
   {
     name: 'John Doe',
     email: 'johndoe@example.com',
@@ -72,3 +72,5 @@ export const users: UserCreationData[] = [
     status: 'inactive',
   },
 ];
+
+export default users;

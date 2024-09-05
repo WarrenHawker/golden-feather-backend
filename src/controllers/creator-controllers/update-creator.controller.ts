@@ -3,4 +3,6 @@ import validator from 'validator';
 
 const { isEmpty, escape, isURL } = validator;
 
-export const updateCreator = async (req: Request, res: Response) => {};
+const updateCreator = async (req: Request, res: Response) => {};
+
+export default updateCreator;

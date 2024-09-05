@@ -18,15 +18,15 @@
  */
 
 import { redisClient } from '../../../lib/redis/client.redis';
-import { getCreatorTagsDB } from '../../creator-db-services/get-creator-tags.service';
+import getCreatorTagsDB from '../../creator-db-services/get-creator-tags.service';
 
-export const storeCreatorTagsRedis = async () => {
+const storeCreatorTagsRedis = async () => {
   redisClient.del('creator_tags');
   try {
     const { publicTags, allTags } = await getCreatorTagsDB();
 
-    const public_tags = publicTags.map((tag) => tag.name);
-    const all_tags = allTags.map((tag) => tag.name);
+    const public_tags = publicTags.map((tag: { name: any }) => tag.name);
+    const all_tags = allTags.map((tag: { name: any }) => tag.name);
 
     redisClient.hSet(
       'creator_tags',
@@ -38,3 +38,5 @@ export const storeCreatorTagsRedis = async () => {
     throw error;
   }
 };
+
+export default storeCreatorTagsRedis;

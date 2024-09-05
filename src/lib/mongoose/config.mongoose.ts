@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export const initializeMongoDatabase = async () => {
+const initializeMongoDatabase = async () => {
   const mongodb = process.env.MONGO_DB || 'mongodb://localhost:8080';
 
   // Connect to the MongoDB server
@@ -10,3 +10,5 @@ export const initializeMongoDatabase = async () => {
 
   const db = mongoose.connection;
 };
+
+export default initializeMongoDatabase;

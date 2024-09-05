@@ -12,7 +12,7 @@ import { rateLimiter } from './middleware/rate-limiter.middleware';
 import compression from 'compression';
 import session from 'express-session';
 import { redisStore } from './lib/redis/client.redis';
-import { ErrorReturn } from './types/error-return';
+import ErrorReturn from './types/error-return';
 
 export const app = express();
 

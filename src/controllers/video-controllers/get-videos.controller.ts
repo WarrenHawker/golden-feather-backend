@@ -30,9 +30,9 @@
 const { google } = require('googleapis');
 import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';
-import { createLog } from '../../services/logger.service';
+import createLog from '../../services/logger.service';
 import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
-import { ErrorReturn } from '../../types/error-return';
+import ErrorReturn from '../../types/error-return';
 import { Request, Response } from 'express';
 
 const youtube = google.youtube({
@@ -100,7 +100,7 @@ const getLatestTwitch = async (channelId: string) => {
   }
 };
 
-export const getHomepageVideos = async (req: Request, res: Response) => {
+const getHomepageVideos = async (req: Request, res: Response) => {
   const youtubeId = process.env.YOUTUBE_CHANNEL_ID || '';
   const twitchId = process.env.TWITCH_CHANNEL_NAME || '';
 
@@ -118,3 +118,5 @@ export const getHomepageVideos = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export default getHomepageVideos;

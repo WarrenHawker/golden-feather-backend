@@ -1,6 +1,6 @@
 import { redisClient } from '../../../lib/redis/client.redis';
 
-export const getGuildTagsRedis = async () => {
+const getGuildTagsRedis = async () => {
   try {
     const result = await redisClient.hGetAll('guild_tags');
     const publicTags = JSON.parse(result.public_tags);
@@ -19,3 +19,5 @@ export const getGuildTagsRedis = async () => {
     throw error;
   }
 };
+
+export default getGuildTagsRedis;

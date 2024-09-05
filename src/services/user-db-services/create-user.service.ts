@@ -1,7 +1,7 @@
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 import { UserCreationData } from '../../types/user';
 
-export const createUserDB = async (options: UserCreationData) => {
+const createUserDB = async (options: UserCreationData) => {
   const newUserData = {
     name: options.name,
     email: options.email,
@@ -25,3 +25,5 @@ export const createUserDB = async (options: UserCreationData) => {
     throw error;
   }
 };
+
+export default createUserDB;

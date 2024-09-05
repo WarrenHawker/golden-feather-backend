@@ -3,4 +3,6 @@ import validator from 'validator';
 
 const { escape, isEmpty } = validator;
 
-export const deleteGuild = async (req: Request, res: Response) => {};
+const deleteGuild = async (req: Request, res: Response) => {};
+
+export default deleteGuild;

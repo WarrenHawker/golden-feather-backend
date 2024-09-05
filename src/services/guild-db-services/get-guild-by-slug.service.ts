@@ -1,6 +1,6 @@
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 
-export const getGuildBySlugDB = async (slug: string) => {
+const getGuildBySlugDB = async (slug: string) => {
   try {
     const guild = prismaClient.guild.findUnique({
       where: { slug: slug },
@@ -10,3 +10,5 @@ export const getGuildBySlugDB = async (slug: string) => {
     throw error;
   }
 };
+
+export default getGuildBySlugDB;

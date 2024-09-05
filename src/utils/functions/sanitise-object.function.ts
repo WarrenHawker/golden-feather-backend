@@ -1,7 +1,6 @@
-import validator from 'validator';
-const { isURL } = validator;
+import { isURL } from 'validator';
 
-export const sanitiseObject = <T extends Record<string, any>>(obj: T): T => {
+const sanitiseObject = <T extends Record<string, any>>(obj: T): T => {
   const newObj = {} as T;
 
   for (const key in obj) {
@@ -21,3 +20,5 @@ export const sanitiseObject = <T extends Record<string, any>>(obj: T): T => {
 
   return newObj;
 };
+
+export default sanitiseObject;

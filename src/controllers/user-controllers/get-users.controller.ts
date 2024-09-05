@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
 import validator from 'validator';
 import { GetUserSearchParams } from '../../types/user';
-import { ErrorReturn } from '../../types/error-return';
+import ErrorReturn from '../../types/error-return';
 import {
   isNumber,
   isUserRole,
   isUserStatus,
 } from '../../utils/functions/validate-input.function';
 import { UserRole, UserStatus } from '@prisma/client';
-import { getUsersDB } from '../../services/user-db-services/get-users.service';
+import getUsersDB from '../../services/user-db-services/get-users.service';
 
 const { escape } = validator;
 
-export const getUsers = async (req: Request, res: Response) => {
+const getUsers = async (req: Request, res: Response) => {
   let { page, limit, name, role, status } = req.query;
   let searchParams: GetUserSearchParams = {};
   try {
@@ -92,3 +92,5 @@ export const getUsers = async (req: Request, res: Response) => {
     return res.status(500).json(error);
   }
 };
+
+export default getUsers;

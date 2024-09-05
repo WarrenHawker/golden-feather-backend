@@ -1,18 +1,10 @@
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import { getGuildBySlugDB } from '../../services/guild-db-services/get-guild-by-slug.service';
+import ErrorReturn from '../../types/error-return';
+import getGuildBySlugDB from '../../services/guild-db-services/get-guild-by-slug.service';
 import { ISession } from '../../types/express-session';
 
-export const getGuildBySlug = async (req: Request, res: Response) => {
+const getGuildBySlug = async (req: Request, res: Response) => {
   const { slug } = req.params;
-
-  if (!slug) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'no slug search param found',
-    };
-    return res.status(400).json(error);
-  }
 
   try {
     const guild = await getGuildBySlugDB(slug as string);
@@ -54,3 +46,5 @@ export const getGuildBySlug = async (req: Request, res: Response) => {
     return res.status(500).json(error);
   }
 };
+
+export default getGuildBySlug;

@@ -20,9 +20,9 @@
  * @requires ../../lib/prisma/client.prisma - Prisma client for interacting with the database.
  */
 
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 
-export const getCreatorTagsDB = async () => {
+const getCreatorTagsDB = async () => {
   try {
     const publicTags = await prismaClient.creatorTag.findMany({
       where: {
@@ -54,3 +54,5 @@ export const getCreatorTagsDB = async () => {
     throw error;
   }
 };
+
+export default getCreatorTagsDB;

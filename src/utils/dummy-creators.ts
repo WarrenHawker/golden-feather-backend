@@ -1,6 +1,6 @@
 import { CreatorCreationData } from '../types/creator';
 
-export const dummyCreators: CreatorCreationData[] = [
+const dummyCreators: CreatorCreationData[] = [
   {
     name: 'GamerGal',
     description:
@@ -573,3 +573,5 @@ export const dummyCreators: CreatorCreationData[] = [
     status: 'private',
   },
 ];
+
+export default dummyCreators;

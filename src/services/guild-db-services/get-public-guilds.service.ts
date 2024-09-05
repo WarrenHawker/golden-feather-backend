@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 import { GetGuildSearchParams } from '../../types/guild';
 
-export const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
+const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
   const { page = 1, limit = 10, name, language, tags, region } = options;
 
   const searchData: Prisma.GuildWhereInput = {
@@ -106,3 +106,5 @@ export const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
     throw error;
   }
 };
+
+export default getPublicGuildsDB;

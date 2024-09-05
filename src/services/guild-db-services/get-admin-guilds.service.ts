@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 import { GetGuildSearchParams } from '../../types/guild';
 
-export const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
+const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
   const {
     page = 1,
     limit = 10,
@@ -121,3 +121,5 @@ export const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
     throw error;
   }
 };
+
+export default getAdminGuildsDB;

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-export const signoutUser = async (req: Request, res: Response) => {
+const signoutUser = async (req: Request, res: Response) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).send('Error signing out');
@@ -10,3 +10,5 @@ export const signoutUser = async (req: Request, res: Response) => {
     res.send('Logout successful');
   });
 };
+
+export default signoutUser;

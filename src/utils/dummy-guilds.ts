@@ -1,6 +1,6 @@
 import { GuildCreationData } from '../types/guild';
 
-export const guilds: GuildCreationData[] = [
+const guilds: GuildCreationData[] = [
   {
     name: 'The Warriors of Light',
     description: 'A hardcore PvE guild focused on endgame content and raids.',
@@ -276,3 +276,5 @@ export const guilds: GuildCreationData[] = [
     },
   },
 ];
+
+export default guilds;

@@ -24,10 +24,10 @@
  */
 
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import { createLog } from '../../services/logger.service';
+import ErrorReturn from '../../types/error-return';
+import createLog from '../../services/logger.service';
 
-export const getSessions = async (req: Request, res: Response) => {
+const getSessions = async (req: Request, res: Response) => {
   if (!req.sessionStore) {
     const error: ErrorReturn = {
       code: 404,
@@ -60,3 +60,5 @@ export const getSessions = async (req: Request, res: Response) => {
     res.status(200).json(sessions);
   });
 };
+
+export default getSessions;

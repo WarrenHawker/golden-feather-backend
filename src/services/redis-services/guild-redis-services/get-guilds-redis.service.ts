@@ -1,7 +1,7 @@
 import { redisClient } from '../../../lib/redis/client.redis';
-import { Pagination } from '../../../types/pagination';
+import Pagination from '../../../types/pagination';
 
-export const getGuildsRedis = async () => {
+const getGuildsRedis = async () => {
   try {
     const result = await redisClient.hGetAll('guilds');
     const pagination: Pagination = JSON.parse(result.pagination);
@@ -32,3 +32,5 @@ export const getGuildsRedis = async () => {
     throw error;
   }
 };
+
+export default getGuildsRedis;

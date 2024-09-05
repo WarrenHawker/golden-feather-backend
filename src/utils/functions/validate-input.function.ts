@@ -100,3 +100,9 @@ export const isEndpoint = (input: string): boolean => {
     return true;
   } else return false;
 };
+
+//returns true if the input is a valid cuid, else returns false
+export const isValidCuid = (id: string): boolean => {
+  const cuidRegex = /^c[a-z0-9]{24}$/;
+  return cuidRegex.test(id);
+};

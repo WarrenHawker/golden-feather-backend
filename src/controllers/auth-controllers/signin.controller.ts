@@ -1,53 +1,16 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { prismaClient } from '../../lib/prisma/client.prisma';
-import { ISession } from '../../types/express-session';
-import { ErrorReturn } from '../../types/error-return';
-import { createLog } from '../../services/logger.service';
 import { redisClient } from '../../lib/redis/client.redis';
+import prismaClient from '../../lib/prisma/client.prisma';
+import createLog from '../../services/logger.service';
+import ErrorReturn from '../../types/error-return';
+import { ISession } from '../../types/express-session';
 
-const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
-  validator;
+const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
 
-export const signInUser = async (req: Request, res: Response) => {
+const signInUser = async (req: Request, res: Response) => {
   let { email, password } = req.body;
-
-  const missingParams = [];
-  if (!email) {
-    missingParams.push('email');
-  }
-  if (!password) {
-    missingParams.push('password');
-  }
-  if (missingParams.length > 0) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Missing body parameters',
-      params: missingParams,
-    };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
-  }
-
-  const emptyFields = [];
-  if (isEmpty(email, { ignore_whitespace: true })) {
-    emptyFields.push('email');
-  }
-  if (isEmpty(password, { ignore_whitespace: true })) {
-    emptyFields.push('password');
-  }
-  if (emptyFields.length > 0) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Empty input fields',
-      params: emptyFields,
-    };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
-  }
 
   if (!isEmail(email)) {
     const error: ErrorReturn = {
@@ -131,3 +94,5 @@ export const signInUser = async (req: Request, res: Response) => {
     return res.status(500).json(error);
   }
 };
+
+export default signInUser;

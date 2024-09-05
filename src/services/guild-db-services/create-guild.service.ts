@@ -1,17 +1,11 @@
 import validator from 'validator';
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 import { GuildCreationData } from '../../types/guild';
 
 const { unescape } = validator;
 
-export const createGuildDB = async (options: GuildCreationData) => {
+const createGuildDB = async (options: GuildCreationData) => {
   try {
-    if (options.tags.length == 0) {
-      throw new Error(
-        'you must include at least one category in the categories array'
-      );
-    }
-
     /*
       if userId is given, check the user exists and is not already
       linked to another guild. If either case happens the guild will
@@ -89,3 +83,5 @@ export const createGuildDB = async (options: GuildCreationData) => {
     throw error;
   }
 };
+
+export default createGuildDB;

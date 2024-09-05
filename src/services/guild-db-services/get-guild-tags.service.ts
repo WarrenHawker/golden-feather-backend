@@ -1,6 +1,6 @@
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 
-export const getGuildTagsDB = async () => {
+const getGuildTagsDB = async () => {
   try {
     const publicTags = await prismaClient.guildTag.findMany({
       where: {
@@ -32,3 +32,5 @@ export const getGuildTagsDB = async () => {
     throw error;
   }
 };
+
+export default getGuildTagsDB;

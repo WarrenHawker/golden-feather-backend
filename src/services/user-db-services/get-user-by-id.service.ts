@@ -1,6 +1,6 @@
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 
-export const getUserByIdDB = async (id: string) => {
+const getUserByIdDB = async (id: string) => {
   try {
     const user = prismaClient.user.findUnique({
       where: { id: id },
@@ -19,3 +19,5 @@ export const getUserByIdDB = async (id: string) => {
     throw error;
   }
 };
+
+export default getUserByIdDB;

@@ -1,65 +1,16 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { prismaClient } from '../../lib/prisma/client.prisma';
 import { UserRole, UserStatus } from '@prisma/client';
-import { ErrorReturn } from '../../types/error-return';
-import { createLog } from '../../services/logger.service';
-import { createUserDB } from '../../services/user-db-services/create-user.service';
+import prismaClient from '../../lib/prisma/client.prisma';
+import createLog from '../../services/logger.service';
+import createUserDB from '../../services/user-db-services/create-user.service';
+import ErrorReturn from '../../types/error-return';
 
-const { isEmail, isEmpty, isStrongPassword, normalizeEmail, escape } =
-  validator;
+const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
 
-export const signUpUser = async (req: Request, res: Response) => {
+const signUpUser = async (req: Request, res: Response) => {
   let { name, email, password, repeatPassword } = req.body;
-
-  const missingParams = [];
-  if (!name) {
-    missingParams.push('name');
-  }
-  if (!email) {
-    missingParams.push('email');
-  }
-  if (!password) {
-    missingParams.push('password');
-  }
-  if (!repeatPassword) {
-    missingParams.push('repeat password');
-  }
-  if (missingParams.length > 0) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Missing body parameters',
-      params: missingParams,
-    };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
-  }
-
-  const emptyFields = [];
-  if (isEmpty(name, { ignore_whitespace: true })) {
-    emptyFields.push('name');
-  }
-  if (isEmpty(email, { ignore_whitespace: true })) {
-    emptyFields.push('email');
-  }
-  if (isEmpty(password, { ignore_whitespace: true })) {
-    emptyFields.push('password');
-  }
-  if (isEmpty(repeatPassword, { ignore_whitespace: true })) {
-    emptyFields.push('repeat password');
-  }
-  if (emptyFields.length > 0) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Empty input fields',
-      params: emptyFields,
-    };
-    res.status(400).json(error);
-    createLog('error', req, res, error);
-    return;
-  }
 
   if (!isEmail(email)) {
     const error: ErrorReturn = {
@@ -138,3 +89,5 @@ export const signUpUser = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export default signUpUser;

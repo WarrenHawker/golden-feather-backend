@@ -3,4 +3,6 @@ import validator from 'validator';
 
 const { isEmpty, escape } = validator;
 
-export const createGuild = async (req: Request, res: Response) => {};
+const createGuild = async (req: Request, res: Response) => {};
+
+export default createGuild;

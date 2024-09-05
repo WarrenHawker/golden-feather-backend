@@ -22,7 +22,7 @@
  * @requires ../../lib/prisma/client.prisma - Prisma client for interacting with the database.
  */
 
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 
 export const getCreatorBySlugDB = async (slug: string) => {
   try {

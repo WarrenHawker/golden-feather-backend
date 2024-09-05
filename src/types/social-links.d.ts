@@ -1,4 +1,4 @@
-export type SocialLinks = {
+type SocialLinks = {
   discord?: string;
   youtube?: string;
   twitch?: string;
@@ -6,3 +6,5 @@ export type SocialLinks = {
   facebook?: string;
   instagram?: string;
 };
+
+export default SocialLinks;

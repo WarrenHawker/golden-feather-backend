@@ -1,17 +1,9 @@
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import { getUserByIdDB } from '../../services/user-db-services/get-user-by-id.service';
+import ErrorReturn from '../../types/error-return';
+import getUserByIdDB from '../../services/user-db-services/get-user-by-id.service';
 
-export const getUserById = async (req: Request, res: Response) => {
+const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
-
-  if (!id) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'no id search param found',
-    };
-    return res.status(400).json(error);
-  }
 
   try {
     const user = await getUserByIdDB(id as string);
@@ -31,3 +23,5 @@ export const getUserById = async (req: Request, res: Response) => {
     return res.status(500).json(error);
   }
 };
+
+export default getUserById;

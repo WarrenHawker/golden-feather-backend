@@ -21,16 +21,16 @@
 
 import { Queue, Worker } from 'bullmq';
 import { IOredisClient } from '../../lib/redis/client.redis';
-import { storeCreatorTagsRedis } from '../redis-services/creator-redis-services/store-creator-tags-redis.service';
-import { storeCreatorsRedis } from '../redis-services/creator-redis-services/store-creators-redis.service';
-import { storeGuildTagsRedis } from '../redis-services/guild-redis-services/store-guild-tags-redis.service';
-import { storeGuildsRedis } from '../redis-services/guild-redis-services/store-guilds-redis.service';
+import storeCreatorTagsRedis from '../redis-services/creator-redis-services/store-creator-tags-redis.service';
+import storeCreatorsRedis from '../redis-services/creator-redis-services/store-creators-redis.service';
+import storeGuildTagsRedis from '../redis-services/guild-redis-services/store-guild-tags-redis.service';
+import storeGuildsRedis from '../redis-services/guild-redis-services/store-guilds-redis.service';
 
 const redisConnect = {
   connection: IOredisClient,
 };
 
-export const syncDatabase = async () => {
+const syncDatabase = async () => {
   const hour6 = 6 * 60 * 60 * 1000;
   const syncDatabase = new Queue('syncDatabase', redisConnect);
   await syncDatabase.add(
@@ -52,3 +52,5 @@ export const syncDatabase = async () => {
     redisConnect
   );
 };
+
+export default syncDatabase;

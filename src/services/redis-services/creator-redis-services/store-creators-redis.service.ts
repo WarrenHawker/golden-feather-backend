@@ -24,7 +24,7 @@
  */
 
 import { redisClient } from '../../../lib/redis/client.redis';
-import { Pagination } from '../../../types/pagination';
+import Pagination from '../../../types/pagination';
 import { getPublicCreatorsDB } from '../../creator-db-services/get-public-creators.service';
 
 type Params = {
@@ -32,7 +32,7 @@ type Params = {
   creators?: any[];
 };
 
-export const storeCreatorsRedis = async (options: Params = {}) => {
+const storeCreatorsRedis = async (options: Params = {}) => {
   redisClient.del('creators');
 
   try {
@@ -56,3 +56,5 @@ export const storeCreatorsRedis = async (options: Params = {}) => {
     throw error;
   }
 };
+
+export default storeCreatorsRedis;

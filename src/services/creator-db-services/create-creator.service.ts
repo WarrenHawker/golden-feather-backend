@@ -28,19 +28,13 @@
  */
 
 import validator from 'validator';
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 import { CreatorCreationData } from '../../types/creator';
 
 const { unescape } = validator;
 
 export const createCreatorDB = async (options: CreatorCreationData) => {
   try {
-    if (options.tags.length == 0) {
-      throw new Error(
-        'you must include at least one category in the categories array'
-      );
-    }
-
     /*
       if userId is given, check the user exists and is not already
       linked to another creator profile. If either case happens the 

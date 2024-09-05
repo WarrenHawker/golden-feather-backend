@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import { GetUserSearchParams } from '../../types/user';
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 
-export const getUsersDB = async (options: GetUserSearchParams = {}) => {
+const getUsersDB = async (options: GetUserSearchParams = {}) => {
   const { page = 1, limit = 10, name, role, status } = options;
 
   const searchData: Prisma.UserWhereInput = {
@@ -75,3 +75,5 @@ export const getUsersDB = async (options: GetUserSearchParams = {}) => {
     throw error;
   }
 };
+
+export default getUsersDB;

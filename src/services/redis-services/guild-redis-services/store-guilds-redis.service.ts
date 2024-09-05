@@ -1,13 +1,13 @@
 import { redisClient } from '../../../lib/redis/client.redis';
-import { Pagination } from '../../../types/pagination';
-import { getPublicGuildsDB } from '../../guild-db-services/get-public-guilds.service';
+import Pagination from '../../../types/pagination';
+import getPublicGuildsDB from '../../guild-db-services/get-public-guilds.service';
 
 type Params = {
   pagination?: Pagination;
   guilds?: any[];
 };
 
-export const storeGuildsRedis = async (options: Params = {}) => {
+const storeGuildsRedis = async (options: Params = {}) => {
   redisClient.del('guilds');
 
   try {
@@ -31,3 +31,5 @@ export const storeGuildsRedis = async (options: Params = {}) => {
     throw error;
   }
 };
+
+export default storeGuildsRedis;

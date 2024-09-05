@@ -3,4 +3,6 @@ import validator from 'validator';
 
 const { escape, isEmpty } = validator;
 
-export const deleteCreator = async (req: Request, res: Response) => {};
+const deleteCreator = async (req: Request, res: Response) => {};
+
+export default deleteCreator;

@@ -29,7 +29,7 @@
 
 import mongoose from 'mongoose';
 import { logSchema } from '../lib/mongoose/log-model.mongoose';
-import { ErrorReturn } from '../types/error-return';
+import ErrorReturn from '../types/error-return';
 import { LogData, LogLevel, ReqMethod, ResCode } from '../types/log';
 import { Request, Response } from 'express';
 import moment from 'moment';
@@ -39,7 +39,7 @@ const getLogModelForMonth = (year: string, month: string) => {
   return mongoose.model(collectionName, logSchema, collectionName);
 };
 
-export const createLog = async (
+const createLog = async (
   level: LogLevel,
   req: Request,
   res: Response,
@@ -79,3 +79,5 @@ export const createLog = async (
   //TODO if log is critical, email admins
   return logEntry;
 };
+
+export default createLog;

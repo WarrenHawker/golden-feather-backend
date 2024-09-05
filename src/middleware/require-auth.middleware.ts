@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserRole, UserStatus } from '@prisma/client';
 import { ISession } from '../types/express-session';
-import { ErrorReturn } from '../types/error-return';
-import { createLog } from '../services/logger.service';
+import ErrorReturn from '../types/error-return';
+import createLog from '../services/logger.service';
 
 export const checkRole = (requiredRole: UserRole) => {
   return (req: Request, res: Response, next: NextFunction) => {

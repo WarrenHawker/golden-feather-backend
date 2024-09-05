@@ -26,7 +26,7 @@
 import sgMail from '@sendgrid/mail';
 import 'dotenv/config';
 
-export const sendEmail = async (
+const sendEmail = async (
   recipient: string,
   subject: string,
   text: string,
@@ -56,3 +56,5 @@ export const sendEmail = async (
     throw new Error(error as string);
   }
 };
+
+export default sendEmail;

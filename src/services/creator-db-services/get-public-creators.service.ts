@@ -29,7 +29,7 @@
  */
 
 import { Prisma } from '@prisma/client';
-import { prismaClient } from '../../lib/prisma/client.prisma';
+import prismaClient from '../../lib/prisma/client.prisma';
 import { GetCreatorSearchParams } from '../../types/creator';
 
 export const getPublicCreatorsDB = async (

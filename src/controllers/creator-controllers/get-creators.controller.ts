@@ -35,20 +35,18 @@
  */
 
 import { Request, Response } from 'express';
-import validator from 'validator';
-import { getCreatorsRedis } from '../../services/redis-services/creator-redis-services/get-creators-redis.service';
+import { escape } from 'validator';
+import { isNumber } from '../../utils/functions/validate-input.function';
+import getCreatorsRedis from '../../services/redis-services/creator-redis-services/get-creators-redis.service';
 import { getAdminCreatorsDB } from '../../services/creator-db-services/get-admin-creators.service';
 import { getPublicCreatorsDB } from '../../services/creator-db-services/get-public-creators.service';
-import { storeCreatorsRedis } from '../../services/redis-services/creator-redis-services/store-creators-redis.service';
+import storeCreatorsRedis from '../../services/redis-services/creator-redis-services/store-creators-redis.service';
 import { GetCreatorSearchParams } from '../../types/creator';
-import { ErrorReturn } from '../../types/error-return';
+import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
-import { sanitiseArray } from '../../utils/functions/sanitise-array.function';
-import { isNumber } from '../../utils/functions/validate-input.function';
+import sanitiseArray from '../../utils/functions/sanitise-array.function';
 
-const { escape } = validator;
-
-export const getCreators = async (req: Request, res: Response) => {
+const getCreators = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default creators from redis.
   if (Object.keys(req.query).length == 0) {
     try {
@@ -171,3 +169,5 @@ export const getCreators = async (req: Request, res: Response) => {
     return res.status(500).json(error);
   }
 };
+
+export default getCreators;

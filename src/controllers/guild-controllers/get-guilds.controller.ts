@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import validator from 'validator';
-import { sanitiseArray } from '../../utils/functions/sanitise-array.function';
-import { isNumber } from '../../utils/functions/validate-input.function';
+import { escape } from 'validator';
+import getAdminGuildsDB from '../../services/guild-db-services/get-admin-guilds.service';
+import getPublicGuildsDB from '../../services/guild-db-services/get-public-guilds.service';
+import getGuildsRedis from '../../services/redis-services/guild-redis-services/get-guilds-redis.service';
+import storeGuildsRedis from '../../services/redis-services/guild-redis-services/store-guilds-redis.service';
+import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
-import { getAdminGuildsDB } from '../../services/guild-db-services/get-admin-guilds.service';
-import { getPublicGuildsDB } from '../../services/guild-db-services/get-public-guilds.service';
-import { getGuildsRedis } from '../../services/redis-services/guild-redis-services/get-guilds-redis.service';
-import { storeGuildsRedis } from '../../services/redis-services/guild-redis-services/store-guilds-redis.service';
 import { GetGuildSearchParams } from '../../types/guild';
+import sanitiseArray from '../../utils/functions/sanitise-array.function';
+import { isNumber } from '../../utils/functions/validate-input.function';
 
-const { escape } = validator;
-
-export const getGuilds = async (req: Request, res: Response) => {
+const getGuilds = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default guilds from redis.
   if (Object.keys(req.query).length == 0) {
     try {
@@ -139,3 +137,5 @@ export const getGuilds = async (req: Request, res: Response) => {
     return res.status(500).json(error);
   }
 };
+
+export default getGuilds;

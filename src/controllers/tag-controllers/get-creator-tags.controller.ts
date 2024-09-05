@@ -26,12 +26,12 @@
  */
 
 import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import { getCreatorTagsDB } from '../../services/creator-db-services/get-creator-tags.service';
-import { getCreatorTagsRedis } from '../../services/redis-services/creator-redis-services/get-creator-tags-redis.service';
+import ErrorReturn from '../../types/error-return';
+import getCreatorTagsDB from '../../services/creator-db-services/get-creator-tags.service';
+import getCreatorTagsRedis from '../../services/redis-services/creator-redis-services/get-creator-tags-redis.service';
 import { ISession } from '../../types/express-session';
 
-export const getCreatorTags = async (req: Request, res: Response) => {
+const getCreatorTags = async (req: Request, res: Response) => {
   const { admin } = req.query;
   //try fetching tags from redis. If that fails, get tags from main database
   try {
@@ -51,8 +51,8 @@ export const getCreatorTags = async (req: Request, res: Response) => {
     //fetch tags from main database
     try {
       const { publicTags, allTags } = await getCreatorTagsDB();
-      const public_tags = publicTags.map((tag) => tag.name);
-      const all_tags = allTags.map((tag) => tag.name);
+      const public_tags = publicTags.map((tag: { name: any }) => tag.name);
+      const all_tags = allTags.map((tag: { name: any }) => tag.name);
 
       /*
         all tags will only be sent if the admin query is true and there 
@@ -77,3 +77,5 @@ export const getCreatorTags = async (req: Request, res: Response) => {
     }
   }
 };
+
+export default getCreatorTags;

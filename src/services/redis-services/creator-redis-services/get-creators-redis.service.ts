@@ -22,9 +22,9 @@
  */
 
 import { redisClient } from '../../../lib/redis/client.redis';
-import { Pagination } from '../../../types/pagination';
+import Pagination from '../../../types/pagination';
 
-export const getCreatorsRedis = async () => {
+const getCreatorsRedis = async () => {
   try {
     const result = await redisClient.hGetAll('creators');
     const pagination: Pagination = JSON.parse(result.pagination);
@@ -55,3 +55,5 @@ export const getCreatorsRedis = async () => {
     throw error;
   }
 };
+
+export default getCreatorsRedis;

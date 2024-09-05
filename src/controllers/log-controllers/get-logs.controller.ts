@@ -34,15 +34,13 @@
 import { Request, Response } from 'express';
 import { getLogModelForMonth } from '../../lib/mongoose/log-model.mongoose';
 import { LogSearchData } from '../../types/log';
-import validator from 'validator';
+import { escape } from 'validator';
 import { isNumber } from '../../utils/functions/validate-input.function';
-import { createLog } from '../../services/logger.service';
-import { ErrorReturn } from '../../types/error-return';
+import createLog from '../../services/logger.service';
+import ErrorReturn from '../../types/error-return';
 import moment from 'moment';
 
-const { escape } = validator;
-
-export const getLogs = async (req: Request, res: Response) => {
+const getLogs = async (req: Request, res: Response) => {
   let { page, limit, month } = req.query;
   const searchData: LogSearchData = {};
 
@@ -147,3 +145,5 @@ export const getLogs = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export default getLogs;

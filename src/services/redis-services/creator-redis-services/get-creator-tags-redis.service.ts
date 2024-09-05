@@ -20,7 +20,7 @@
 
 import { redisClient } from '../../../lib/redis/client.redis';
 
-export const getCreatorTagsRedis = async () => {
+const getCreatorTagsRedis = async () => {
   try {
     const result = await redisClient.hGetAll('creator_tags');
     const publicTags = JSON.parse(result.public_tags);
@@ -39,3 +39,5 @@ export const getCreatorTagsRedis = async () => {
     throw error;
   }
 };
+
+export default getCreatorTagsRedis;

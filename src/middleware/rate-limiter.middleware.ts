@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { redisClient } from '../lib/redis/client.redis';
-import { createLog } from '../services/logger.service';
-import { ErrorReturn } from '../types/error-return';
+import createLog from '../services/logger.service';
+import ErrorReturn from '../types/error-return';
 
 export const rateLimiter = async (
   req: Request,
