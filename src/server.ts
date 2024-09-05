@@ -15,9 +15,9 @@ import {
 
 import bcrypt from 'bcrypt';
 import createUserDB from './services/user-db-services/create-user.service';
-import creators from './utils/dummy-creators-2';
-import guilds from './utils/dummy-guilds';
-import users from './utils/dummy-users';
+import creators from './utils/dummy-data/dummy-creators-2';
+import guilds from './utils/dummy-data/dummy-guilds';
+import users from './utils/dummy-data/dummy-users';
 
 const port = process.env.PORT || 5000;
 

@@ -30,3 +30,5 @@ router.post(
 router.patch('/:id', updateGuild);
 router.get('/:slug', getGuildBySlug);
 router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteGuild);
+
+//TODO allow only admins or the linked user to update guild

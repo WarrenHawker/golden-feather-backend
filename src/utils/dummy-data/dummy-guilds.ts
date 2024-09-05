@@ -1,4 +1,4 @@
-import { GuildCreationData } from '../types/guild';
+import { GuildCreationData } from '../../types/guild';
 
 const guilds: GuildCreationData[] = [
   {

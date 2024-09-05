@@ -1,4 +1,4 @@
-import { CreatorCreationData } from '../types/creator';
+import { CreatorCreationData } from '../../types/creator';
 
 const creators: CreatorCreationData[] = [
   {

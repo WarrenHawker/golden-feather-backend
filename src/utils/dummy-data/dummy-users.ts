@@ -1,4 +1,4 @@
-import { UserCreationData } from '../types/user';
+import { UserCreationData } from '../../types/user';
 
 const users: UserCreationData[] = [
   {
