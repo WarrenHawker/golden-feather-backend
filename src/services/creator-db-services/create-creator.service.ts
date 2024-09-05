@@ -27,11 +27,9 @@
  * @requires ../../types/creator - Type definition for the structure of the creator creation data.
  */
 
-import validator from 'validator';
+import { unescape } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { CreatorCreationData } from '../../types/creator';
-
-const { unescape } = validator;
 
 export const createCreatorDB = async (options: CreatorCreationData) => {
   try {

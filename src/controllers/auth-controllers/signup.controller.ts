@@ -1,11 +1,11 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { UserRole, UserStatus } from '@prisma/client';
-import prismaClient from '../../lib/prisma/client.prisma';
 import createLog from '../../services/logger.service';
 import createUserDB from '../../services/user-db-services/create-user.service';
 import ErrorReturn from '../../types/error-return';
+import { UserRole, UserStatus } from '@prisma/client';
+import prismaClient from '../../lib/prisma/client.prisma';
 
 const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
 

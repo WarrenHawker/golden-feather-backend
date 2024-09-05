@@ -1,8 +1,6 @@
-import validator from 'validator';
+import { unescape } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { GuildCreationData } from '../../types/guild';
-
-const { unescape } = validator;
 
 const createGuildDB = async (options: GuildCreationData) => {
   try {
