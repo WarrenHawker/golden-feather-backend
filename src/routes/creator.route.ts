@@ -29,4 +29,3 @@ router.post(
 router.patch('/:id', updateCreator);
 router.get('/:slug', getCreatorBySlug);
 router.delete('/', checkRole('admin'), checkStatus('active'), deleteCreator);
-//TODO fill out controller functions for updating and deleting creators

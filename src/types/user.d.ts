@@ -15,3 +15,13 @@ export type GetUserSearchParams = {
   role?: UserRole;
   status?: UserStatus;
 };
+
+export type UserUpdateData = {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: UserRole;
+  status?: UserStatus;
+  guildId?: string;
+  creatorId?: string;
+};

@@ -1,21 +1,22 @@
 import { Request, Response } from 'express';
-import { escape, isURL } from 'validator';
+import { escape } from 'validator';
 import { CreatorCreationData } from '../../types/creator';
 import {
   isContentStatus,
   isValidCuid,
+  isValidVideoUrl,
 } from '../../utils/functions/validate-input.function';
 import { createCreatorDB } from '../../services/creator-db-services/create-creator.service';
 import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
-import sanitiseObject from '../../utils/functions/sanitise-object.function';
+import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 
 const createCreator = async (req: Request, res: Response) => {
   let { name, description, videoUrl, socials, tags, language, status, userId } =
     req.body;
 
-  if (!isURL(videoUrl)) {
+  if (!isValidVideoUrl(videoUrl)) {
     const error: ErrorReturn = {
       code: 400,
       message: 'videoUrl must be a valid url',
@@ -52,7 +53,7 @@ const createCreator = async (req: Request, res: Response) => {
     name: escape(name).trim(),
     description: escape(description).trim(),
     videoUrl,
-    socials: sanitiseObject(socials),
+    socials: sanitiseSocials(socials),
     tags: sanitiseArray(tags),
     language: escape(language).trim(),
     status,

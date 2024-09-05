@@ -1,13 +1,13 @@
-import { isURL } from 'validator';
+import { isValidSocialsUrl } from './validate-input.function';
 
-const sanitiseObject = <T extends Record<string, any>>(obj: T): T => {
+const sanitiseSocials = <T extends Record<string, any>>(obj: T): T => {
   const newObj = {} as T;
 
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const value = obj[key];
       if (typeof value === 'string') {
-        if (isURL(value)) {
+        if (isValidSocialsUrl(value)) {
           newObj[key] = value.trim() as T[typeof key];
         } else {
           newObj[key] = '' as T[typeof key];
@@ -21,4 +21,4 @@ const sanitiseObject = <T extends Record<string, any>>(obj: T): T => {
   return newObj;
 };
 
-export default sanitiseObject;
+export default sanitiseSocials;

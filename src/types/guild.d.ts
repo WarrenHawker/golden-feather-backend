@@ -22,3 +22,15 @@ export type GetGuildSearchParams = {
   status?: ContentStatus;
   region?: string;
 };
+
+export type GuildUpdateData = {
+  name?: string;
+  description?: string;
+  guild_leader?: string;
+  status?: ContentStatus;
+  language?: string;
+  tags?: string[];
+  region?: string;
+  userId?: string;
+  socials?: SocialLinks;
+};

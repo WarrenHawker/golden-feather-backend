@@ -30,5 +30,3 @@ router.post(
 router.patch('/:id', updateGuild);
 router.get('/:slug', getGuildBySlug);
 router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteGuild);
-
-//TODO fill out controller functions for all guild routes

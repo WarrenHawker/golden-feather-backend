@@ -8,7 +8,7 @@ import {
 } from '../../utils/functions/validate-input.function';
 import { GuildCreationData } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
-import sanitiseObject from '../../utils/functions/sanitise-object.function';
+import sanitiseObject from '../../utils/functions/sanitise-socials.function';
 import createGuildDB from '../../services/guild-db-services/create-guild.service';
 
 const createGuild = async (req: Request, res: Response) => {

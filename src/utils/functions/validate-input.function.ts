@@ -1,3 +1,5 @@
+import { isURL } from 'validator';
+
 //returns true if the input is a valid user role, else returns false
 export const isUserRole = (input: string): boolean => {
   if (input == 'user' || input == 'moderator' || input == 'admin') {
@@ -105,4 +107,71 @@ export const isEndpoint = (input: string): boolean => {
 export const isValidCuid = (id: string): boolean => {
   const cuidRegex = /^c[a-z0-9]{24}$/;
   return cuidRegex.test(id);
+};
+
+//returns true if the input is a valid url from twitch or youtube
+export const isValidVideoUrl = (url: string): boolean => {
+  if (!isURL(url)) {
+    return false;
+  }
+  const parsedUrl = new URL(url);
+  if (parsedUrl.protocol !== 'https:') {
+    return false;
+  }
+
+  // List of allowed YouTube and Twitch domains
+  const allowedDomains = [
+    'youtube.com',
+    'www.youtube.com',
+    'youtu.be',
+    'www.youtu.be',
+    'twitch.tv',
+    'www.twitch.tv',
+  ];
+
+  if (allowedDomains.includes(parsedUrl.hostname)) {
+    return true;
+  } else return false;
+};
+
+/*
+  returns true if the input is a valid url from
+  discord, youtube, twitch, twitter/x, facebook or instagram
+*/
+export const isValidSocialsUrl = (url: string): boolean => {
+  if (!isURL(url)) {
+    return false;
+  }
+
+  const parsedUrl = new URL(url);
+
+  // Ensure the URL is served over HTTPS
+  if (parsedUrl.protocol !== 'https:') {
+    return false;
+  }
+
+  // List of allowed domains (YouTube, Twitch, Twitter/X, Discord, Facebook, Instagram)
+  const allowedDomains = [
+    'youtube.com',
+    'www.youtube.com',
+    'youtu.be',
+    'www.youtu.be',
+    'twitch.tv',
+    'www.twitch.tv',
+    'discord.com',
+    'www.discord.com',
+    'twitter.com',
+    'www.twitter.com',
+    'x.com',
+    'www.x.com',
+    'facebook.com',
+    'www.facebook.com',
+    'instagram.com',
+    'www.instagram.com',
+  ];
+
+  // Check if the domain is one of the allowed domains
+  if (allowedDomains.includes(parsedUrl.hostname)) {
+    return true;
+  } else return false;
 };

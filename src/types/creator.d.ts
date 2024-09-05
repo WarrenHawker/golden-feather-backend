@@ -20,3 +20,14 @@ export type GetCreatorSearchParams = {
   tags?: string[];
   status?: ContentStatus;
 };
+
+export type CreatorUpdateData = {
+  name?: string;
+  description?: string;
+  videoUrl?: string;
+  socials?: SocialLinks;
+  tags?: string[];
+  language?: string;
+  status?: string;
+  userId?: string;
+};
