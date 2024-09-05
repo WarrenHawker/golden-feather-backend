@@ -11,12 +11,52 @@ import { CreatorUpdateData } from '../../types/creator';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import updateCreatorDB from '../../services/creator-db-services/update-creator.service';
+import prismaClient from '../../lib/prisma/client.prisma';
+import { ISession } from '../../types/express-session';
+import getUserContent from '../../services/user-db-services/get-user-content.service';
 
 const updateCreator = async (req: Request, res: Response) => {
   let { id: creatorId } = req.query;
   let { name, description, videoUrl, socials, tags, language, status, userId } =
     req.body;
 
+  /* 
+    creator profiles can only be updated by admins or the linked user.
+    check for a valid session before continuing.
+  */
+  try {
+    const sessionUser = (req.session as ISession).user;
+
+    if (!sessionUser) {
+      const error: ErrorReturn = {
+        code: 401,
+        message: 'no session found',
+      };
+      return res.status(401).json(error);
+    }
+
+    const { userCreatorId } = await getUserContent(sessionUser.id);
+    if (
+      !userCreatorId ||
+      userCreatorId != creatorId ||
+      !(sessionUser.role == 'admin' && sessionUser.status == 'active')
+    ) {
+      const error: ErrorReturn = {
+        code: 403,
+        message: 'unorthorised access',
+      };
+      return res.status(403).json(error);
+    }
+  } catch (err) {
+    const error: ErrorReturn = {
+      code: 500,
+      message: (err as Error).message,
+    };
+    createLog('critical', req, res, error);
+    return res.status(500).json(error);
+  }
+
+  //assuming session is valid, continue with rest of function
   try {
     if (!isValidCuid(creatorId as string)) {
       const error: ErrorReturn = {

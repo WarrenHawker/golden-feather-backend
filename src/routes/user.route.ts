@@ -9,7 +9,5 @@ export const router = express.Router();
 
 router.get('/', checkRole('admin'), checkStatus('active'), getUsers);
 router.get('/:id', checkRole('admin'), checkStatus('active'), getUserById);
-router.patch('/:id', checkRole('admin'), checkStatus('active'), updateUser);
+router.patch('/:id', updateUser);
 router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteUser);
-
-//TODO allow only admins or the user to update user

@@ -58,6 +58,7 @@ const signInUser = async (req: Request, res: Response) => {
 
   try {
     (req.session as ISession).user = {
+      id: userDB.id,
       role: userDB.role,
       status: userDB.status,
       email: userDB.email,

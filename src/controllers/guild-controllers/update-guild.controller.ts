@@ -10,6 +10,9 @@ import { GuildUpdateData } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import updateGuildDB from '../../services/guild-db-services/update-guild.service';
+import { ISession } from '../../types/express-session';
+import prismaClient from '../../lib/prisma/client.prisma';
+import getUserContent from '../../services/user-db-services/get-user-content.service';
 
 const updateGuild = async (req: Request, res: Response) => {
   let { id: guildId } = req.query;
@@ -25,6 +28,43 @@ const updateGuild = async (req: Request, res: Response) => {
     guildLeader: guild_leader,
   } = req.body;
 
+  /* 
+    guilds can only be updated by admins or the linked user.
+    check for a valid session before continuing.
+  */
+  try {
+    const sessionUser = (req.session as ISession).user;
+
+    if (!sessionUser) {
+      const error: ErrorReturn = {
+        code: 401,
+        message: 'no session found',
+      };
+      return res.status(401).json(error);
+    }
+
+    const { userGuildId } = await getUserContent(sessionUser.id);
+    if (
+      !userGuildId ||
+      userGuildId != guildId ||
+      !(sessionUser.role == 'admin' && sessionUser.status == 'active')
+    ) {
+      const error: ErrorReturn = {
+        code: 403,
+        message: 'unorthorised access',
+      };
+      return res.status(403).json(error);
+    }
+  } catch (err) {
+    const error: ErrorReturn = {
+      code: 500,
+      message: (err as Error).message,
+    };
+    createLog('critical', req, res, error);
+    return res.status(500).json(error);
+  }
+
+  //assuming session is valid, continue with rest of function
   try {
     if (!isValidCuid(guildId as string)) {
       const error: ErrorReturn = {
