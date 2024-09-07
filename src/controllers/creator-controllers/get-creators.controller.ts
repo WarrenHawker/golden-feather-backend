@@ -77,7 +77,7 @@ const getCreators = async (req: Request, res: Response) => {
   }
 
   //if there are any search params, validate and sanitise, then fetch data from main database
-  let { page, limit, name, language, tag, admin } = req.query;
+  let { page, limit, name, lang, tag, admin } = req.query;
   let searchParams: GetCreatorSearchParams = {};
   try {
     if (page) {
@@ -108,8 +108,8 @@ const getCreators = async (req: Request, res: Response) => {
       searchParams.name = escape(name as string).trim();
     }
 
-    if (language) {
-      searchParams.language = escape(language as string).trim();
+    if (lang) {
+      searchParams.language = escape(lang as string).trim();
     }
 
     if (tag) {
