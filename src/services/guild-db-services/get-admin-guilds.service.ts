@@ -5,7 +5,7 @@ import { GetGuildSearchParams } from '../../types/guild';
 const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
   const {
     page = 1,
-    limit = 10,
+    limit = 12,
     name,
     language,
     tags,

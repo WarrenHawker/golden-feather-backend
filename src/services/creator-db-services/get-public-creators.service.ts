@@ -35,7 +35,7 @@ import { GetCreatorSearchParams } from '../../types/creator';
 export const getPublicCreatorsDB = async (
   options: GetCreatorSearchParams = {}
 ) => {
-  const { page = 1, limit = 10, name, language, tags } = options;
+  const { page = 1, limit = 12, name, language, tags } = options;
 
   const searchData: Prisma.CreatorWhereInput = {
     ...(name && {
