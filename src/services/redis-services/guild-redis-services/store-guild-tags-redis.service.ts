@@ -1,9 +1,10 @@
 import { redisClient } from '../../../lib/redis/client.redis';
 import getGuildTagsDB from '../../guild-db-services/get-guild-tags.service';
+import deleteKeyRedis from '../delete-key-redis.service';
 
 const storeGuildTagsRedis = async () => {
-  redisClient.del('guild_tags');
   try {
+    await deleteKeyRedis('guild_tags');
     const { publicTags, allTags } = await getGuildTagsDB();
 
     const public_tags = publicTags.map((tag: { name: any }) => tag.name);

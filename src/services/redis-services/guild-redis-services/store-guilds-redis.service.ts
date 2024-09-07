@@ -1,6 +1,7 @@
 import { redisClient } from '../../../lib/redis/client.redis';
 import Pagination from '../../../types/pagination';
 import getPublicGuildsDB from '../../guild-db-services/get-public-guilds.service';
+import deleteKeyRedis from '../delete-key-redis.service';
 
 type Params = {
   pagination?: Pagination;
@@ -8,9 +9,8 @@ type Params = {
 };
 
 const storeGuildsRedis = async (options: Params = {}) => {
-  redisClient.del('guilds');
-
   try {
+    await deleteKeyRedis('guilds');
     if (!options.guilds || !options.pagination) {
       const { pagination, guilds } = await getPublicGuildsDB();
       guilds.forEach((guild: any) => {

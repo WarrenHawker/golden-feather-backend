@@ -26,6 +26,7 @@
 import { redisClient } from '../../../lib/redis/client.redis';
 import Pagination from '../../../types/pagination';
 import { getPublicCreatorsDB } from '../../creator-db-services/get-public-creators.service';
+import deleteKeyRedis from '../delete-key-redis.service';
 
 type Params = {
   pagination?: Pagination;
@@ -33,9 +34,8 @@ type Params = {
 };
 
 const storeCreatorsRedis = async (options: Params = {}) => {
-  redisClient.del('creators');
-
   try {
+    await deleteKeyRedis('creators');
     if (!options.creators || !options.pagination) {
       const { pagination, creators } = await getPublicCreatorsDB();
       creators.forEach((creator: any) => {

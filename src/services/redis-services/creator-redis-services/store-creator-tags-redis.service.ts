@@ -19,10 +19,11 @@
 
 import { redisClient } from '../../../lib/redis/client.redis';
 import getCreatorTagsDB from '../../creator-db-services/get-creator-tags.service';
+import deleteKeyRedis from '../delete-key-redis.service';
 
 const storeCreatorTagsRedis = async () => {
-  redisClient.del('creator_tags');
   try {
+    await deleteKeyRedis('creator_tags');
     const { publicTags, allTags } = await getCreatorTagsDB();
 
     const public_tags = publicTags.map((tag: { name: any }) => tag.name);
