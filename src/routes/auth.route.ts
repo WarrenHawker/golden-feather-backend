@@ -21,7 +21,7 @@ router.post(
   validateFields(['email']),
   requestPassword
 );
-router.get(
+router.post(
   '/password-reset/validate',
   validateFields(resetFields),
   validateReset
