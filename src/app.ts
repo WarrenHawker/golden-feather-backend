@@ -54,7 +54,7 @@ app.use(
     name: 'sessionId',
     cookie: {
       secure: process.env.NODE_ENV == 'production' ? true : 'auto',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 1000 * 60 * 60 * 24 * 3, //currently set for 3 days, can be changed later on
       sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'lax',
     },
   })

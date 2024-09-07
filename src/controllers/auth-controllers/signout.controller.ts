@@ -14,7 +14,7 @@ const signoutUser = async (req: Request, res: Response) => {
     }
 
     res.clearCookie('sessionId');
-    res.send('Logout successful');
+    res.status(200).json({ message: 'Signout successful' });
   });
 };
 
