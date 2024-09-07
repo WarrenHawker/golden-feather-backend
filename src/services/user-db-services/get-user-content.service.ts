@@ -6,6 +6,7 @@ const getUserContent = async (userId: string) => {
       where: { id: userId },
       include: { guild: true, creator: true },
     });
+
     if (!user) {
       throw new Error('user not found');
     }

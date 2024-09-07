@@ -4,10 +4,9 @@ import { ISession } from '../types/express-session';
 import ErrorReturn from '../types/error-return';
 import createLog from '../services/logger.service';
 
-export const checkRole = (requiredRole: UserRole) => {
+export const checkSession = () => {
   return (req: Request, res: Response, next: NextFunction) => {
     const session = req.session as ISession;
-
     if (!session || !session.user) {
       const error: ErrorReturn = {
         code: 401,
@@ -16,7 +15,13 @@ export const checkRole = (requiredRole: UserRole) => {
       createLog('error', req, res, error);
       return res.status(401).json(error);
     }
+    next();
+  };
+};
 
+export const checkRole = (requiredRole: UserRole) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const session = req.session as ISession;
     if (session.user.role != requiredRole) {
       const error: ErrorReturn = {
         code: 403,
@@ -32,15 +37,6 @@ export const checkRole = (requiredRole: UserRole) => {
 export const checkStatus = (requiredStatus: UserStatus) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const session = req.session as ISession;
-    if (!session || !session.user) {
-      const error: ErrorReturn = {
-        code: 401,
-        message: 'session not found',
-      };
-      createLog('error', req, res, error);
-      return res.status(401).json(error);
-    }
-
     if (session.user.status != requiredStatus) {
       const error: ErrorReturn = {
         code: 403,

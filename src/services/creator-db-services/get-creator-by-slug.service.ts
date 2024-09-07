@@ -29,6 +29,7 @@ export const getCreatorBySlugDB = async (slug: string) => {
     const creator = prismaClient.creator.findUnique({
       where: { slug: slug },
     });
+
     return creator;
   } catch (error) {
     throw error;

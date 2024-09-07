@@ -2,10 +2,15 @@ import express from 'express';
 import signInUser from '../controllers/auth-controllers/signin.controller';
 import signoutUser from '../controllers/auth-controllers/signout.controller';
 import signUpUser from '../controllers/auth-controllers/signup.controller';
-import { checkRole, checkStatus } from '../middleware/require-auth.middleware';
+import {
+  checkRole,
+  checkSession,
+  checkStatus,
+} from '../middleware/require-auth.middleware';
 import validateFields from '../middleware/validate-fields.middleware';
 import requestPassword from '../controllers/auth-controllers/request-password.controller';
 import validateReset from '../controllers/auth-controllers/validate-reset.controller';
+import getUserProfile from '../controllers/auth-controllers/get-user-profile.controller';
 
 export const router = express.Router();
 
@@ -27,7 +32,16 @@ router.post(
   validateReset
 );
 
-//the "admin" route searches for a valid session with admin role - used to access the admin dashboard
-router.get('/admin', checkRole('admin'), checkStatus('active'), (req, res) => {
-  res.status(200).json({ message: 'Welcome to the admin area!' });
-});
+//the "profile" routes searches for a valid session then retrieves the user profile based on the signed in session
+router.get('/profile', checkSession(), getUserProfile);
+
+//the "admin" route searches for a valid session with active admin role - used to access the admin dashboard
+router.get(
+  '/admin',
+  checkSession(),
+  checkRole('admin'),
+  checkStatus('active'),
+  (req, res) => {
+    res.status(200).json({ message: 'Welcome to the admin area!' });
+  }
+);

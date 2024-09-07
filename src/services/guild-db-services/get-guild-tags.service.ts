@@ -27,6 +27,7 @@ const getGuildTagsDB = async () => {
         name: true,
       },
     });
+
     return { publicTags, allTags };
   } catch (error) {
     throw error;

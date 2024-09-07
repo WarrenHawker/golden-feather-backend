@@ -5,6 +5,7 @@ const getGuildBySlugDB = async (slug: string) => {
     const guild = prismaClient.guild.findUnique({
       where: { slug: slug },
     });
+
     return guild;
   } catch (error) {
     throw error;

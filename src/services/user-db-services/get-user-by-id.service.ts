@@ -14,6 +14,7 @@ const getUserByIdDB = async (id: string) => {
         updated_on: true,
       },
     });
+
     return user;
   } catch (error) {
     throw error;
