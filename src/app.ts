@@ -9,7 +9,7 @@ import { router as videoRoutes } from './routes/video.route';
 import { router as tagRoutes } from './routes/tag.route';
 import { router as userRoutes } from './routes/user.route';
 import { router as languageRoutes } from './routes/language.route';
-import { rateLimiter } from './middleware/rate-limiter.middleware';
+import rateLimiter from './middleware/rate-limiter.middleware';
 import compression from 'compression';
 import session from 'express-session';
 import { redisStore } from './lib/redis/client.redis';
@@ -60,10 +60,9 @@ app.use(
     },
   })
 );
-// app.use(rateLimiter);
+app.use(rateLimiter(100, 60 * 1000)); //100 requests per minute for general routes
 
 const apiBasePath = '/api/v1';
-
 app.use(`${apiBasePath}/auth`, authRoutes);
 app.use(`${apiBasePath}/session`, sessionRoutes);
 app.use(`${apiBasePath}/log`, logRoutes);

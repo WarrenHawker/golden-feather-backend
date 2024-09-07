@@ -11,6 +11,7 @@ import validateFields from '../middleware/validate-fields.middleware';
 import requestPassword from '../controllers/auth-controllers/request-password.controller';
 import validateReset from '../controllers/auth-controllers/validate-reset.controller';
 import getUserProfile from '../controllers/auth-controllers/get-user-profile.controller';
+import rateLimiter from '../middleware/rate-limiter.middleware';
 
 export const router = express.Router();
 
@@ -18,8 +19,18 @@ const signinFields = ['email', 'password'];
 const signupFields = ['name', 'email', 'password', 'repeatPassword'];
 const resetFields = ['email', 'password', 'repeatPassword', 'token'];
 
-router.post('/signin', validateFields(signinFields), signInUser);
-router.post('/signup', validateFields(signupFields), signUpUser);
+router.post(
+  '/signin',
+  rateLimiter(3, 60 * 1000),
+  validateFields(signinFields),
+  signInUser
+);
+router.post(
+  '/signup',
+  rateLimiter(3, 60 * 1000),
+  validateFields(signupFields),
+  signUpUser
+);
 router.post('/signout', signoutUser);
 router.post(
   '/password-reset/request',
