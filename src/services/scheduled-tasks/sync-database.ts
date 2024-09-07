@@ -25,6 +25,7 @@ import storeCreatorTagsRedis from '../redis-services/creator-redis-services/stor
 import storeCreatorsRedis from '../redis-services/creator-redis-services/store-creators-redis.service';
 import storeGuildTagsRedis from '../redis-services/guild-redis-services/store-guild-tags-redis.service';
 import storeGuildsRedis from '../redis-services/guild-redis-services/store-guilds-redis.service';
+import storeLanguagesRedis from '../redis-services/language-redis-services/store-languages-redis.service';
 
 const redisConnect = {
   connection: IOredisClient,
@@ -47,6 +48,7 @@ const syncDatabase = async () => {
         await storeGuildsRedis();
         await storeCreatorTagsRedis();
         await storeGuildTagsRedis();
+        await storeLanguagesRedis();
       }
     },
     redisConnect

@@ -18,6 +18,7 @@ import createUserDB from './services/user-db-services/create-user.service';
 import creators from './utils/dummy-data/dummy-creators-2';
 import guilds from './utils/dummy-data/dummy-guilds';
 import users from './utils/dummy-data/dummy-users';
+import storeLanguagesRedis from './services/redis-services/language-redis-services/store-languages-redis.service';
 
 const port = process.env.PORT || 5000;
 
@@ -76,6 +77,7 @@ app.listen(port, async () => {
     await storeGuildsRedis();
     await storeGuildTagsRedis();
     await storeCreatorTagsRedis();
+    await storeLanguagesRedis();
 
     //scheduled tasks
     maintainTwitchToken();

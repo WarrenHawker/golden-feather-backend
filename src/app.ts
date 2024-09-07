@@ -8,6 +8,7 @@ import { router as guildRoutes } from './routes/guild.route';
 import { router as videoRoutes } from './routes/video.route';
 import { router as tagRoutes } from './routes/tag.route';
 import { router as userRoutes } from './routes/user.route';
+import { router as languageRoutes } from './routes/language.route';
 import { rateLimiter } from './middleware/rate-limiter.middleware';
 import compression from 'compression';
 import session from 'express-session';
@@ -71,6 +72,7 @@ app.use(`${apiBasePath}/creator`, creatorRoutes);
 app.use(`${apiBasePath}/video`, videoRoutes);
 app.use(`${apiBasePath}/tag`, tagRoutes);
 app.use(`${apiBasePath}/user`, userRoutes);
+app.use(`${apiBasePath}/language`, languageRoutes);
 
 //catch-all if the requested route or method doesn't exist.
 app.use((req: Request, res: Response) => {
