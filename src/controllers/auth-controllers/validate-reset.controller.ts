@@ -51,7 +51,7 @@ const validateReset = async (req: Request, res: Response) => {
 
     email = normalizeEmail(email, { gmail_remove_dots: false });
 
-    if (!data.email != email) {
+    if (data.email != email) {
       const error: ErrorReturn = {
         code: 400,
         message: 'request body email does not match token email',
