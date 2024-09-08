@@ -78,7 +78,7 @@ const validateReset = async (req: Request, res: Response) => {
     });
 
     await deleteKeyRedis(`passwordReset:token:${token}`);
-    res.sendStatus(200);
+    return res.status(200).json({ message: 'success' });
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,

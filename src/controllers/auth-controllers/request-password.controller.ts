@@ -44,7 +44,7 @@ const requestPassword = async (req: Request, res: Response) => {
     const { text, html } = passwordResetEmailTemplate(resetUrl, userIP, now);
     await sendEmail(email, 'password reset request', html, text);
 
-    return res.sendStatus(201);
+    return res.status(201).json({ message: 'success' });
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,

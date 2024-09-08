@@ -12,7 +12,7 @@ const signoutUser = async (req: Request, res: Response) => {
     }
 
     res.clearCookie('sessionId');
-    return res.sendStatus(200);
+    return res.status(200).json({ message: 'success' });
   });
 };
 
