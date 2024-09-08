@@ -5,6 +5,7 @@ import { redisClient } from '../../lib/redis/client.redis';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
 import csrf from 'csurf';
+import logCritical from '../../services/logger-services/log-critical.service';
 
 const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
 const csrfProtection = csrf({ cookie: true });
@@ -88,8 +89,11 @@ const signInUser = async (req: Request, res: Response) => {
     const error: ErrorReturn = {
       code: 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    res.status(500).json(error);
+    logCritical({ req, res, error });
+    return;
   }
 };
 

@@ -5,7 +5,7 @@ import criticalErrorTemplate from '../../utils/templates/critical-error.template
 import sendEmail from '../email.service';
 import createLogMongo from '../mongo-services/create-log-mongo.service';
 
-const logError = async (data: LogsCreateData) => {
+const logCritical = async (data: LogsCreateData) => {
   const { req, res, error } = data;
   try {
     const newLogData: LogData = {
@@ -52,4 +52,4 @@ const logError = async (data: LogsCreateData) => {
   }
 };
 
-export default logError;
+export default logCritical;
