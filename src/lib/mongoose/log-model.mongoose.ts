@@ -4,19 +4,24 @@ import paginate from 'mongoose-paginate-v2';
 const { Schema } = mongoose;
 
 // LogData interface that matches the structure of the logSchema
-interface LogData {
+export interface LogData {
+  logLevel: 'info' | 'error' | 'critical';
   timestamp: string;
-  responseTimeMS: number;
+  responseTimeMS: number | null;
   url: string;
   method: string;
   code: number;
   headers: {
     userAgent: string;
+    referer?: string | null;
+    contentType?: string;
+    authorization?: 'present' | 'absent';
   };
-  message: string;
-  ip: string;
-  body?: any; // Assuming Mixed type for body
+  message?: string;
+  ip?: string;
+  body?: any;
   userId?: string;
+  stackTrace?: string;
 }
 
 // LogDocument that extends mongoose.Document and LogData
@@ -25,13 +30,17 @@ interface LogDocument extends mongoose.Document, LogData {}
 // Log schema definition
 export const logSchema = new Schema<LogDocument>(
   {
+    logLevel: { type: String, required: true },
     timestamp: { type: String, required: true },
-    responseTimeMS: { type: Number, required: true },
+    responseTimeMS: { type: Number || null, required: true },
     url: { type: String, required: true },
     method: { type: String, required: true },
     code: { type: Number, required: true },
     headers: {
       userAgent: { type: String, required: true },
+      referer: { type: String || null },
+      contentType: { type: String },
+      authorization: { type: String },
     },
     message: { type: String, required: true },
     ip: { type: String, required: true },

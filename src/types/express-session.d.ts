@@ -1,7 +1,7 @@
 import { UserRole, UserStatus } from '@prisma/client';
 import { Session } from 'express-session';
 
-export interface ISession extends Session {
+interface ISession extends Session {
   user: {
     id: string;
     role: UserRole;
@@ -12,7 +12,7 @@ export interface ISession extends Session {
   };
 }
 
-export type SessionSearchData = {
+type SessionSearchData = {
   role?: UserRole;
   status?: UserStatus;
   email?: { contains: string; mode?: any };

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import ErrorReturn from '../../types/error-return';
 import getGuildTagsRedis from '../../services/redis-services/guild-redis-services/get-guild-tags.service';
 import { ISession } from '../../types/express-session';
 import getGuildTagsDB from '../../services/db-services/guild-db-services/get-guild-tags.service';

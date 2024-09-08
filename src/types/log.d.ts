@@ -1,3 +1,5 @@
+import { Request, Response } from 'express';
+
 type LogLevel = 'info' | 'error' | 'critical';
 type ReqMethod =
   | 'GET'
@@ -21,8 +23,8 @@ type ResCode = 200 | 201 | 400 | 401 | 403 | 404 | 500 | 502 | 503;
   Basic log data, used in all logs
   complete for successful GET requests (level: info)
 */
-export interface logDataBasic {
-  level: LogLevel;
+interface logDataBasic {
+  logLevel: LogLevel = 'info';
   timestamp: string;
   responseTimeMS: number | null;
   url: string;
@@ -34,7 +36,7 @@ export interface logDataBasic {
 }
 
 //404 errors from GET requests (level: info)
-export interface logDataGet404 extends logDataBasic {
+interface logDataGet404 extends logDataBasic {
   message: string;
   headers: {
     userAgent: string;
@@ -43,7 +45,7 @@ export interface logDataGet404 extends logDataBasic {
 }
 
 //successful POST, PATCH or DELETE requests (level: info)
-export interface logDataSuccess extends logDataBasic {
+interface logDataSuccess extends logDataBasic {
   body?: any;
   ip: string;
   headers: {
@@ -56,11 +58,19 @@ export interface logDataSuccess extends logDataBasic {
 }
 
 //4xx errors from POST, PATCH or DELETE requests (level: error)
-export interface logDataError extends logDataSuccess {
+interface logDataError extends logDataSuccess {
+  logLevel: LogLevel = 'error';
   message: string;
 }
 
 //5xx errors from any request (level: critical)
-export interface logDataCritical extends logDataError {
+interface logDataCritical extends logDataError {
+  logLevel: LogLevel = 'critical';
   stackTrace?: string;
 }
+
+type LogsCreateData = {
+  req: Request;
+  res: Response;
+  error?: ErrorReturn;
+};

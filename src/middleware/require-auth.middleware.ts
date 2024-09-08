@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserRole, UserStatus } from '@prisma/client';
 import { ISession } from '../types/express-session';
-import ErrorReturn from '../types/error-return';
 
 export const checkSession = () => {
   return (req: Request, res: Response, next: NextFunction) => {

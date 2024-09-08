@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { escape } from 'validator';
-import ErrorReturn from '../../types/error-return';
 import {
   isContentStatus,
   isValidCuid,

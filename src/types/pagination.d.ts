@@ -4,5 +4,3 @@ type Pagination = {
   entries: number;
   totalEntries: number;
 };
-
-export default Pagination;

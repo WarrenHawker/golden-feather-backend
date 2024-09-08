@@ -5,7 +5,6 @@ import {
   isValidCuid,
   isValidVideoUrl,
 } from '../../utils/functions/validate-input.function';
-import ErrorReturn from '../../types/error-return';
 import { CreatorUpdateData } from '../../types/creator';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';

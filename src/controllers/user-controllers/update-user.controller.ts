@@ -1,4 +1,3 @@
-import ErrorReturn from '../../types/error-return';
 import { Request, Response } from 'express';
 import { UserUpdateData } from '../../types/user';
 import {

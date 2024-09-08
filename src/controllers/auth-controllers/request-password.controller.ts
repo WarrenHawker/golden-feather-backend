@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { isEmail, normalizeEmail } from 'validator';
-import ErrorReturn from '../../types/error-return';
 import prismaClient from '../../lib/prisma/client.prisma';
 import crypto from 'crypto';
 import passwordResetEmailTemplate from '../../utils/templates/password-reset.template';

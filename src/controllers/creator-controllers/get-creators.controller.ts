@@ -40,7 +40,6 @@ import { isNumber } from '../../utils/functions/validate-input.function';
 import getCreatorsRedis from '../../services/redis-services/creator-redis-services/get-creators-redis.service';
 import storeCreatorsRedis from '../../services/redis-services/creator-redis-services/store-creators-redis.service';
 import { GetCreatorSearchParams } from '../../types/creator';
-import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import { getAdminCreatorsDB } from '../../services/db-services/creator-db-services/get-admin-creators.service';

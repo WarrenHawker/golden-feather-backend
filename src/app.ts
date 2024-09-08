@@ -1,7 +1,6 @@
 import cors from 'cors';
 import express, { json, Request, Response } from 'express';
 import { redisStore } from './lib/redis/client.redis';
-import ErrorReturn from './types/error-return';
 import { compressionMiddleware } from './middleware/compression.middleware';
 import { createSessionConfig } from './middleware/session.middleware';
 import { corsOptions } from './middleware/cors.middleware';

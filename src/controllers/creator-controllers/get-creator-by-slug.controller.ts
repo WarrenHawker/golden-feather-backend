@@ -26,7 +26,6 @@
  */
 
 import { Request, Response } from 'express';
-import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import { getCreatorBySlugDB } from '../../services/db-services/creator-db-services/get-creator-by-slug.service';
 

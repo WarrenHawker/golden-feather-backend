@@ -1,5 +1,4 @@
 import { redisClient } from '../../../lib/redis/client.redis';
-import Pagination from '../../../types/pagination';
 
 const getGuildsRedis = async () => {
   try {

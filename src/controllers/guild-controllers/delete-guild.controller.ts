@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import ErrorReturn from '../../types/error-return';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
 import deleteGuildDB from '../../services/db-services/guild-db-services/delete-guild.service';
 

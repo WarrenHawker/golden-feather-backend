@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { redisClient } from '../../lib/redis/client.redis';
 import prismaClient from '../../lib/prisma/client.prisma';
-import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import csrf from 'csurf';
 

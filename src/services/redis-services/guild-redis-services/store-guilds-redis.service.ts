@@ -1,5 +1,4 @@
 import { redisClient } from '../../../lib/redis/client.redis';
-import Pagination from '../../../types/pagination';
 import getPublicGuildsDB from '../../db-services/guild-db-services/get-public-guilds.service';
 import deleteKeyRedis from '../delete-key-redis.service';
 

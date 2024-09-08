@@ -31,7 +31,6 @@ const { google } = require('googleapis');
 import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';
 import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
-import ErrorReturn from '../../types/error-return';
 import { Request, Response } from 'express';
 
 const youtube = google.youtube({

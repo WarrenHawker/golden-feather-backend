@@ -1,7 +1,7 @@
 import { ContentStatus } from '@prisma/client';
 import { SocialLinks } from './social-links';
 
-export type GuildCreationData = {
+type GuildCreationData = {
   name: string;
   description: string;
   guild_leader?: string;
@@ -13,7 +13,7 @@ export type GuildCreationData = {
   socials: SocialLinks;
 };
 
-export type GetGuildSearchParams = {
+type GetGuildSearchParams = {
   page?: number;
   limit?: number;
   name?: string;
@@ -23,7 +23,7 @@ export type GetGuildSearchParams = {
   region?: string;
 };
 
-export type GuildUpdateData = {
+type GuildUpdateData = {
   name?: string;
   description?: string;
   guild_leader?: string;

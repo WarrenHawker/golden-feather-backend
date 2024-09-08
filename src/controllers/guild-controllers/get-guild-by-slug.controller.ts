@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import getGuildBySlugDB from '../../services/db-services/guild-db-services/get-guild-by-slug.service';
 

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import ErrorReturn from '../../types/error-return';
 import { isEmail, isStrongPassword, normalizeEmail } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
 import bcrypt from 'bcrypt';

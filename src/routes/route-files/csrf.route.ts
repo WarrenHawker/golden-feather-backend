@@ -1,5 +1,4 @@
 import express from 'express';
-import ErrorReturn from '../../types/error-return';
 import rateLimiter from '../../middleware/rate-limiter.middleware';
 
 export const router = express.Router();

@@ -1,7 +1,6 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import ErrorReturn from '../../types/error-return';
 import { UserRole, UserStatus } from '@prisma/client';
 import prismaClient from '../../lib/prisma/client.prisma';
 import createUserDB from '../../services/db-services/user-db-services/create-user.service';

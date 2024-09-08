@@ -2,6 +2,5 @@ type ErrorReturn = {
   code: number;
   message: string;
   params?: string[];
+  stack?: string;
 };
-
-export default ErrorReturn;

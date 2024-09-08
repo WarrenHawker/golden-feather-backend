@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { escape } from 'validator';
 import getGuildsRedis from '../../services/redis-services/guild-redis-services/get-guilds-redis.service';
 import storeGuildsRedis from '../../services/redis-services/guild-redis-services/store-guilds-redis.service';
-import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import { GetGuildSearchParams } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';

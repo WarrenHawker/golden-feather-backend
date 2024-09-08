@@ -6,5 +6,3 @@ type SocialLinks = {
   facebook?: string;
   instagram?: string;
 };
-
-export default SocialLinks;

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import validator from 'validator';
 import { GetUserSearchParams } from '../../types/user';
-import ErrorReturn from '../../types/error-return';
 import {
   isNumber,
   isUserRole,
