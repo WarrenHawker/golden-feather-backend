@@ -9,8 +9,10 @@ import {
   checkStatus,
 } from '../../middleware/require-auth.middleware';
 import validateFields from '../../middleware/validate-fields.middleware';
+import csrf from 'csurf';
 
 export const router = express.Router();
+
 const createFields = [
   'name',
   'description',
@@ -23,6 +25,9 @@ const createFields = [
 
 router.get('/', getCreators);
 router.get('/:slug', getCreatorBySlug);
+
+// CSRF protection is applied to the below routes
+router.use(csrf({ cookie: true }));
 
 router.post(
   '/',

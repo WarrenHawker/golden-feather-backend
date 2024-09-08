@@ -5,10 +5,8 @@ const deleteKeyRedis = async (key: string) => {
     const result = await redisClient.del(key);
 
     if (result === 1) {
-      console.log(`Key '${key}' deleted successfully.`);
       return true;
     } else {
-      console.log(`Key '${key}' not found or already deleted.`);
       return false;
     }
   } catch (error) {

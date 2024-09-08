@@ -6,7 +6,6 @@ import {
   isValidCuid,
   isValidVideoUrl,
 } from '../../utils/functions/validate-input.function';
-import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
@@ -62,7 +61,6 @@ const createCreator = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

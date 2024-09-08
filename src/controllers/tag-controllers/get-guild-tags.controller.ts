@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
 import getGuildTagsRedis from '../../services/redis-services/guild-redis-services/get-guild-tags.service';
 import { ISession } from '../../types/express-session';
-import createLog from '../../services/logger.service';
 import getGuildTagsDB from '../../services/db-services/guild-db-services/get-guild-tags.service';
 
 const getGuildTags = async (req: Request, res: Response) => {
@@ -47,7 +46,6 @@ const getGuildTags = async (req: Request, res: Response) => {
         code: 500,
         message: (err as Error).message,
       };
-      createLog('critical', req, res, error);
       return res.status(500).json(error);
     }
   }

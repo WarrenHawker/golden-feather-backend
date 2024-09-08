@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import { isEmail, isStrongPassword, normalizeEmail } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
@@ -79,13 +78,12 @@ const validateReset = async (req: Request, res: Response) => {
     });
 
     await deleteKeyRedis(`passwordReset:token:${token}`);
-    res.status(200).json({ message: 'password updated successfully' });
+    res.sendStatus(200);
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

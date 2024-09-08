@@ -43,7 +43,6 @@ import { GetCreatorSearchParams } from '../../types/creator';
 import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
-import createLog from '../../services/logger.service';
 import { getAdminCreatorsDB } from '../../services/db-services/creator-db-services/get-admin-creators.service';
 import { getPublicCreatorsDB } from '../../services/db-services/creator-db-services/get-public-creators.service';
 
@@ -70,7 +69,6 @@ const getCreators = async (req: Request, res: Response) => {
           code: 500,
           message: (err as Error).message,
         };
-        createLog('critical', req, res, error);
         return res.status(500).json(error);
       }
     }
@@ -121,7 +119,6 @@ const getCreators = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 
@@ -169,7 +166,6 @@ const getCreators = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

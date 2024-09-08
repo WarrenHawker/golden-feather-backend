@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
 import { ISession } from '../../types/express-session';
-import createLog from '../../services/logger.service';
 import getGuildBySlugDB from '../../services/db-services/guild-db-services/get-guild-by-slug.service';
 
 const getGuildBySlug = async (req: Request, res: Response) => {
@@ -44,7 +43,6 @@ const getGuildBySlug = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

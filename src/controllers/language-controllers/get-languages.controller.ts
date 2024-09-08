@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
-import createLog from '../../services/logger.service';
 import getLanguagesRedis from '../../services/redis-services/language-redis-services/get-languages-redis.service';
 import getLanguagesDB from '../../services/db-services/language-db-services/get-languages-db.service';
 
@@ -24,7 +23,6 @@ const getLanguages = async (req: Request, res: Response) => {
         code: 500,
         message: (err as Error).message,
       };
-      createLog('critical', req, res, error);
       return res.status(500).json(error);
     }
   }

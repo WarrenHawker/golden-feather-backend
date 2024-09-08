@@ -7,10 +7,15 @@ import {
   checkRole,
   checkStatus,
 } from '../../middleware/require-auth.middleware';
+import csrf from 'csurf';
 
 export const router = express.Router();
 
 router.get('/', checkRole('admin'), checkStatus('active'), getUsers);
 router.get('/:id', checkRole('admin'), checkStatus('active'), getUserById);
+
+// CSRF protection is applied to the below routes
+router.use(csrf({ cookie: true }));
+
 router.patch('/:id', updateUser);
 router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteUser);

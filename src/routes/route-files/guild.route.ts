@@ -9,6 +9,7 @@ import {
   checkStatus,
 } from '../../middleware/require-auth.middleware';
 import validateFields from '../../middleware/validate-fields.middleware';
+import csrf from 'csurf';
 
 export const router = express.Router();
 
@@ -23,6 +24,11 @@ const createFields = [
 ];
 
 router.get('/', getGuilds);
+router.get('/:slug', getGuildBySlug);
+
+// CSRF protection is applied to the below routes
+router.use(csrf({ cookie: true }));
+
 router.post(
   '/',
   checkRole('admin'),
@@ -31,5 +37,4 @@ router.post(
   createGuild
 );
 router.patch('/:id', updateGuild);
-router.get('/:slug', getGuildBySlug);
 router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteGuild);

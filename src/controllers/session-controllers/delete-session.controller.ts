@@ -26,7 +26,6 @@
 
 import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
-import createLog from '../../services/logger.service';
 
 const deleteSession = async (req: Request, res: Response) => {
   const sessionId = req.params.id;
@@ -58,7 +57,6 @@ const deleteSession = async (req: Request, res: Response) => {
         code: 500,
         message: (err as Error).message,
       };
-      createLog('critical', req, res, error);
       return res.status(500).json(error);
     }
     res.sendStatus(200).json({ message: 'session destroyed successfully' });

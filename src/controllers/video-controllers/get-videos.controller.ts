@@ -30,7 +30,6 @@
 const { google } = require('googleapis');
 import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';
-import createLog from '../../services/logger.service';
 import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
 import ErrorReturn from '../../types/error-return';
 import { Request, Response } from 'express';
@@ -114,7 +113,6 @@ const getHomepageVideos = async (req: Request, res: Response) => {
       message: (err as Error).message,
     };
     res.status(500).json(error);
-    createLog('critical', req, res, error);
     return;
   }
 };

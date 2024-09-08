@@ -8,7 +8,6 @@ import {
   isUserStatus,
 } from '../../utils/functions/validate-input.function';
 import { UserRole, UserStatus } from '@prisma/client';
-import createLog from '../../services/logger.service';
 import getUsersDB from '../../services/db-services/user-db-services/get-users.service';
 
 const { escape } = validator;
@@ -73,7 +72,6 @@ const getUsers = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 
@@ -91,7 +89,6 @@ const getUsers = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

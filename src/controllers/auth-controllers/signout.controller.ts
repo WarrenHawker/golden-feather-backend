@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 
 const signoutUser = async (req: Request, res: Response) => {
@@ -9,12 +8,11 @@ const signoutUser = async (req: Request, res: Response) => {
         code: 500,
         message: (err as Error).message,
       };
-      createLog('critical', req, res, error);
       return res.status(500).json(error);
     }
 
     res.clearCookie('sessionId');
-    return res.status(200).json({ message: 'Signout successful' });
+    return res.sendStatus(200);
   });
 };
 

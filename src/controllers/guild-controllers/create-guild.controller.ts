@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { escape } from 'validator';
-import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import {
   isContentStatus,
@@ -62,7 +61,6 @@ const createGuild = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

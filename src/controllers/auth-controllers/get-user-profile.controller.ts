@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { ISession } from '../../types/express-session';
-import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import getUserByIdDB from '../../services/db-services/user-db-services/get-user-by-id.service';
 
@@ -22,7 +21,6 @@ const getUserProfile = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

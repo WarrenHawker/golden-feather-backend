@@ -5,7 +5,7 @@ const initializeMongoDatabase = async () => {
 
   // Connect to the MongoDB server
   await mongoose.connect(mongodb, {
-    dbName: 'golden_feather_logs',
+    dbName: 'golden_feather',
   });
 
   const db = mongoose.connection;

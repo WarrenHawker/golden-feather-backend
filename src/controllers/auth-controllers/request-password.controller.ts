@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { isEmail, normalizeEmail } from 'validator';
 import ErrorReturn from '../../types/error-return';
 import prismaClient from '../../lib/prisma/client.prisma';
-import createLog from '../../services/logger.service';
 import crypto from 'crypto';
 import passwordResetEmailTemplate from '../../utils/templates/password-reset.template';
 import formatDate from '../../utils/functions/format-date.function';
@@ -45,13 +44,12 @@ const requestPassword = async (req: Request, res: Response) => {
     const { text, html } = passwordResetEmailTemplate(resetUrl, userIP, now);
     await sendEmail(email, 'password reset request', html, text);
 
-    return res.status(201).json({ message: 'password reset email sent' });
+    return res.sendStatus(201);
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

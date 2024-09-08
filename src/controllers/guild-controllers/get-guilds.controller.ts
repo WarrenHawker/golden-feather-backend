@@ -7,7 +7,6 @@ import { ISession } from '../../types/express-session';
 import { GetGuildSearchParams } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import { isNumber } from '../../utils/functions/validate-input.function';
-import createLog from '../../services/logger.service';
 import getAdminGuildsDB from '../../services/db-services/guild-db-services/get-admin-guilds.service';
 import getPublicGuildsDB from '../../services/db-services/guild-db-services/get-public-guilds.service';
 
@@ -34,7 +33,6 @@ const getGuilds = async (req: Request, res: Response) => {
           code: 500,
           message: (err as Error).message,
         };
-        createLog('critical', req, res, error);
         return res.status(500).json(error);
       }
     }
@@ -89,7 +87,6 @@ const getGuilds = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 
@@ -137,7 +134,6 @@ const getGuilds = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };

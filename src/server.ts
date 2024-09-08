@@ -18,24 +18,24 @@ app.listen(port, async () => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await initializeMongoDatabase();
-    redisClient.flushAll();
+    // redisClient.flushAll();
 
     //add dummy creators and guilds
     //await setDummyCreators();
     //await setDummyGuilds();
     //await setDummyUsers();
 
-    await generateTwitchToken();
+    // await generateTwitchToken();
 
-    await storeCreatorsRedis();
-    await storeGuildsRedis();
-    await storeGuildTagsRedis();
-    await storeCreatorTagsRedis();
-    await storeLanguagesRedis();
+    // await storeCreatorsRedis();
+    // await storeGuildsRedis();
+    // await storeGuildTagsRedis();
+    // await storeCreatorTagsRedis();
+    // await storeLanguagesRedis();
 
     //scheduled tasks
-    maintainTwitchToken();
-    syncDatabase();
+    // maintainTwitchToken();
+    // syncDatabase();
 
     console.log(
       `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`

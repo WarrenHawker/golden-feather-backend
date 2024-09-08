@@ -1,22 +1,26 @@
 import cors from 'cors';
 import express, { json, Request, Response } from 'express';
-import rateLimiter from './middleware/rate-limiter.middleware';
 import { redisStore } from './lib/redis/client.redis';
 import ErrorReturn from './types/error-return';
 import { compressionMiddleware } from './middleware/compression.middleware';
 import { createSessionConfig } from './middleware/session.middleware';
 import { corsOptions } from './middleware/cors.middleware';
+import cookieParser from 'cookie-parser';
 import routes from './routes';
+import { measureResponseTime } from './middleware/response-time.middleware';
+import rateLimiter from './middleware/rate-limiter.middleware';
 
 export const app = express();
 
 app.set('trust proxy', 1);
 app.use(cors(corsOptions));
-app.use(rateLimiter(100, 60 * 1000)); //100 requests per minute for general routes
+app.use(cookieParser());
+app.use(rateLimiter());
+app.use(createSessionConfig(redisStore));
 app.use(compressionMiddleware);
 app.use(json());
 app.use(express.urlencoded({ extended: true }));
-app.use(createSessionConfig(redisStore));
+app.use(measureResponseTime);
 
 app.use(routes);
 

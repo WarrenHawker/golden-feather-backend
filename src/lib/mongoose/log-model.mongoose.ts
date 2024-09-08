@@ -1,78 +1,83 @@
-import mongoose, { model } from 'mongoose';
+import mongoose, { model, PaginateModel } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
-import { LogRequestData, LogData } from '../../types/log';
+
 const { Schema } = mongoose;
 
-const logRequestDataSchema = new Schema<LogRequestData>(
-  {
-    url: { type: String, required: true },
-    method: {
-      type: String,
-      enum: ['GET', 'POST', 'PATCH', 'DELETE'],
-      required: true,
-    },
-    ip: { type: String, required: true },
-    body: { type: Object },
-    headers: { type: Object },
-  },
-  { _id: false }
-);
+// LogData interface that matches the structure of the logSchema
+interface LogData {
+  timestamp: string;
+  responseTimeMS: number;
+  url: string;
+  method: string;
+  code: number;
+  headers: {
+    userAgent: string;
+  };
+  message: string;
+  ip: string;
+  body?: any; // Assuming Mixed type for body
+  userId?: string;
+}
 
-export const logSchema = new Schema(
+// LogDocument that extends mongoose.Document and LogData
+interface LogDocument extends mongoose.Document, LogData {}
+
+// Log schema definition
+export const logSchema = new Schema<LogDocument>(
   {
-    level: {
-      type: String,
-      required: true,
-      enum: ['info', 'warn', 'error', 'critical'],
+    timestamp: { type: String, required: true },
+    responseTimeMS: { type: Number, required: true },
+    url: { type: String, required: true },
+    method: { type: String, required: true },
+    code: { type: Number, required: true },
+    headers: {
+      userAgent: { type: String, required: true },
     },
-    message: {
-      type: String,
-      required: true,
-    },
-    timestamp: {
-      type: Date,
-      required: true,
-    },
-    responseCode: {
-      type: Number,
-      required: true,
-    },
-    request: {
-      type: logRequestDataSchema,
-      required: true,
-    },
+    message: { type: String, required: true },
+    ip: { type: String, required: true },
+    body: { type: mongoose.Schema.Types.Mixed },
+    userId: { type: String },
   },
   { versionKey: false }
 );
 
+// Apply the pagination plugin to the schema
 logSchema.plugin(paginate);
 
-export const getLogModelForMonth = async (collectionName: string) => {
+// Function to return the paginated model for the specified collection
+export const getLogModelForMonth = async (
+  collectionName: string
+): Promise<PaginateModel<LogDocument>> => {
   const db = mongoose.connection.db;
 
-  // Check if the collection exists
-  const collections = await db
-    .listCollections({ name: collectionName })
-    .toArray();
+  try {
+    // Check if the collection exists
+    const collections = await db
+      .listCollections({ name: collectionName })
+      .toArray();
 
-  if (collections.length === 0) {
-    // Create the collection with zstd compression
-    await db.createCollection(collectionName, {
-      storageEngine: {
-        wiredTiger: {
-          configString: 'block_compressor=zstd',
+    if (collections.length === 0) {
+      // Create the collection with zstd compression
+      await db.createCollection(collectionName, {
+        storageEngine: {
+          wiredTiger: {
+            configString: 'block_compressor=zstd',
+          },
         },
-      },
-    });
-    console.log(`Created collection ${collectionName} with zstd compression.`);
+      });
+      console.log(
+        `Created collection ${collectionName} with zstd compression.`
+      );
+    }
+
+    // Return the Mongoose model for the collection
+    return model<LogDocument, PaginateModel<LogDocument>>(
+      collectionName,
+      logSchema,
+      collectionName
+    );
+  } catch (error) {
+    console.error(`Error creating collection ${collectionName}:`, error);
+    throw error; // Rethrow error to be handled by calling code
   }
-
-  // Return the Mongoose model for the collection
-  return model<LogDocument, mongoose.PaginateModel<LogDocument>>(
-    collectionName,
-    logSchema,
-    collectionName
-  );
 };
-
-interface LogDocument extends mongoose.Document, LogData {}

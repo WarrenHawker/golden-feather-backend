@@ -1,7 +1,6 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import { UserRole, UserStatus } from '@prisma/client';
 import prismaClient from '../../lib/prisma/client.prisma';
@@ -74,7 +73,6 @@ const signUpUser = async (req: Request, res: Response) => {
       code: 500,
       message: (err as Error).message,
     };
-    createLog('critical', req, res, error);
     return res.status(500).json(error);
   }
 };
