@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import deleteGuildDB from '../../services/guild-db-services/delete-guild.service';
 import ErrorReturn from '../../types/error-return';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
 import createLog from '../../services/logger.service';
+import deleteGuildDB from '../../services/db-services/guild-db-services/delete-guild.service';
 
 const deleteGuild = async (req: Request, res: Response) => {
   const { id } = req.params;

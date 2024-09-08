@@ -4,7 +4,6 @@ import ErrorReturn from '../../types/error-return';
 import prismaClient from '../../lib/prisma/client.prisma';
 import createLog from '../../services/logger.service';
 import crypto from 'crypto';
-import { redisClient } from '../../lib/redis/client.redis';
 import passwordResetEmailTemplate from '../../utils/templates/password-reset.template';
 import formatDate from '../../utils/functions/format-date.function';
 import sendEmail from '../../services/email.service';

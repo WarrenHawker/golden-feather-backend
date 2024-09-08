@@ -27,10 +27,10 @@
 
 import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
-import getCreatorTagsDB from '../../services/creator-db-services/get-creator-tags.service';
 import getCreatorTagsRedis from '../../services/redis-services/creator-redis-services/get-creator-tags-redis.service';
 import { ISession } from '../../types/express-session';
 import createLog from '../../services/logger.service';
+import getCreatorTagsDB from '../../services/db-services/creator-db-services/get-creator-tags.service';
 
 const getCreatorTags = async (req: Request, res: Response) => {
   const { admin } = req.query;

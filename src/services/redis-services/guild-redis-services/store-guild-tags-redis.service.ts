@@ -1,5 +1,5 @@
 import { redisClient } from '../../../lib/redis/client.redis';
-import getGuildTagsDB from '../../guild-db-services/get-guild-tags.service';
+import getGuildTagsDB from '../../db-services/guild-db-services/get-guild-tags.service';
 import deleteKeyRedis from '../delete-key-redis.service';
 
 const storeGuildTagsRedis = async () => {

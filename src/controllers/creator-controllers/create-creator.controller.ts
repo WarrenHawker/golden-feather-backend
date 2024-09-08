@@ -6,11 +6,11 @@ import {
   isValidCuid,
   isValidVideoUrl,
 } from '../../utils/functions/validate-input.function';
-import { createCreatorDB } from '../../services/creator-db-services/create-creator.service';
 import createLog from '../../services/logger.service';
 import ErrorReturn from '../../types/error-return';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
+import { createCreatorDB } from '../../services/db-services/creator-db-services/create-creator.service';
 
 const createCreator = async (req: Request, res: Response) => {
   let { name, description, videoUrl, socials, tags, language, status, userId } =

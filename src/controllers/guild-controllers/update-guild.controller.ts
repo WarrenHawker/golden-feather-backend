@@ -9,10 +9,9 @@ import {
 import { GuildUpdateData } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
-import updateGuildDB from '../../services/guild-db-services/update-guild.service';
 import { ISession } from '../../types/express-session';
-import prismaClient from '../../lib/prisma/client.prisma';
-import getUserContent from '../../services/user-db-services/get-user-content.service';
+import updateGuildDB from '../../services/db-services/guild-db-services/update-guild.service';
+import getUserContent from '../../services/db-services/user-db-services/get-user-content.service';
 
 const updateGuild = async (req: Request, res: Response) => {
   let { id: guildId } = req.query;

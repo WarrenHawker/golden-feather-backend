@@ -4,9 +4,9 @@ import ErrorReturn from '../../types/error-return';
 import { isEmail, isStrongPassword, normalizeEmail } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
 import bcrypt from 'bcrypt';
-import updateUserDB from '../../services/user-db-services/update-user.service';
 import getResetTokenRedis from '../../services/redis-services/auth-redis-services/get-reset-token-redis.services';
 import deleteKeyRedis from '../../services/redis-services/delete-key-redis.service';
+import updateUserDB from '../../services/db-services/user-db-services/update-user.service';
 
 const validateReset = async (req: Request, res: Response) => {
   let { email, password, repeatPassword, token } = req.body;

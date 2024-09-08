@@ -1,5 +1,5 @@
 import { redisClient } from '../../../lib/redis/client.redis';
-import getLanguagesDB from '../../language-db-services/get-languages-db.service';
+import getLanguagesDB from '../../db-services/language-db-services/get-languages-db.service';
 import deleteKeyRedis from '../delete-key-redis.service';
 
 const storeLanguagesRedis = async () => {

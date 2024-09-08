@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import ErrorReturn from '../../types/error-return';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
-import deleteUserDB from '../../services/user-db-services/delete-user.service';
 import createLog from '../../services/logger.service';
+import deleteUserDB from '../../services/db-services/user-db-services/delete-user.service';
 
 const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;

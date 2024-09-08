@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { escape } from 'validator';
-import getAdminGuildsDB from '../../services/guild-db-services/get-admin-guilds.service';
-import getPublicGuildsDB from '../../services/guild-db-services/get-public-guilds.service';
 import getGuildsRedis from '../../services/redis-services/guild-redis-services/get-guilds-redis.service';
 import storeGuildsRedis from '../../services/redis-services/guild-redis-services/store-guilds-redis.service';
 import ErrorReturn from '../../types/error-return';
@@ -10,6 +8,8 @@ import { GetGuildSearchParams } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import { isNumber } from '../../utils/functions/validate-input.function';
 import createLog from '../../services/logger.service';
+import getAdminGuildsDB from '../../services/db-services/guild-db-services/get-admin-guilds.service';
+import getPublicGuildsDB from '../../services/db-services/guild-db-services/get-public-guilds.service';
 
 const getGuilds = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default guilds from redis.

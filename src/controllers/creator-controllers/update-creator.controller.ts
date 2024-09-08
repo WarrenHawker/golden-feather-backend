@@ -10,10 +10,9 @@ import ErrorReturn from '../../types/error-return';
 import { CreatorUpdateData } from '../../types/creator';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
-import updateCreatorDB from '../../services/creator-db-services/update-creator.service';
-import prismaClient from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
-import getUserContent from '../../services/user-db-services/get-user-content.service';
+import getUserContent from '../../services/db-services/user-db-services/get-user-content.service';
+import updateCreatorDB from '../../services/db-services/creator-db-services/update-creator.service';
 
 const updateCreator = async (req: Request, res: Response) => {
   let { id: creatorId } = req.query;

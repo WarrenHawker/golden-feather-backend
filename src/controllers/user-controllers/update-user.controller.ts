@@ -10,8 +10,8 @@ import {
 import isEmail from 'validator/lib/isEmail';
 import { normalizeEmail, escape, isStrongPassword } from 'validator';
 import bcrypt from 'bcrypt';
-import updateUserDB from '../../services/user-db-services/update-user.service';
 import { ISession } from '../../types/express-session';
+import updateUserDB from '../../services/db-services/user-db-services/update-user.service';
 
 const updateUser = async (req: Request, res: Response) => {
   let { id: userId } = req.query;
