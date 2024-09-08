@@ -6,9 +6,9 @@ import { compressionMiddleware } from './middleware/compression.middleware';
 import { createSessionConfig } from './middleware/session.middleware';
 import { corsOptions } from './middleware/cors.middleware';
 import cookieParser from 'cookie-parser';
-import routes from './routes';
 import { measureResponseTime } from './middleware/response-time.middleware';
 import rateLimiter from './middleware/rate-limiter.middleware';
+import { router } from './routes';
 
 export const app = express();
 
@@ -22,7 +22,7 @@ app.use(json());
 app.use(express.urlencoded({ extended: true }));
 app.use(measureResponseTime);
 
-app.use(routes);
+app.use(router);
 
 //catch-all if the requested route or method doesn't exist.
 app.use((req: Request, res: Response) => {

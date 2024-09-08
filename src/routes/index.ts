@@ -1,29 +1,26 @@
+import { router as authRoutes } from './route-files/auth.route';
+import { router as sessionRoutes } from './route-files/session.route';
+import { router as logRoutes } from './route-files/log.route';
+import { router as creatorRoutes } from './route-files/creator.route';
+import { router as guildRoutes } from './route-files/guild.route';
+import { router as videoRoutes } from './route-files/video.route';
+import { router as tagRoutes } from './route-files/tag.route';
+import { router as userRoutes } from './route-files/user.route';
+import { router as csrfRoutes } from './route-files/csrf.route';
+import { router as languageRoutes } from './route-files/language.route';
 import { Router } from 'express';
-import fs from 'fs';
-import path from 'path';
 
-const router = Router();
+export const router = Router();
 
-// API base path
 const apiBasePath = '/api/v1';
 
-// Get the path to the route-files subdirectory
-const routesDirectory = path.join(__dirname, 'route-files');
-
-// Read all files in the route-files directory
-fs.readdirSync(routesDirectory).forEach((file) => {
-  // Only process files that end with `.route.ts`
-  if (file.endsWith('.route.ts')) {
-    // Dynamically require the route file
-    const route = require(path.join(routesDirectory, file));
-
-    // Remove the `.route.ts` from the file name to use it as the base path
-    const routeName = file.replace('.route.ts', '');
-
-    // Register the route with the apiBasePath, e.g., "/api/v1/auth"
-    router.use(`${apiBasePath}/${routeName}`, route.router);
-  }
-});
-
-// Export the router so it can be used in app.ts
-export default router;
+router.use(`${apiBasePath}/auth`, authRoutes);
+router.use(`${apiBasePath}/session`, sessionRoutes);
+router.use(`${apiBasePath}/log`, logRoutes);
+router.use(`${apiBasePath}/guild`, guildRoutes);
+router.use(`${apiBasePath}/creator`, creatorRoutes);
+router.use(`${apiBasePath}/video`, videoRoutes);
+router.use(`${apiBasePath}/tag`, tagRoutes);
+router.use(`${apiBasePath}/user`, userRoutes);
+router.use(`${apiBasePath}/csrf`, csrfRoutes);
+router.use(`${apiBasePath}/language`, languageRoutes);
