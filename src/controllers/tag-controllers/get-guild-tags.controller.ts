@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import getGuildTagsRedis from '../../services/redis-services/guild-redis-services/get-guild-tags.service';
 import { ISession } from '../../types/express-session';
 import getGuildTagsDB from '../../services/db-services/guild-db-services/get-guild-tags.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getGuildTags = async (req: Request, res: Response) => {
   const { admin } = req.query;

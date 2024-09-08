@@ -12,7 +12,6 @@ import requestPassword from '../../controllers/auth-controllers/request-password
 import validateReset from '../../controllers/auth-controllers/validate-reset.controller';
 import getUserProfile from '../../controllers/auth-controllers/get-user-profile.controller';
 import rateLimiter from '../../middleware/rate-limiter.middleware';
-import csrf from 'csurf';
 
 export const router = express.Router();
 
@@ -41,7 +40,6 @@ router.get(
 );
 
 //signin and signup routes are rate limited to 3 requests per minute
-
 router.post(
   '/signin',
   rateLimiter(3, 60, 'signin'),
@@ -55,9 +53,6 @@ router.post(
   signUpUser
 );
 router.post('/signout', signoutUser);
-
-// CSRF protection is applied to the below routes
-router.use(csrf({ cookie: true }));
 
 router.post(
   '/password-reset/request',

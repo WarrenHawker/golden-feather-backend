@@ -8,6 +8,7 @@ import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import { isNumber } from '../../utils/functions/validate-input.function';
 import getAdminGuildsDB from '../../services/db-services/guild-db-services/get-admin-guilds.service';
 import getPublicGuildsDB from '../../services/db-services/guild-db-services/get-public-guilds.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getGuilds = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default guilds from redis.

@@ -24,6 +24,7 @@
  */
 
 import { Request, Response } from 'express';
+import { ErrorReturn } from '../../types/error-return';
 
 const getSessions = async (req: Request, res: Response) => {
   if (!req.sessionStore) {

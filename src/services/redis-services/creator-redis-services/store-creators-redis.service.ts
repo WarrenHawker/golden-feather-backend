@@ -24,6 +24,7 @@
  */
 
 import { redisClient } from '../../../lib/redis/client.redis';
+import { Pagination } from '../../../types/pagination';
 import { getPublicCreatorsDB } from '../../db-services/creator-db-services/get-public-creators.service';
 import deleteKeyRedis from '../delete-key-redis.service';
 

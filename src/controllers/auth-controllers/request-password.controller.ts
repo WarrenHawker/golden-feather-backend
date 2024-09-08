@@ -6,6 +6,7 @@ import passwordResetEmailTemplate from '../../utils/templates/password-reset.tem
 import formatDate from '../../utils/functions/format-date.function';
 import sendEmail from '../../services/email.service';
 import storeResetTokenRedis from '../../services/redis-services/auth-redis-services/store-reset-token-redis.services';
+import { ErrorReturn } from '../../types/error-return';
 
 const requestPassword = async (req: Request, res: Response) => {
   let { email } = req.body;

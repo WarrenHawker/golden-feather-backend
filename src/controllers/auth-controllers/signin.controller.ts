@@ -4,11 +4,10 @@ import { Request, Response } from 'express';
 import { redisClient } from '../../lib/redis/client.redis';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
-import csrf from 'csurf';
 import logCritical from '../../services/logger-services/log-critical.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
-const csrfProtection = csrf({ cookie: true });
 
 const signInUser = async (req: Request, res: Response) => {
   let { email, password } = req.body;
@@ -69,8 +68,6 @@ const signInUser = async (req: Request, res: Response) => {
 
     redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
 
-    const csrfToken = req.csrfToken();
-
     const user = {
       id: userDB.id,
       name: userDB.name,
@@ -79,11 +76,6 @@ const signInUser = async (req: Request, res: Response) => {
       status: userDB.status,
     };
 
-    res.cookie('XSRF-TOKEN', csrfToken, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-    });
-
     return res.status(200).json(user);
   } catch (err) {
     const error: ErrorReturn = {
@@ -91,8 +83,8 @@ const signInUser = async (req: Request, res: Response) => {
       message: (err as Error).message,
       stack: (err as Error).stack,
     };
-    res.status(500).json(error);
     logCritical({ req, res, error });
+    res.status(500).json(error);
     return;
   }
 };

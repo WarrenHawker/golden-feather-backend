@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
 import getUserByIdDB from '../../services/db-services/user-db-services/get-user-by-id.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;

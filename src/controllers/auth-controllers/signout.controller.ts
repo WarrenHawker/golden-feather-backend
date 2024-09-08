@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ErrorReturn } from '../../types/error-return';
 
 const signoutUser = async (req: Request, res: Response) => {
   req.session.destroy((err) => {

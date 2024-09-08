@@ -10,6 +10,7 @@ import { normalizeEmail, escape, isStrongPassword } from 'validator';
 import bcrypt from 'bcrypt';
 import { ISession } from '../../types/express-session';
 import updateUserDB from '../../services/db-services/user-db-services/update-user.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const updateUser = async (req: Request, res: Response) => {
   let { id: userId } = req.query;

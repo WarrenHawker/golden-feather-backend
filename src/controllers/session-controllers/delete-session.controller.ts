@@ -25,6 +25,7 @@
  */
 
 import { Request, Response } from 'express';
+import { ErrorReturn } from '../../types/error-return';
 
 const deleteSession = async (req: Request, res: Response) => {
   const sessionId = req.params.id;

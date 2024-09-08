@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import { measureResponseTime } from './middleware/response-time.middleware';
 import rateLimiter from './middleware/rate-limiter.middleware';
 import { router } from './routes';
+import { ErrorReturn } from './types/error-return';
 
 export const app = express();
 

@@ -8,6 +8,7 @@ import {
 } from '../../utils/functions/validate-input.function';
 import { UserRole, UserStatus } from '@prisma/client';
 import getUsersDB from '../../services/db-services/user-db-services/get-users.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const { escape } = validator;
 

@@ -10,6 +10,7 @@ import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import { ISession } from '../../types/express-session';
 import updateGuildDB from '../../services/db-services/guild-db-services/update-guild.service';
 import getUserContent from '../../services/db-services/user-db-services/get-user-content.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const updateGuild = async (req: Request, res: Response) => {
   let { id: guildId } = req.query;

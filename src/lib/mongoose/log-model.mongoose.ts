@@ -32,7 +32,7 @@ export const logSchema = new Schema<LogDocument>(
   {
     logLevel: { type: String, required: true },
     timestamp: { type: String, required: true },
-    responseTimeMS: { type: Number || null, required: true },
+    responseTimeMS: { type: Number || null },
     url: { type: String, required: true },
     method: { type: String, required: true },
     code: { type: Number, required: true },

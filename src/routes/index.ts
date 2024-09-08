@@ -6,7 +6,6 @@ import { router as guildRoutes } from './route-files/guild.route';
 import { router as videoRoutes } from './route-files/video.route';
 import { router as tagRoutes } from './route-files/tag.route';
 import { router as userRoutes } from './route-files/user.route';
-import { router as csrfRoutes } from './route-files/csrf.route';
 import { router as languageRoutes } from './route-files/language.route';
 import { Router } from 'express';
 
@@ -22,5 +21,4 @@ router.use(`${apiBasePath}/creator`, creatorRoutes);
 router.use(`${apiBasePath}/video`, videoRoutes);
 router.use(`${apiBasePath}/tag`, tagRoutes);
 router.use(`${apiBasePath}/user`, userRoutes);
-router.use(`${apiBasePath}/csrf`, csrfRoutes);
 router.use(`${apiBasePath}/language`, languageRoutes);

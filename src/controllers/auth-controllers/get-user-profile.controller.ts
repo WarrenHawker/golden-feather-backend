@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ISession } from '../../types/express-session';
 import getUserByIdDB from '../../services/db-services/user-db-services/get-user-by-id.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getUserProfile = async (req: Request, res: Response) => {
   const userId = (req.session as ISession).user.id;

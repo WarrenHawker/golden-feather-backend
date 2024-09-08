@@ -44,6 +44,7 @@ import { ISession } from '../../types/express-session';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import { getAdminCreatorsDB } from '../../services/db-services/creator-db-services/get-admin-creators.service';
 import { getPublicCreatorsDB } from '../../services/db-services/creator-db-services/get-public-creators.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getCreators = async (req: Request, res: Response) => {
   //if no search params are given, try fetching the default creators from redis.

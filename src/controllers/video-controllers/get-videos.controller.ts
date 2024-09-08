@@ -32,6 +32,7 @@ import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';
 import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
 import { Request, Response } from 'express';
+import { ErrorReturn } from '../../types/error-return';
 
 const youtube = google.youtube({
   version: 'v3',

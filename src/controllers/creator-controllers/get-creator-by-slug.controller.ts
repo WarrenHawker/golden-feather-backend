@@ -28,6 +28,7 @@
 import { Request, Response } from 'express';
 import { ISession } from '../../types/express-session';
 import { getCreatorBySlugDB } from '../../services/db-services/creator-db-services/get-creator-by-slug.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getCreatorBySlug = async (req: Request, res: Response) => {
   const { slug } = req.params;

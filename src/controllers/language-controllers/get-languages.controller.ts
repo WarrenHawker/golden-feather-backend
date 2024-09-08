@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import getLanguagesRedis from '../../services/redis-services/language-redis-services/get-languages-redis.service';
 import getLanguagesDB from '../../services/db-services/language-db-services/get-languages-db.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const getLanguages = async (req: Request, res: Response) => {
   try {

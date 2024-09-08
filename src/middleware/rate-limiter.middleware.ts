@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { redisClient } from '../lib/redis/client.redis';
-
+import { ErrorReturn } from '../types/error-return';
 /* 
   This rate limiter takes in a limit, a time (in milliseconds) and an 
   optional endpoint, used for more restricted endpoints like /signin.

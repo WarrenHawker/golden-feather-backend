@@ -1,4 +1,4 @@
-type Pagination = {
+export type Pagination = {
   currentPage: number;
   totalPages: number;
   entries: number;

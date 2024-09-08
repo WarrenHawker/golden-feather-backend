@@ -9,6 +9,7 @@ import {
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import { createCreatorDB } from '../../services/db-services/creator-db-services/create-creator.service';
+import { ErrorReturn } from '../../types/error-return';
 
 const createCreator = async (req: Request, res: Response) => {
   let { name, description, videoUrl, socials, tags, language, status, userId } =

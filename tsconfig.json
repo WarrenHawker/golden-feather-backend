@@ -11,5 +11,9 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "exclude": ["src/tests/**/*"]
+  "exclude": ["src/tests/**/*"],
+  "include": [
+    "src/**/*",
+    "src/types/**/*.d.ts" // Make sure this includes your declaration files
+  ]
 }
