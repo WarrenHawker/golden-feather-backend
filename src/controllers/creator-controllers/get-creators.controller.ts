@@ -99,14 +99,14 @@ const getCreators = async (req: Request, res: Response) => {
           code: 401,
           message: 'Unorthorised: Must be signed in',
         };
-        return res.status(401).json(error);
+        return res.status(error.code).json(error);
       }
       if (sessionUser.role != 'admin' || sessionUser.status != 'active') {
         const error: ErrorReturn = {
           code: 403,
           message: 'Forbidden: Admin access required',
         };
-        return res.status(403).json(error);
+        return res.status(error.code).json(error);
       }
 
       const { pagination, creators } = await getAdminCreatorsDB(searchParams);

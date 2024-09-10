@@ -7,7 +7,7 @@ const getSessions = async (req: Request, res: Response) => {
       code: 404,
       message: 'Session store not found.',
     };
-    return res.status(404).json(error);
+    return res.status(error.code).json(error);
   }
 
   req.sessionStore.all!((err, sessions) => {

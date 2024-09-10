@@ -29,7 +29,7 @@ const updateUser = async (req: Request, res: Response) => {
       message: 'invalid user id',
       params: ['id'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   const sessionUser = (req.session as ISession).user;
@@ -39,7 +39,7 @@ const updateUser = async (req: Request, res: Response) => {
         code: 401,
         message: 'no session found',
       };
-      return res.status(401).json(error);
+      return res.status(error.code).json(error);
     }
 
     if (
@@ -50,14 +50,14 @@ const updateUser = async (req: Request, res: Response) => {
         code: 403,
         message: 'unorthorised access',
       };
-      return res.status(403).json(error);
+      return res.status(error.code).json(error);
     }
   } catch (err) {
     const error: ErrorReturn = {
       code: 500,
       message: (err as Error).message,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 
   try {
@@ -69,14 +69,14 @@ const updateUser = async (req: Request, res: Response) => {
           code: 403,
           message: 'unorthorised access',
         };
-        return res.status(403).json(error);
+        return res.status(error.code).json(error);
       } else if (!isValidCuid(guildId as string)) {
         const error: ErrorReturn = {
           code: 400,
           message: 'invalid guild id',
           params: ['guildId'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.guildId = guildId;
       }
@@ -89,14 +89,14 @@ const updateUser = async (req: Request, res: Response) => {
           code: 403,
           message: 'unorthorised access',
         };
-        return res.status(403).json(error);
+        return res.status(error.code).json(error);
       } else if (!isValidCuid(creatorId as string)) {
         const error: ErrorReturn = {
           code: 400,
           message: 'invalid creator id',
           params: ['creatorId'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.creatorId = creatorId;
       }
@@ -109,14 +109,14 @@ const updateUser = async (req: Request, res: Response) => {
           code: 403,
           message: 'unorthorised access',
         };
-        return res.status(403).json(error);
+        return res.status(error.code).json(error);
       } else if (!isUserStatus(status)) {
         const error: ErrorReturn = {
           code: 400,
           message: 'invalid status',
           params: ['status'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.status = status;
       }
@@ -129,14 +129,14 @@ const updateUser = async (req: Request, res: Response) => {
           code: 403,
           message: 'unorthorised access',
         };
-        return res.status(403).json(error);
+        return res.status(error.code).json(error);
       } else if (!isUserRole(role)) {
         const error: ErrorReturn = {
           code: 400,
           message: 'invalid role',
           params: ['role'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.role = role;
       }
@@ -149,7 +149,7 @@ const updateUser = async (req: Request, res: Response) => {
           message: 'invalid email',
           params: ['email'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.email =
           normalizeEmail(email, { gmail_remove_dots: false }) || undefined;
@@ -163,7 +163,7 @@ const updateUser = async (req: Request, res: Response) => {
           message: 'Password not strong enough',
           params: ['password'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
         updateData.password = hashedPassword;

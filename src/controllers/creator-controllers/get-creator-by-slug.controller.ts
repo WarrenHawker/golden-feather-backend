@@ -14,7 +14,7 @@ const getCreatorBySlug = async (req: Request, res: Response) => {
         code: 404,
         message: 'creator not found',
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
 
     /*
@@ -34,7 +34,7 @@ const getCreatorBySlug = async (req: Request, res: Response) => {
           code: 404,
           message: 'creator not found',
         };
-        return res.status(404).json(error);
+        return res.status(error.code).json(error);
       }
     }
 

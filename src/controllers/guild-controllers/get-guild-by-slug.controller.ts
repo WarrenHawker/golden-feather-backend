@@ -13,7 +13,7 @@ const getGuildBySlug = async (req: Request, res: Response) => {
         code: 404,
         message: 'guild not found',
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
 
     /*
@@ -33,7 +33,7 @@ const getGuildBySlug = async (req: Request, res: Response) => {
           code: 404,
           message: 'guild not found',
         };
-        return res.status(404).json(error);
+        return res.status(error.code).json(error);
       }
     }
 

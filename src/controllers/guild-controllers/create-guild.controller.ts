@@ -33,7 +33,7 @@ const createGuild = async (req: Request, res: Response) => {
       message: 'invalid content status',
       params: ['status'],
     };
-    return res.status(404).json(error);
+    return res.status(error.code).json(error);
   }
 
   if (!isValidCuid(userId)) {
@@ -42,7 +42,7 @@ const createGuild = async (req: Request, res: Response) => {
       message: 'invalid userId',
       params: ['userId'],
     };
-    return res.status(404).json(error);
+    return res.status(error.code).json(error);
   }
 
   if (!isValidVideoUrl(videoUrl)) {
@@ -51,7 +51,7 @@ const createGuild = async (req: Request, res: Response) => {
       message: 'videoUrl must be a valid url',
       params: ['videoUrl'],
     };
-    return res.status(404).json(error);
+    return res.status(error.code).json(error);
   }
 
   const createData: GuildCreationData = {
@@ -70,7 +70,7 @@ const createGuild = async (req: Request, res: Response) => {
 
   try {
     const { newGuild, warningMessage } = await createGuildDB(createData);
-    res.status(201).json({ creator: newGuild, warningMessage });
+    return res.status(201).json({ creator: newGuild, warningMessage });
   } catch (err) {
     const error: ErrorReturn = {
       code: (err as any).statusCode || (err as any).status || 500,

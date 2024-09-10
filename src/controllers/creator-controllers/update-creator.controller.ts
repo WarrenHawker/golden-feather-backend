@@ -40,7 +40,7 @@ const updateCreator = async (req: Request, res: Response) => {
         code: 401,
         message: 'no session found',
       };
-      return res.status(401).json(error);
+      return res.status(error.code).json(error);
     }
 
     const { userCreatorId } = await getUserContent(sessionUser.id);
@@ -53,7 +53,7 @@ const updateCreator = async (req: Request, res: Response) => {
         code: 403,
         message: 'unorthorised access',
       };
-      return res.status(403).json(error);
+      return res.status(error.code).json(error);
     }
   } catch (err) {
     const error: ErrorReturn = {
@@ -72,7 +72,7 @@ const updateCreator = async (req: Request, res: Response) => {
         message: 'invalid creator id',
         params: ['id'],
       };
-      return res.status(400).json(error);
+      return res.status(error.code).json(error);
     }
 
     const updateData: CreatorUpdateData = {};
@@ -84,7 +84,7 @@ const updateCreator = async (req: Request, res: Response) => {
           message: 'invalid user id',
           params: ['userId'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.userId = userId;
       }
@@ -97,7 +97,7 @@ const updateCreator = async (req: Request, res: Response) => {
           message: 'invalid videoUrl',
           params: ['videoUrl'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.videoUrl = videoUrl;
       }
@@ -110,7 +110,7 @@ const updateCreator = async (req: Request, res: Response) => {
           message: 'invalid status',
           params: ['status'],
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         updateData.status = status;
       }

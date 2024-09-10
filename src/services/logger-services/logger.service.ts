@@ -10,26 +10,15 @@ const logger = async (
   error: ErrorReturn | null = null
 ) => {
   const statusCode = res.statusCode;
-  const method = req.method;
 
-  //successful GET requests (level: info)
-  if (method == 'GET' && statusCode < 300) {
+  //successful requests (level: info)
+  if (statusCode < 300) {
     await logInfo({ req, res });
     return;
   }
 
-  //404 errors from GET requests (level: info)
-  if (method == 'GET' && statusCode == 404) {
-    await logInfo({ req, res, error });
-  }
-
-  //successful POST, PATCH or DELETE requests (level: info)
-  if (method != 'GET' && statusCode < 300) {
-    await logInfo({ req, res });
-  }
-
-  //4xx errors from POST, PATCH or DELETE requests (level: error)
-  if (method != 'GET' && statusCode >= 300 && statusCode < 500) {
+  //4xx errors from requests (level: error)
+  if (statusCode >= 300 && statusCode < 500) {
     await logError({ req, res, error });
   }
 

@@ -30,10 +30,11 @@ const getGuilds = async (req: Request, res: Response) => {
         });
       } catch (err) {
         const error: ErrorReturn = {
-          code: 500,
+          code: (err as any).statusCode || (err as any).status || 500,
           message: (err as Error).message,
+          stack: (err as Error).stack,
         };
-        return res.status(500).json(error);
+        return res.status(error.code).json(error);
       }
     }
   }
@@ -48,7 +49,7 @@ const getGuilds = async (req: Request, res: Response) => {
           code: 400,
           message: 'invalid "page" search param',
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         searchParams.page = parseInt(page as string);
       }
@@ -60,7 +61,7 @@ const getGuilds = async (req: Request, res: Response) => {
           code: 400,
           message: 'invalid "limit" search param',
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         searchParams.limit = parseInt(limit as string);
       }
@@ -104,14 +105,14 @@ const getGuilds = async (req: Request, res: Response) => {
           code: 401,
           message: 'Unorthorised: Must be signed in',
         };
-        return res.status(401).json(error);
+        return res.status(error.code).json(error);
       }
       if (sessionUser.role != 'admin' || sessionUser.status != 'active') {
         const error: ErrorReturn = {
           code: 403,
           message: 'Forbidden: Admin access required',
         };
-        return res.status(403).json(error);
+        return res.status(error.code).json(error);
       }
 
       const { pagination, guilds } = await getAdminGuildsDB(searchParams);

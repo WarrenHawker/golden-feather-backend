@@ -12,7 +12,7 @@ const getUserById = async (req: Request, res: Response) => {
       message: 'invalid id',
       params: ['id'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   try {
@@ -22,7 +22,7 @@ const getUserById = async (req: Request, res: Response) => {
         code: 404,
         message: 'user not found',
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
     return res.status(200).json(user);
   } catch (err) {

@@ -17,7 +17,7 @@ const validateReset = async (req: Request, res: Response) => {
         message: 'Invalid email',
         params: ['email'],
       };
-      return res.status(400).json(error);
+      return res.status(error.code).json(error);
     }
 
     const data = await getResetTokenRedis(token);
@@ -27,7 +27,7 @@ const validateReset = async (req: Request, res: Response) => {
         code: 404,
         message: 'token data not found',
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
 
     if (!isStrongPassword(password)) {
@@ -36,7 +36,7 @@ const validateReset = async (req: Request, res: Response) => {
         message: 'Password not strong enough',
         params: ['password'],
       };
-      return res.status(400).json(error);
+      return res.status(error.code).json(error);
     }
 
     if (password != repeatPassword) {
@@ -45,7 +45,7 @@ const validateReset = async (req: Request, res: Response) => {
         message: 'Passwords do not match',
         params: ['password', 'repeatPassword'],
       };
-      return res.status(400).json(error);
+      return res.status(error.code).json(error);
     }
 
     email = normalizeEmail(email, { gmail_remove_dots: false });
@@ -56,7 +56,7 @@ const validateReset = async (req: Request, res: Response) => {
         message: 'request body email does not match token email',
         params: ['email'],
       };
-      return res.status(400).json(error);
+      return res.status(error.code).json(error);
     }
 
     const user = await prismaClient.user.findUnique({
@@ -68,7 +68,7 @@ const validateReset = async (req: Request, res: Response) => {
         code: 404,
         message: 'user not found',
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

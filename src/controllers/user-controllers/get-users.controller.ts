@@ -22,7 +22,7 @@ const getUsers = async (req: Request, res: Response) => {
           code: 400,
           message: 'invalid "page" search param',
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         searchParams.page = parseInt(page as string);
       }
@@ -34,7 +34,7 @@ const getUsers = async (req: Request, res: Response) => {
           code: 400,
           message: 'invalid "limit" search param',
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         searchParams.limit = parseInt(limit as string);
       }
@@ -50,7 +50,7 @@ const getUsers = async (req: Request, res: Response) => {
           code: 400,
           message: 'invalid "role" search param',
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         searchParams.role = role as UserRole;
       }
@@ -62,7 +62,7 @@ const getUsers = async (req: Request, res: Response) => {
           code: 400,
           message: 'invalid "status" search param',
         };
-        return res.status(400).json(error);
+        return res.status(error.code).json(error);
       } else {
         searchParams.status = status as UserStatus;
       }

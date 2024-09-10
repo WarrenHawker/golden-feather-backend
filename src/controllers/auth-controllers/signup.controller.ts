@@ -17,7 +17,7 @@ const signUpUser = async (req: Request, res: Response) => {
       message: 'Invalid email',
       params: ['email'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   if (!isStrongPassword(password)) {
@@ -26,7 +26,7 @@ const signUpUser = async (req: Request, res: Response) => {
       message: 'Password not strong enough',
       params: ['password'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   if (password != repeatPassword) {
@@ -35,7 +35,7 @@ const signUpUser = async (req: Request, res: Response) => {
       message: 'Passwords do not match',
       params: ['password', 'repeatPassword'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   name = escape(name).trim();
@@ -51,7 +51,7 @@ const signUpUser = async (req: Request, res: Response) => {
       message: 'User with that email already exists',
       params: ['email'],
     };
-    return res.status(409).json(error);
+    return res.status(error.code).json(error);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);

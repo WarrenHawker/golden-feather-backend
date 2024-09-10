@@ -12,7 +12,7 @@ const deleteGuild = async (req: Request, res: Response) => {
       message: 'invalid id',
       params: ['id'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   try {
