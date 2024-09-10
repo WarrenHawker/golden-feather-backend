@@ -85,7 +85,7 @@ export const getPublicCreatorsDB = async (
     const formattedCreators = creators.map((creator) => {
       return {
         ...creator,
-        language: creator.languages.map((c) => c.language.name),
+        languages: creator.languages.map((c) => c.language.name),
         tags: creator.tags.map((c) => c.tag.name),
       };
     });
