@@ -10,7 +10,7 @@ const logInfo = async (data: LogsCreateData) => {
       logLevel: 'info',
       timestamp: new Date().toISOString(),
       responseTimeMS: req.responseTimeMs ?? null,
-      url: req.url,
+      url: req.originalUrl,
       method: req.method,
       code: res.statusCode,
       headers: {

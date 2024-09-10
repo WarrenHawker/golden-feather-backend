@@ -12,7 +12,7 @@ const logCritical = async (data: LogsCreateData) => {
       logLevel: 'critical',
       timestamp: new Date().toISOString(),
       responseTimeMS: req.responseTimeMs ?? null,
-      url: req.url,
+      url: req.originalUrl,
       method: req.method,
       code: res.statusCode,
       ip: req.ip,
