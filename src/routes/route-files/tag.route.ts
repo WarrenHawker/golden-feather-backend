@@ -12,6 +12,7 @@ import createGuildTag from '../../controllers/tag-controllers/guild-tag-controll
 import deleteGuildTag from '../../controllers/tag-controllers/guild-tag-controllers/delete-guild-tag.controller';
 import getGuildTags from '../../controllers/tag-controllers/guild-tag-controllers/get-guild-tags.controller';
 import updateGuildTag from '../../controllers/tag-controllers/guild-tag-controllers/update-guild-tag.controller';
+import validateFields from '../../middleware/validate-fields.middleware';
 
 export const router = express.Router();
 
@@ -23,8 +24,12 @@ router.use(checkSession());
 router.use(checkRole('admin'));
 router.use(checkStatus('active'));
 
-router.post('/creator', createCreatorTag);
-router.post('/guild', createGuildTag);
+router.post(
+  '/creator',
+  validateFields(['name', 'description']),
+  createCreatorTag
+);
+router.post('/guild', validateFields(['name', 'description']), createGuildTag);
 
 router.patch('/creator/:id', updateCreatorTag);
 router.patch('/guild/:id', updateGuildTag);

@@ -7,11 +7,8 @@ const storeGuildTagsRedis = async () => {
     await deleteKeyRedis('guild_tags');
     const { publicTags, allTags } = await getGuildTagsDB();
 
-    const public_tags = publicTags.map((tag: { name: any }) => tag.name);
-    const all_tags = allTags.map((tag: { name: any }) => tag.name);
-
-    redisClient.hSet('guild_tags', 'public_tags', JSON.stringify(public_tags));
-    redisClient.hSet('guild_tags', 'all_tags', JSON.stringify(all_tags));
+    redisClient.hSet('guild_tags', 'public_tags', JSON.stringify(publicTags));
+    redisClient.hSet('guild_tags', 'all_tags', JSON.stringify(allTags));
   } catch (error) {
     throw error;
   }

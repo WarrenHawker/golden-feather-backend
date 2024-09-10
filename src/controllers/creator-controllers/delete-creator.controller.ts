@@ -9,7 +9,7 @@ const deleteCreator = async (req: Request, res: Response) => {
 
   if (!isValidCuid(id)) {
     const error: ErrorReturn = {
-      code: 40,
+      code: 400,
       message: 'invalid id',
       params: ['id'],
     };

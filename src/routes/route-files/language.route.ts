@@ -8,6 +8,7 @@ import {
   checkSession,
   checkStatus,
 } from '../../middleware/require-auth.middleware';
+import validateFields from '../../middleware/validate-fields.middleware';
 
 export const router = express.Router();
 
@@ -18,6 +19,6 @@ router.use(checkSession());
 router.use(checkRole('admin'));
 router.use(checkStatus('active'));
 
-router.post('/', createLanguage);
+router.post('/', validateFields(['name']), createLanguage);
 router.patch('/:id', updateLanguage);
 router.delete('/:id', deleteLanguage);

@@ -2,7 +2,7 @@ import prismaClient from '../../../../lib/prisma/client.prisma';
 
 const getGuildTagsDB = async () => {
   try {
-    const publicTags = await prismaClient.guildTag.findMany({
+    const publicData = await prismaClient.guildTag.findMany({
       where: {
         guildTags: {
           some: {
@@ -17,17 +17,9 @@ const getGuildTagsDB = async () => {
       },
     });
 
-    const allTags = await prismaClient.guildTag.findMany({
-      where: {
-        guildTags: {
-          some: {},
-        },
-      },
-      select: {
-        name: true,
-      },
-    });
+    const publicTags = Array.from(new Set(publicData.map((tag) => tag.name)));
 
+    const allTags = await prismaClient.creatorTag.findMany();
     return { publicTags, allTags };
   } catch (error) {
     throw error;
