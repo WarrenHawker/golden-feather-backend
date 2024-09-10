@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import { redisClient } from '../../lib/redis/client.redis';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
-import logCritical from '../../services/logger-services/log-critical.service';
 import { ErrorReturn } from '../../types/error-return';
 
 const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
@@ -18,7 +17,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'Invalid email',
       params: ['email'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   if (!isStrongPassword(password)) {
@@ -27,7 +26,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'Password not strong enough',
       params: ['password'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   email = escape(email).trim();
@@ -43,7 +42,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'User not found',
       params: ['email'],
     };
-    return res.status(404).json(error);
+    return res.status(error.code).json(error);
   }
 
   const match = await bcrypt.compare(password, userDB.password);
@@ -53,7 +52,7 @@ const signInUser = async (req: Request, res: Response) => {
       message: 'Wrong password',
       params: ['password'],
     };
-    return res.status(400).json(error);
+    return res.status(error.code).json(error);
   }
 
   try {
@@ -79,13 +78,11 @@ const signInUser = async (req: Request, res: Response) => {
     return res.status(200).json(user);
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
       stack: (err as Error).stack,
     };
-    logCritical({ req, res, error });
-    res.status(500).json(error);
-    return;
+    return res.status(error.code).json(error);
   }
 };
 

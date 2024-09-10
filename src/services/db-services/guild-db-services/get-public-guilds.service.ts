@@ -3,21 +3,13 @@ import { GetGuildSearchParams } from '../../../types/guild';
 import prismaClient from '../../../lib/prisma/client.prisma';
 
 const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
-  const { page = 1, limit = 12, name, language, tags, region } = options;
+  const { page = 1, limit = 12, name, languages, tags, regions } = options;
 
   const searchData: Prisma.GuildWhereInput = {
     ...(name && {
       name: {
         contains: name,
         mode: 'insensitive',
-      },
-    }),
-    ...(language && {
-      language: {
-        name: {
-          equals: language,
-          mode: 'insensitive',
-        },
       },
     }),
     ...(tags &&
@@ -35,15 +27,37 @@ const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
           },
         })),
       }),
+    ...(languages &&
+      languages.length > 0 && {
+        AND: languages.map((language) => ({
+          languages: {
+            some: {
+              language: {
+                name: {
+                  equals: language,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        })),
+      }),
+    ...(regions &&
+      regions.length > 0 && {
+        AND: regions.map((region) => ({
+          regions: {
+            some: {
+              region: {
+                name: {
+                  equals: region,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        })),
+      }),
     status: 'public',
-    ...(region && {
-      region: {
-        name: {
-          equals: region,
-          mode: 'insensitive',
-        },
-      },
-    }),
   };
 
   try {
@@ -57,21 +71,31 @@ const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
         name: true,
         slug: true,
         description: true,
-        region: {
-          select: {
-            name: true,
-          },
-        },
+        excerpt: true,
         guild_leader: true,
         socials: true,
-        language: {
-          select: {
-            name: true,
-          },
-        },
+        videoUrl: true,
         tags: {
           select: {
             tag: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        languages: {
+          select: {
+            language: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        regions: {
+          select: {
+            region: {
               select: {
                 name: true,
               },
@@ -84,9 +108,9 @@ const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
     const formattedGuilds = guilds.map((guild) => {
       return {
         ...guild,
-        language: guild.language.name,
-        region: guild.region.name,
-        categories: guild.tags.map((c) => c.tag.name),
+        regions: guild.regions.map((g) => g.region.name),
+        languages: guild.languages.map((g) => g.language.name),
+        tags: guild.tags.map((g) => g.tag.name),
       };
     });
 

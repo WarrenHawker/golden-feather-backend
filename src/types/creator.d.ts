@@ -1,33 +1,35 @@
 import { ContentStatus } from '@prisma/client';
 import { SocialLinks } from './social-links';
 
-type CreatorCreationData = {
+export type CreatorCreationData = {
   name: string;
   description: string;
+  excerpt: string;
   videoUrl: string;
   socials: SocialLinks;
   tags: string[];
-  language: string;
+  languages: string[];
   status: ContentStatus;
   userId?: string;
 };
 
-type GetCreatorSearchParams = {
+export type GetCreatorSearchParams = {
   page?: number;
   limit?: number;
   name?: string;
-  language?: string;
+  languages?: string[];
   tags?: string[];
   status?: ContentStatus;
 };
 
-type CreatorUpdateData = {
+export type CreatorUpdateData = {
   name?: string;
   description?: string;
+  excerpt?: string;
   videoUrl?: string;
   socials?: SocialLinks;
   tags?: string[];
-  language?: string;
+  languages?: string[];
   status?: string;
   userId?: string;
 };

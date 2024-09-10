@@ -10,10 +10,20 @@ import sanitiseArray from '../../utils/functions/sanitise-array.function';
 import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
 import { createCreatorDB } from '../../services/db-services/creator-db-services/create-creator.service';
 import { ErrorReturn } from '../../types/error-return';
+import trimExcerpt from '../../utils/functions/trim-excerpt.function';
 
 const createCreator = async (req: Request, res: Response) => {
-  let { name, description, videoUrl, socials, tags, language, status, userId } =
-    req.body;
+  let {
+    name,
+    description,
+    excerpt,
+    videoUrl,
+    socials,
+    tags,
+    languages,
+    status,
+    userId,
+  } = req.body;
 
   if (!isValidVideoUrl(videoUrl)) {
     const error: ErrorReturn = {
@@ -45,10 +55,11 @@ const createCreator = async (req: Request, res: Response) => {
   const createData: CreatorCreationData = {
     name: escape(name).trim(),
     description: escape(description).trim(),
+    excerpt: trimExcerpt(escape(excerpt).trim()),
     videoUrl,
     socials: sanitiseSocials(socials),
     tags: sanitiseArray(tags),
-    language: escape(language).trim(),
+    languages: sanitiseArray(languages),
     status,
     userId,
   };
@@ -58,10 +69,11 @@ const createCreator = async (req: Request, res: Response) => {
     res.status(201).json({ creator: newCreator, warningMessage });
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

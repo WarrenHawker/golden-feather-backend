@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import getGuildTagsRedis from '../../services/redis-services/guild-redis-services/get-guild-tags.service';
-import { ISession } from '../../types/express-session';
-import getGuildTagsDB from '../../services/db-services/guild-db-services/get-guild-tags.service';
-import { ErrorReturn } from '../../types/error-return';
+import getCreatorTagsRedis from '../../../services/redis-services/tag-redis-services/get-creator-tags-redis.service';
+import { ErrorReturn } from '../../../types/error-return';
+import { ISession } from '../../../types/express-session';
+import getCreatorTagsDB from '../../../services/db-services/tag-db-services/creator-tag-db-services/get-creator-tags.service';
 
-const getGuildTags = async (req: Request, res: Response) => {
+const getCreatorTags = async (req: Request, res: Response) => {
   const { admin } = req.query;
   //try fetching tags from redis. If that fails, get tags from main database
   try {
-    const { publicTags, allTags } = await getGuildTagsRedis();
+    const { publicTags, allTags } = await getCreatorTagsRedis();
 
     if (
       admin &&
@@ -23,9 +23,9 @@ const getGuildTags = async (req: Request, res: Response) => {
   } catch (error) {
     //fetch tags from main database
     try {
-      const { publicTags, allTags } = await getGuildTagsDB();
-      const public_tags = publicTags.map((tag) => tag.name);
-      const all_tags = allTags.map((tag) => tag.name);
+      const { publicTags, allTags } = await getCreatorTagsDB();
+      const public_tags = publicTags.map((tag: { name: any }) => tag.name);
+      const all_tags = allTags.map((tag: { name: any }) => tag.name);
 
       /*
         all tags will only be sent if the admin query is true and there 
@@ -43,12 +43,13 @@ const getGuildTags = async (req: Request, res: Response) => {
       }
     } catch (err) {
       const error: ErrorReturn = {
-        code: 500,
+        code: (err as any).statusCode || (err as any).status || 500,
         message: (err as Error).message,
+        stack: (err as Error).stack,
       };
-      return res.status(500).json(error);
+      return res.status(error.code).json(error);
     }
   }
 };
 
-export default getGuildTags;
+export default getCreatorTags;

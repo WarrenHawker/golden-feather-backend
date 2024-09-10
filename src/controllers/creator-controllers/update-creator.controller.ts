@@ -12,11 +12,21 @@ import { ISession } from '../../types/express-session';
 import getUserContent from '../../services/db-services/user-db-services/get-user-content.service';
 import updateCreatorDB from '../../services/db-services/creator-db-services/update-creator.service';
 import { ErrorReturn } from '../../types/error-return';
+import trimExcerpt from '../../utils/functions/trim-excerpt.function';
 
 const updateCreator = async (req: Request, res: Response) => {
   let { id: creatorId } = req.query;
-  let { name, description, videoUrl, socials, tags, language, status, userId } =
-    req.body;
+  let {
+    name,
+    description,
+    excerpt,
+    videoUrl,
+    socials,
+    tags,
+    languages,
+    status,
+    userId,
+  } = req.body;
 
   /* 
     creator profiles can only be updated by admins or the linked user.
@@ -47,10 +57,11 @@ const updateCreator = async (req: Request, res: Response) => {
     }
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 
   //assuming session is valid, continue with rest of function
@@ -107,7 +118,10 @@ const updateCreator = async (req: Request, res: Response) => {
 
     if (name) updateData.name = escape(name).trim();
     if (description) updateData.description = escape(description).trim();
-    if (language) updateData.language = escape(language).trim();
+    if (excerpt) updateData.excerpt = trimExcerpt(escape(excerpt).trim());
+    if (languages && Array.isArray(languages) && languages.length > 0) {
+      updateData.languages = sanitiseArray(languages);
+    }
     if (tags && Array.isArray(tags) && tags.length > 0) {
       updateData.tags = sanitiseArray(tags);
     }
@@ -127,10 +141,11 @@ const updateCreator = async (req: Request, res: Response) => {
     return res.status(200).json({ updatedCreator, warningMessage });
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

@@ -1,39 +1,3 @@
-/**
- * @file get-creators.controller.ts
- * @description Controller for handling the retrieval of creators based on various search parameters.
- *              If no search parameters are provided, the default is the first 10 "public" creators
- *              (sorted by the "created_on" field) along with pagination data.
- *              This controller attempts to fetch data from Redis for default creators if no search
- *              parameters are provided. If Redis retrieval fails or search parameters are present,
- *              it validates and sanitizes the inputs before querying the main database. If the admin
- *              parameter is absent it will only fetch creators that have a "public" status.
- *
- * @module controllers/creator
- *
- * @function getCreators - Express middleware function to handle GET requests for retrieving creators
- *                         based on optional query parameters such as page, limit, name, language, tag,
- *                         and admin.
- *
- * @param {Request} req - The Express request object, which may contain search parameters as query strings.
- * @param {Response} res - The Express response object used to send the JSON response.
- *
- * @returns {Promise<Response>} - A promise that resolves with an HTTP response containing either the
- *                                requested creator data or an error message.
- *
- * @throws {Error} - Throws a 400 error for invalid input parameters, a 500 error if there is an issue
- *                   with either Redis or database retrieval.
- *
- * @requires ../../types/error-return - Type definition for the structure of error responses.
- * @requires ../../services/creator-db-services/get-admin-creators.service - Service to fetch admin creator data.
- * @requires ../../services/creator-db-services/get-public-creators.service - Service to fetch public creator data.
- * @requires ../../services/redis-services/get-creators-redis.service - Service to fetch creator data from Redis.
- * @requires ../../services/redis-services/store-creators-redis.service - Service to store creator data in Redis.
- * @requires ../../types/creator - Type definition for search parameters used in creator queries.
- * @requires ../../utils/functions/validate-input.function - Utility function to validate numerical input.
- * @requires ../../utils/functions/sanitise-array.function - Utility function to sanitize arrays.
- * @requires validator - Library used to sanitize input strings.
- */
-
 import { Request, Response } from 'express';
 import { escape } from 'validator';
 import { isNumber } from '../../utils/functions/validate-input.function';
@@ -107,7 +71,8 @@ const getCreators = async (req: Request, res: Response) => {
     }
 
     if (lang) {
-      searchParams.language = escape(lang as string).trim();
+      const langs = (lang as string).split(' ');
+      searchParams.languages = sanitiseArray(langs);
     }
 
     if (tag) {
@@ -116,10 +81,11 @@ const getCreators = async (req: Request, res: Response) => {
     }
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 
   //fetch data from main database. If admin search param is true,
@@ -163,10 +129,11 @@ const getCreators = async (req: Request, res: Response) => {
     }
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

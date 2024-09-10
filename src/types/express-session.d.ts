@@ -11,9 +11,3 @@ interface ISession extends Session {
     agent: string;
   };
 }
-
-type SessionSearchData = {
-  role?: UserRole;
-  status?: UserStatus;
-  email?: { contains: string; mode?: any };
-};

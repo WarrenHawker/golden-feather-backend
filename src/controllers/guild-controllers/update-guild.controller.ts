@@ -3,6 +3,7 @@ import { escape } from 'validator';
 import {
   isContentStatus,
   isValidCuid,
+  isValidVideoUrl,
 } from '../../utils/functions/validate-input.function';
 import { GuildUpdateData } from '../../types/guild';
 import sanitiseArray from '../../utils/functions/sanitise-array.function';
@@ -11,18 +12,21 @@ import { ISession } from '../../types/express-session';
 import updateGuildDB from '../../services/db-services/guild-db-services/update-guild.service';
 import getUserContent from '../../services/db-services/user-db-services/get-user-content.service';
 import { ErrorReturn } from '../../types/error-return';
+import trimExcerpt from '../../utils/functions/trim-excerpt.function';
 
 const updateGuild = async (req: Request, res: Response) => {
   let { id: guildId } = req.query;
   let {
     name,
     description,
+    excerpt,
+    videoUrl,
     socials,
     tags,
-    language,
+    languages,
     status,
     userId,
-    region,
+    regions,
     guildLeader: guild_leader,
   } = req.body;
 
@@ -55,10 +59,11 @@ const updateGuild = async (req: Request, res: Response) => {
     }
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 
   //assuming session is valid, continue with rest of function
@@ -87,6 +92,19 @@ const updateGuild = async (req: Request, res: Response) => {
       }
     }
 
+    if (videoUrl) {
+      if (!isValidVideoUrl(videoUrl)) {
+        const error: ErrorReturn = {
+          code: 400,
+          message: 'videoUrl must be a valid url',
+          params: ['videoUrl'],
+        };
+        return res.status(404).json(error);
+      } else {
+        updateData.videoUrl = videoUrl;
+      }
+    }
+
     if (status) {
       if (!isContentStatus(status)) {
         const error: ErrorReturn = {
@@ -102,11 +120,19 @@ const updateGuild = async (req: Request, res: Response) => {
 
     if (name) updateData.name = escape(name).trim();
     if (description) updateData.description = escape(description).trim();
+    if (excerpt) updateData.excerpt = trimExcerpt(escape(excerpt).trim());
     if (guild_leader) updateData.guild_leader = escape(guild_leader).trim();
-    if (region) updateData.region = escape(region).trim();
-    if (language) updateData.language = escape(language).trim();
     if (tags && Array.isArray(tags) && tags.length > 0) {
       updateData.tags = sanitiseArray(tags);
+    }
+    if (languages && Array.isArray(languages) && languages.length > 0) {
+      updateData.languages = sanitiseArray(languages);
+    }
+    if (tags && Array.isArray(tags) && tags.length > 0) {
+      updateData.tags = sanitiseArray(tags);
+    }
+    if (regions && Array.isArray(regions) && regions.length > 0) {
+      updateData.regions = sanitiseArray(regions);
     }
     if (
       socials &&
@@ -123,10 +149,11 @@ const updateGuild = async (req: Request, res: Response) => {
     return res.status(200).json({ updatedGuild, warningMessage });
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

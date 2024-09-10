@@ -3,11 +3,16 @@ import deleteSession from '../../controllers/session-controllers/delete-session.
 import getSessions from '../../controllers/session-controllers/get-sessions.controller';
 import {
   checkRole,
+  checkSession,
   checkStatus,
 } from '../../middleware/require-auth.middleware';
 
 export const router = express.Router();
 
-router.get('/', checkRole('admin'), checkStatus('active'), getSessions);
+//all session-related routes require admin access
+router.use(checkSession());
+router.use(checkRole('admin'));
+router.use(checkStatus('active'));
 
-router.delete('/:id', checkRole('admin'), checkStatus('active'), deleteSession);
+router.get('/', getSessions);
+router.delete('/:id', deleteSession);

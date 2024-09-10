@@ -1,7 +1,32 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-//run "npx prisma migrate dev" command to update schema 
-//run "npx prisma migrate reset" command to wipe database
+
+// Prisma Migration Commands:
+//
+// 1. Generate and apply migration:
+//    npx prisma migrate dev --name <your_migration_name>
+//    - Generates a new migration based on schema changes and applies it immediately to the development database.
+//
+// 2. Generate migration without applying:
+//    npx prisma migrate dev --name <your_migration_name> --create-only
+//    - Generates the migration file but does not apply it to the database right away.
+//
+// 3. Apply all pending migrations:
+//    npx prisma migrate deploy
+//    - Applies all migrations that haven't been applied yet (useful in production).
+//
+// 4. Preview the migration (without applying):
+//    npx prisma migrate dev --preview-feature
+//    - Shows the migration that would be generated based on current schema changes, without actually applying it.
+//
+// 5. Reset the database (drops all data and applies all migrations):
+//    npx prisma migrate reset
+//    - Resets the database by dropping all data and reapplying all migrations from scratch.
+//
+// 6. Open Prisma Studio to view and edit data:
+//    npx prisma studio
+//    - Opens an interactive tool to view and manipulate the database data.
+
 
 generator client {
   provider = "prisma-client-js" 
@@ -12,6 +37,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//each user can be linked to a single guild and single creator profile
 model User {
   id                  String                        @id @default(cuid())
   name                String
@@ -20,7 +46,7 @@ model User {
   role                UserRole
   status              UserStatus
   created_on          DateTime                      @default(now())
-  updated_on          DateTime?  
+  updated_on          DateTime?                     @updatedAt 
   guild               Guild?
   creator             Creator?
 
@@ -29,108 +55,149 @@ model User {
   @@index([name])
 }
 
+//each guild can be linked to multiple languages, regions and tags
 model Guild {
   id                  String                        @id @default(cuid())
   name                String                        @unique
   slug                String                        @unique 
   description         String
-  guild_leader        String?                      
+  excerpt             String
+  guild_leader        String? 
+  videoUrl            String                     
   created_on          DateTime                      @default(now())
-  updated_on          DateTime?
+  updated_on          DateTime?                     @updatedAt
   socials             Json?    
   status              ContentStatus
-  languageId          String
-  language            Language                      @relation(fields: [languageId], references: [id])
-  regionId            String
-  region              Region                        @relation(fields: [regionId], references: [id])
+  regions              GuildRegionRelation[]       
   tags                GuildTagRelation[]
   userId              String?                       @unique
-  user                User?                         @relation(fields: [userId], references: [id]) 
+  user                User?                         @relation(fields: [userId], references: [id])
+  languages           GuildLanguageRelation[] 
 
   @@index([created_on])
   @@index([slug])
   @@index([status])
-  @@index([languageId])
-  @@index([regionId])
   @@index([userId])
   @@index([name])
 }
 
+//multiple tags can be linked to multiple different guilds
 model GuildTag {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   description         String?
   guildTags           GuildTagRelation[]
+
+  @@index([name])
 }
 
 model GuildTagRelation {
   id                  String                        @id @default(uuid())
   guildId             String
   tagId               String
-  guild               Guild                         @relation(fields: [guildId], references: [id])
-  tag                 GuildTag                      @relation(fields: [tagId], references: [id])
+  guild               Guild                         @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  tag                 GuildTag                      @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@index([guildId])
   @@index([tagId])
 }
 
+//each creator profile can be linked to multiple languages and tags
 model Creator {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   slug                String                        @unique
   description         String
+  excerpt             String
   videoUrl            String           
   created_on          DateTime                      @default(now())
-  updated_on          DateTime? 
+  updated_on          DateTime?                     @updatedAt
   status              ContentStatus   
   socials             Json?
   tags                CreatorTagRelation[]
-  languageId          String
-  language            Language                      @relation(fields: [languageId], references: [id])
   userId              String?                       @unique
   user                User?                         @relation(fields: [userId], references: [id])
+  languages           CreatorLanguageRelation[]
 
   @@index([created_on])
   @@index([slug])
   @@index([status])
-  @@index([languageId])
   @@index([userId])
   @@index([name])
 }
 
+//multiple tags can be linked to multiple different creator profiles
 model CreatorTag {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   description         String?
   creatorTags         CreatorTagRelation[]
+
+  @@index([name])
 }
 
 model CreatorTagRelation {
   id                  String                        @id @default(uuid())
   creatorId           String
   tagId               String
-  creator             Creator                       @relation(fields: [creatorId], references: [id])
-  tag                 CreatorTag                    @relation(fields: [tagId], references: [id])
+  creator             Creator                       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  tag                 CreatorTag                    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
   @@index([tagId])
 }
 
+//multiple languages can be linked to multiple different guilds and creators
 model Language {
   id                  String                        @id @default(uuid())
   name                String                        @unique
-  guilds              Guild[]
-  creators            Creator[]
+  creatorLanguages    CreatorLanguageRelation[]
+  guildLanguages      GuildLanguageRelation[]
 
   @@index([name])
 }
 
+model CreatorLanguageRelation {
+  id                  String                        @id @default(uuid())
+  creatorId           String                        
+  languageId          String     
+  creator             Creator                       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  language            Language                      @relation(fields: [languageId], references: [id], onDelete: Cascade)                   
+
+  @@index([creatorId])
+  @@index([languageId])
+}
+
+model GuildLanguageRelation {
+  id                  String                        @id @default(uuid())
+  guildId             String                        
+  languageId          String                        
+  guild               Guild                         @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  language            Language                      @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  
+
+  @@index([guildId])
+  @@index([languageId])
+}
+
+//multiple regions can be linked to multiple different guilds
 model Region {
   id                  String                        @id @default(cuid())
   name                String                        @unique
-  guilds              Guild[]
+  guildsRegion        GuildRegionRelation[]
 
   @@index([name])
+}
+
+model GuildRegionRelation {
+  id                  String                        @id @default(uuid())
+  guildId             String
+  regionId            String
+  guild               Guild                       @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  region              Region                      @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([guildId])
+  @@index([regionId])
 }
 
 enum ContentStatus {

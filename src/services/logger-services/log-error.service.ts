@@ -31,10 +31,10 @@ const logError = async (data: LogsCreateData) => {
 
     newLogData.body = req.body;
     if (req.body.password) {
-      delete newLogData.body.password;
+      newLogData.body.password = '--REDACTED--';
     }
     if (req.body.repeatPassword) {
-      delete newLogData.body.repeatPassword;
+      newLogData.body.repeatPassword = '--REDACTED--';
     }
 
     await createLogMongo(newLogData);

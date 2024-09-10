@@ -18,7 +18,7 @@ const requestPassword = async (req: Request, res: Response) => {
         message: 'Invalid email',
         params: ['email'],
       };
-      return res.status(400).json(error);
+      return res.status(error.code).json(error);
     }
 
     email = normalizeEmail(email, { gmail_remove_dots: false });
@@ -32,7 +32,7 @@ const requestPassword = async (req: Request, res: Response) => {
         code: 404,
         message: 'user not found',
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
 
     const token = crypto.randomBytes(32).toString('hex');
@@ -47,10 +47,11 @@ const requestPassword = async (req: Request, res: Response) => {
     return res.status(201).json({ message: 'success' });
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

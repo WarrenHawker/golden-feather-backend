@@ -37,38 +37,54 @@ const createGuildDB = async (options: GuildCreationData) => {
         .replace(/\//g, '-')
         .replace(/\s+/g, '-'),
       description: options.description,
+      excerpt: options.excerpt,
       guild_leader: options.guild_leader,
-      language: {
-        connectOrCreate: {
-          where: { name: options.language },
-          create: {
-            name: options.language,
-          },
-        },
-      },
+      videoUrl: options.videoUrl,
       status: options.status,
-      tags: {
-        create: options.tags.map((tag) => ({
-          tag: {
-            connectOrCreate: {
-              where: { name: tag },
-              create: {
-                name: tag,
-                description: `${tag} related content.`,
+      ...(options.tags.length > 0 && {
+        tags: {
+          create: options.tags.map((tag) => ({
+            tag: {
+              connectOrCreate: {
+                where: { name: tag },
+                create: {
+                  name: tag,
+                  description: `${tag} related content.`,
+                },
               },
             },
-          },
-        })),
-      },
-      socials: options.socials,
-      region: {
-        connectOrCreate: {
-          where: { name: options.region },
-          create: {
-            name: options.region,
-          },
+          })),
         },
-      },
+      }),
+      ...(options.languages.length > 0 && {
+        languages: {
+          create: options.languages.map((language) => ({
+            language: {
+              connectOrCreate: {
+                where: { name: language },
+                create: {
+                  name: language,
+                },
+              },
+            },
+          })),
+        },
+      }),
+      ...(options.regions.length > 0 && {
+        regions: {
+          create: options.regions.map((region) => ({
+            region: {
+              connectOrCreate: {
+                where: { name: region },
+                create: {
+                  name: region,
+                },
+              },
+            },
+          })),
+        },
+      }),
+      socials: options.socials,
       user:
         user && !user.guild ? { connect: { id: options.userId } } : undefined,
     };

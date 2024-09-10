@@ -179,10 +179,11 @@ const updateUser = async (req: Request, res: Response) => {
       .json({ updatedUser, warnings: [warningMessage1, warningMessage2] });
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

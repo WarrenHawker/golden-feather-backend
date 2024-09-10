@@ -9,6 +9,7 @@ import { measureResponseTime } from './middleware/response-time.middleware';
 import rateLimiter from './middleware/rate-limiter.middleware';
 import { router } from './routes';
 import { ErrorReturn } from './types/error-return';
+import logMiddleware from './middleware/logger.middleware';
 
 export const app = express();
 
@@ -21,6 +22,7 @@ app.use(compressionMiddleware);
 app.use(json());
 app.use(express.urlencoded({ extended: true }));
 app.use(measureResponseTime);
+app.use(logMiddleware);
 
 app.use(router);
 

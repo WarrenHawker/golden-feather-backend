@@ -1,4 +1,4 @@
-import prismaClient from '../../../lib/prisma/client.prisma';
+import prismaClient from '../../../../lib/prisma/client.prisma';
 
 const getGuildTagsDB = async () => {
   try {

@@ -31,7 +31,7 @@ const sendEmail = async (
 ) => {
   try {
     // Send the email
-    let info = await transporter.sendMail({
+    await transporter.sendMail({
       from: '"TGF Tavern" <mist@tgftavern.com>',
       to,
       subject,

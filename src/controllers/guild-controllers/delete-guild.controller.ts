@@ -20,10 +20,11 @@ const deleteGuild = async (req: Request, res: Response) => {
     return res.status(200).json(deletedGuild);
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

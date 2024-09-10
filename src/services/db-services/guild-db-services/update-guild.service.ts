@@ -1,18 +1,20 @@
 import { ContentStatus, Prisma } from '@prisma/client';
-import { unescape } from 'validator';
 import prismaClient from '../../../lib/prisma/client.prisma';
 import { GuildUpdateData } from '../../../types/guild';
-import { findUniqueStrings } from '../../../utils/functions/compare-arays.function';
+import { unescape } from 'validator';
+import updateGuildRelations from './update-guild-relations.service';
 
 const updateGuildDB = async (guildId: string, options: GuildUpdateData) => {
   let {
     name,
     description,
+    excerpt,
+    videoUrl,
     guild_leader,
-    region,
+    regions,
     socials,
     tags,
-    language,
+    languages,
     status,
     userId,
   } = options;
@@ -44,72 +46,56 @@ const updateGuildDB = async (guildId: string, options: GuildUpdateData) => {
       }
     }
 
-    let tagsToDisconnect: any[] = [];
-    let tagsToConnect: any[] = [];
-    if (tags) {
-      tags = [...new Set(tags)];
-      const currentTags = await prismaClient.guild.findUnique({
-        where: { id: guildId },
-        select: {
-          tags: {
-            select: {
-              tag: true,
-            },
-          },
-        },
-      });
-
-      const currentTagNames =
-        currentTags?.tags.map((tagRelation) => tagRelation.tag.name) ||
-        undefined;
-      tagsToDisconnect = findUniqueStrings(currentTagNames, tags).map((tag) => {
-        return {
-          tag: { name: tag },
-        };
-      });
-
-      tagsToConnect = tags.map((tag) => {
-        return {
-          where: { name: tag },
-          create: { name: tag },
-        };
-      });
-    }
     const updateData: Prisma.GuildUpdateInput = {
       name: name ? name : undefined,
       slug: name
         ? unescape(name).toLowerCase().replace(/\//g, '-').replace(/\s+/g, '-')
         : undefined,
       description: description ? description : undefined,
+      excerpt: excerpt ? excerpt : undefined,
+      videoUrl: videoUrl ? videoUrl : undefined,
       socials: socials ? socials : undefined,
       guild_leader: guild_leader ? guild_leader : undefined,
       status: status ? (status as ContentStatus) : undefined,
       user: user && !user.creator ? { connect: { id: userId } } : undefined,
       updated_on: new Date(),
-      language: language
-        ? {
-            connectOrCreate: {
-              where: { name: language },
-              create: {
-                name: language,
-              },
-            },
-          }
-        : undefined,
-      region: region
-        ? {
-            connectOrCreate: {
-              where: { name: region },
-              create: {
-                name: region,
-              },
-            },
-          }
-        : undefined,
-      tags: tags
-        ? { disconnect: tagsToDisconnect, connectOrCreate: tagsToConnect }
-        : undefined,
     };
+
+    if (tags) {
+      const {
+        itemsToConnect: tagsToConnect,
+        itemsToDisconnect: tagsToDisconnect,
+      } = await updateGuildRelations('tags', guildId, tags);
+
+      updateData.tags = {
+        disconnect: tagsToDisconnect,
+        connectOrCreate: tagsToConnect,
+      };
+    }
+
+    if (languages) {
+      const {
+        itemsToConnect: languagesToConnect,
+        itemsToDisconnect: languagesToDisconnect,
+      } = await updateGuildRelations('languages', guildId, languages);
+
+      updateData.languages = {
+        disconnect: languagesToDisconnect,
+        connectOrCreate: languagesToConnect,
+      };
+    }
+
+    if (regions) {
+      const {
+        itemsToConnect: regionsToConnect,
+        itemsToDisconnect: regionsToDisconnect,
+      } = await updateGuildRelations('regions', guildId, regions);
+
+      updateData.regions = {
+        disconnect: regionsToDisconnect,
+        connectOrCreate: regionsToConnect,
+      };
+    }
 
     const updatedGuild = await prismaClient.guild.update({
       where: { id: guildId },

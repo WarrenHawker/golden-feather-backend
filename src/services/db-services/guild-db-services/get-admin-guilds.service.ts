@@ -7,10 +7,10 @@ const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
     page = 1,
     limit = 12,
     name,
-    language,
+    languages,
     tags,
     status,
-    region,
+    regions,
   } = options;
 
   const searchData: Prisma.GuildWhereInput = {
@@ -18,14 +18,6 @@ const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
       name: {
         contains: name,
         mode: 'insensitive',
-      },
-    }),
-    ...(language && {
-      language: {
-        name: {
-          equals: language,
-          mode: 'insensitive',
-        },
       },
     }),
     ...(tags &&
@@ -43,17 +35,39 @@ const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
           },
         })),
       }),
+    ...(languages &&
+      languages.length > 0 && {
+        AND: languages.map((language) => ({
+          languages: {
+            some: {
+              language: {
+                name: {
+                  equals: language,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        })),
+      }),
+    ...(regions &&
+      regions.length > 0 && {
+        AND: regions.map((region) => ({
+          regions: {
+            some: {
+              region: {
+                name: {
+                  equals: region,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        })),
+      }),
     ...(status && {
       status: {
         equals: status,
-      },
-    }),
-    ...(region && {
-      region: {
-        name: {
-          equals: region,
-          mode: 'insensitive',
-        },
       },
     }),
   };
@@ -64,44 +78,32 @@ const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
       orderBy: { created_on: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        slug: true,
-        socials: true,
-        created_on: true,
-        updated_on: true,
-        status: true,
-        language: {
-          select: {
-            name: true,
-          },
-        },
-        region: {
-          select: {
-            name: true,
-          },
-        },
-        userId: true,
+      include: {
         tags: {
-          select: {
-            tag: {
-              select: {
-                name: true,
-              },
-            },
+          include: {
+            tag: true,
           },
         },
+        languages: {
+          include: {
+            language: true,
+          },
+        },
+        regions: {
+          include: {
+            region: true,
+          },
+        },
+        user: true,
       },
     });
 
     const formattedGuilds = guilds.map((guild) => {
       return {
         ...guild,
-        language: guild.language.name,
-        region: guild.region.name,
-        categories: guild.tags.map((c) => c.tag.name),
+        regions: guild.regions.map((g) => g.region.name),
+        languages: guild.languages.map((g) => g.language.name),
+        tags: guild.tags.map((g) => g.tag.name),
       };
     });
 

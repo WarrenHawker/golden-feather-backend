@@ -13,15 +13,16 @@ const getUserProfile = async (req: Request, res: Response) => {
         code: 404,
         message: `User with ID ${userId} not found`,
       };
-      return res.status(404).json(error);
+      return res.status(error.code).json(error);
     }
     return res.status(200).json(user);
   } catch (err) {
     const error: ErrorReturn = {
-      code: 500,
+      code: (err as any).statusCode || (err as any).status || 500,
       message: (err as Error).message,
+      stack: (err as Error).stack,
     };
-    return res.status(500).json(error);
+    return res.status(error.code).json(error);
   }
 };
 

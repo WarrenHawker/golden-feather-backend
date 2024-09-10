@@ -42,8 +42,8 @@ export const logSchema = new Schema<LogDocument>(
       contentType: { type: String },
       authorization: { type: String },
     },
-    message: { type: String, required: true },
-    ip: { type: String, required: true },
+    message: { type: String },
+    ip: { type: String },
     body: { type: mongoose.Schema.Types.Mixed },
     userId: { type: String },
   },
@@ -74,9 +74,6 @@ export const getLogModelForMonth = async (
           },
         },
       });
-      console.log(
-        `Created collection ${collectionName} with zstd compression.`
-      );
     }
 
     // Return the Mongoose model for the collection

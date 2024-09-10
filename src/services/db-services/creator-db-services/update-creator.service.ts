@@ -3,13 +3,22 @@ import { unescape } from 'validator';
 import prismaClient from '../../../lib/prisma/client.prisma';
 import { CreatorUpdateData } from '../../../types/creator';
 import { findUniqueStrings } from '../../../utils/functions/compare-arays.function';
+import updateCreatorRelations from './update-creator-relations.service';
 
 const updateCreatorDB = async (
   creatorId: string,
   options: CreatorUpdateData
 ) => {
-  let { name, description, videoUrl, socials, tags, language, status, userId } =
-    options;
+  let {
+    name,
+    description,
+    videoUrl,
+    socials,
+    tags,
+    languages,
+    status,
+    userId,
+  } = options;
   try {
     /*
       if userId is given, check the user exists and is not already
@@ -37,38 +46,6 @@ const updateCreatorDB = async (
       }
     }
 
-    let tagsToDisconnect: any[] = [];
-    let tagsToConnect: any[] = [];
-    if (tags) {
-      tags = [...new Set(tags)];
-      const currentTags = await prismaClient.creator.findUnique({
-        where: { id: creatorId },
-        select: {
-          tags: {
-            select: {
-              tag: true,
-            },
-          },
-        },
-      });
-
-      const currentTagNames =
-        currentTags?.tags.map((tagRelation) => tagRelation.tag.name) ||
-        undefined;
-      tagsToDisconnect = findUniqueStrings(currentTagNames, tags).map((tag) => {
-        return {
-          tag: { name: tag },
-        };
-      });
-
-      tagsToConnect = tags.map((tag) => {
-        return {
-          where: { name: tag },
-          create: { name: tag },
-        };
-      });
-    }
-
     const updateData: Prisma.CreatorUpdateInput = {
       name: name ? name : undefined,
       slug: name
@@ -80,20 +57,31 @@ const updateCreatorDB = async (
       status: status ? (status as ContentStatus) : undefined,
       user: user && !user.creator ? { connect: { id: userId } } : undefined,
       updated_on: new Date(),
-      language: language
-        ? {
-            connectOrCreate: {
-              where: { name: language },
-              create: {
-                name: language,
-              },
-            },
-          }
-        : undefined,
-      tags: tags
-        ? { disconnect: tagsToDisconnect, connectOrCreate: tagsToConnect }
-        : undefined,
     };
+
+    if (tags) {
+      const {
+        itemsToConnect: tagsToConnect,
+        itemsToDisconnect: tagsToDisconnect,
+      } = await updateCreatorRelations('tags', creatorId, tags);
+
+      updateData.tags = {
+        disconnect: tagsToDisconnect,
+        connectOrCreate: tagsToConnect,
+      };
+    }
+
+    if (languages) {
+      const {
+        itemsToConnect: languagesToConnect,
+        itemsToDisconnect: languagesToDisconnect,
+      } = await updateCreatorRelations('languages', creatorId, languages);
+
+      updateData.languages = {
+        disconnect: languagesToDisconnect,
+        connectOrCreate: languagesToConnect,
+      };
+    }
 
     const updatedCreator = await prismaClient.creator.update({
       where: { id: creatorId },
