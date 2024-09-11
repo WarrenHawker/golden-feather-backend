@@ -12,12 +12,25 @@ import requestPassword from '../../controllers/auth-controllers/request-password
 import validateReset from '../../controllers/auth-controllers/validate-reset.controller';
 import getUserProfile from '../../controllers/auth-controllers/get-user-profile.controller';
 import rateLimiter from '../../middleware/rate-limiter.middleware';
+import verifyRecaptcha from '../../middleware/verify-recaptcha.middleware';
 
 export const router = express.Router();
 
-const signinFields = ['email', 'password'];
-const signupFields = ['name', 'email', 'password', 'repeatPassword'];
-const resetFields = ['email', 'password', 'repeatPassword', 'token'];
+const signinFields = ['email', 'password', 'captchaToken'];
+const signupFields = [
+  'name',
+  'email',
+  'password',
+  'repeatPassword',
+  'captchaToken',
+];
+const resetFields = [
+  'email',
+  'password',
+  'repeatPassword',
+  'token',
+  'captchaToken',
+];
 
 /*
   the "profile" routes searches for a valid session then retrieves 
@@ -44,12 +57,14 @@ router.post(
   '/signin',
   rateLimiter(3, 60, 'signin'),
   validateFields(signinFields),
+  verifyRecaptcha,
   signInUser
 );
 router.post(
   '/signup',
   rateLimiter(3, 60, 'signup'),
   validateFields(signupFields),
+  verifyRecaptcha,
   signUpUser
 );
 router.post('/signout', signoutUser);
@@ -57,7 +72,8 @@ router.post('/signout', signoutUser);
 router.post(
   '/password-reset/request',
   rateLimiter(3, 60 * 1000, 'password-reset/request'),
-  validateFields(['email']),
+  validateFields(['email', 'captchaToken']),
+  verifyRecaptcha,
   requestPassword
 );
 
@@ -65,5 +81,6 @@ router.post(
   '/password-reset/validate',
   rateLimiter(3, 60 * 1000, 'password-reset/validate'),
   validateFields(resetFields),
+  verifyRecaptcha,
   validateReset
 );

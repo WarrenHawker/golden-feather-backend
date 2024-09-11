@@ -26,13 +26,13 @@ let transporter = nodemailer.createTransport({
 const sendEmail = async (
   to: string,
   subject: string,
-  html: string,
-  text: string
+  text: string,
+  html: string
 ) => {
   try {
     // Send the email
     await transporter.sendMail({
-      from: '"TGF Tavern" <mist@tgftavern.com>',
+      from: process.env.EMAIL_SENDER_ACCOUNT,
       to,
       subject,
       text,
