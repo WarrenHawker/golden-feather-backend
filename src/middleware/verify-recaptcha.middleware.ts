@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ErrorReturn } from '../types/error-return';
 
 const verifyRecaptcha = async () => {
+  console.log('hello?');
   return async (req: Request, res: Response, next: NextFunction) => {
     const { captchaToken } = req.body;
     const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`;
