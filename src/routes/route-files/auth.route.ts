@@ -24,13 +24,7 @@ const signupFields = [
   'repeatPassword',
   'captchaToken',
 ];
-const resetFields = [
-  'email',
-  'password',
-  'repeatPassword',
-  'token',
-  'captchaToken',
-];
+const resetFields = ['email', 'password', 'repeatPassword', 'token'];
 
 /*
   the "profile" routes searches for a valid session then retrieves 
@@ -81,6 +75,5 @@ router.post(
   '/password-reset/validate',
   rateLimiter(3, 60 * 1000, 'password-reset/validate'),
   validateFields(resetFields),
-  verifyRecaptcha,
   validateReset
 );

@@ -27,20 +27,20 @@ app.listen(port, async () => {
     // await setStarterCreators();
     // await setStarterGuilds();
 
-    // redisClient.flushAll();
+    redisClient.flushAll();
 
-    // await generateTwitchToken();
+    await generateTwitchToken();
 
-    // await storeCreatorsRedis();
-    // await storeGuildsRedis();
-    // await storeGuildTagsRedis();
-    // await storeCreatorTagsRedis();
-    // await storeLanguagesRedis();
-    // await storeRegionsRedis();
+    await storeCreatorsRedis();
+    await storeGuildsRedis();
+    await storeGuildTagsRedis();
+    await storeCreatorTagsRedis();
+    await storeLanguagesRedis();
+    await storeRegionsRedis();
 
     //scheduled tasks
-    // maintainTwitchToken();
-    // syncRedis();
+    maintainTwitchToken();
+    syncRedis();
 
     console.log(
       `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`
