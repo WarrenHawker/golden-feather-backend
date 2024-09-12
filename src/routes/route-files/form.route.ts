@@ -14,7 +14,7 @@ import verifyRecaptcha from '../../middleware/verify-recaptcha.middleware';
 export const router = express.Router();
 
 //sending a contact form is rate limited to 3 requests per minute
-const contactFormFields = ['name', 'email', 'message', 'captchaToken'];
+const contactFormFields = ['name', 'email', 'message'];
 router.post(
   '/contact',
   validateFields(contactFormFields),

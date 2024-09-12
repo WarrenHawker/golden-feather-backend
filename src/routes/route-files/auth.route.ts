@@ -16,14 +16,8 @@ import verifyRecaptcha from '../../middleware/verify-recaptcha.middleware';
 
 export const router = express.Router();
 
-const signinFields = ['email', 'password', 'captchaToken'];
-const signupFields = [
-  'name',
-  'email',
-  'password',
-  'repeatPassword',
-  'captchaToken',
-];
+const signinFields = ['email', 'password'];
+const signupFields = ['name', 'email', 'password', 'repeatPassword'];
 const resetFields = ['email', 'password', 'repeatPassword', 'token'];
 
 /*
@@ -66,7 +60,7 @@ router.post('/signout', signoutUser);
 router.post(
   '/password-reset/request',
   rateLimiter(3, 60 * 1000, 'password-reset/request'),
-  validateFields(['email', 'captchaToken']),
+  validateFields(['email']),
   verifyRecaptcha,
   requestPassword
 );
@@ -75,5 +69,6 @@ router.post(
   '/password-reset/validate',
   rateLimiter(3, 60 * 1000, 'password-reset/validate'),
   validateFields(resetFields),
+  verifyRecaptcha,
   validateReset
 );

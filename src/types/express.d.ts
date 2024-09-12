@@ -5,6 +5,7 @@ declare global {
     interface Request {
       session?: Record<string, any>;
       responseTimeMs?: number;
+      recaptchaScore?: number;
     }
   }
 }
