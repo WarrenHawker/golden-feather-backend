@@ -5,10 +5,13 @@ import { ISession } from '../../types/express-session';
 import updateUserDB from '../../services/db-services/user-db-services/update-user.service';
 import { CustomError } from '../../types/custom-error';
 import responseHandler from '../../middleware/response-handler.middleware';
+import { UserUpdateData } from '../../types/user';
+import { UserRole, UserStatus } from '@prisma/client';
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { id: userId } = req.params;
-  let { password, role, status, guildId, creatorId } = req.body;
+  let { username, email, password, role, status, guildId, creatorId } =
+    req.body;
 
   /* 
     user profiles can only be updated by admins or the signed in user.
@@ -118,13 +121,23 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
 
+    let hashedPassword;
     if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      password = hashedPassword;
+      hashedPassword = await bcrypt.hash(password, 10);
     }
 
+    const updateData: UserUpdateData = {
+      username: username ? username : undefined,
+      email: email ? email : undefined,
+      password: password ? hashedPassword : undefined,
+      role: role ? (role as UserRole) : undefined,
+      status: status ? (status as UserStatus) : undefined,
+      guildId: guildId ? guildId : undefined,
+      creatorId: creatorId ? creatorId : undefined,
+    };
+
     const { updatedUser, warningMessage1, warningMessage2 } =
-      await updateUserDB(userId as string, req.body);
+      await updateUserDB(userId as string, updateData);
     const data = { updatedUser, warnings: [warningMessage1, warningMessage2] };
     return responseHandler(req, res, 200, data);
   } catch (error) {

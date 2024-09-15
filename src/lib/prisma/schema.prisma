@@ -49,7 +49,7 @@ model User {
   guild               Guild?
   creator             Creator?
   devices             UserDevice[]
-  authProviders       AuthProvider[] 
+  auth_providers      AuthProvider[] 
 
   @@index([created_on])
   @@index([email])
@@ -62,27 +62,27 @@ model User {
 //any supported provider they like to sign in. 
 model AuthProvider {
   id                  String             @id @default(uuid())
-  userId              String
+  user_id             String
   provider            String
-  providerUserId      String?           
+  provider_user_id    String?           
   password            String?            
   created_on          DateTime           @default(now())
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerUserId])   
+  @@unique([provider, provider_user_id])   
 }
 
 model UserDevice {
   id                  String             @id @default(uuid())
-  userId              String
-  deviceName          String
-  userAgent           String
-  ipAddress           String
-  lastSignin          DateTime
-  sessionId           String
+  user_id             String
+  device_name         String
+  user_agent          String
+  ip_address          String
+  last_signin         DateTime
+  session_id          String
   created_on          DateTime           @default(now())
   active              Boolean            @default(true) 
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 //each guild can be linked to multiple languages, regions and tags
@@ -93,21 +93,21 @@ model Guild {
   description         String
   excerpt             String
   guild_leader        String? 
-  videoUrl            String                     
+  video_url           String                     
   created_on          DateTime                      @default(now())
   updated_on          DateTime?                     @updatedAt
   socials             Json?    
   status              ContentStatus
   regions             GuildRegionRelation[]       
   tags                GuildTagRelation[]
-  userId              String?                       @unique
-  user                User?                         @relation(fields: [userId], references: [id])
+  user_id             String?                       @unique
+  user                User?                         @relation(fields: [user_id], references: [id])
   languages           GuildLanguageRelation[] 
 
   @@index([created_on])
   @@index([slug])
   @@index([status])
-  @@index([userId])
+  @@index([user_id])
   @@index([name])
 }
 
@@ -116,20 +116,20 @@ model GuildTag {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   description         String?
-  guildTags           GuildTagRelation[]
+  guild_tags          GuildTagRelation[]
 
   @@index([name])
 }
 
 model GuildTagRelation {
   id                  String                        @id @default(uuid())
-  guildId             String
-  tagId               String
-  guild               Guild                         @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  tag                 GuildTag                      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  guild_id            String
+  tag_id              String
+  guild               Guild                         @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  tag                 GuildTag                      @relation(fields: [tag_id], references: [id], onDelete: Cascade)
 
-  @@index([guildId])
-  @@index([tagId])
+  @@index([guild_id])
+  @@index([tag_id])
 }
 
 //each creator profile can be linked to multiple languages and tags
@@ -139,20 +139,20 @@ model Creator {
   slug                String                        @unique
   description         String
   excerpt             String
-  videoUrl            String           
+  video_url           String           
   created_on          DateTime                      @default(now())
   updated_on          DateTime?                     @updatedAt
   status              ContentStatus   
   socials             Json?
   tags                CreatorTagRelation[]
-  userId              String?                       @unique
-  user                User?                         @relation(fields: [userId], references: [id])
+  user_id             String?                       @unique
+  user                User?                         @relation(fields: [user_id], references: [id])
   languages           CreatorLanguageRelation[]
 
   @@index([created_on])
   @@index([slug])
   @@index([status])
-  @@index([userId])
+  @@index([user_id])
   @@index([name])
 }
 
@@ -161,73 +161,73 @@ model CreatorTag {
   id                  String                        @id @default(uuid())
   name                String                        @unique
   description         String?
-  creatorTags         CreatorTagRelation[]
+  creator_tags        CreatorTagRelation[]
 
   @@index([name])
 }
 
 model CreatorTagRelation {
   id                  String                        @id @default(uuid())
-  creatorId           String
-  tagId               String
-  creator             Creator                       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  tag                 CreatorTag                    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  creator_id          String
+  tag_id              String
+  creator             Creator                       @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  tag                 CreatorTag                    @relation(fields: [tag_id], references: [id], onDelete: Cascade)
 
-  @@index([creatorId])
-  @@index([tagId])
+  @@index([creator_id])
+  @@index([tag_id])
 }
 
 //multiple languages can be linked to multiple different guilds and creators
 model Language {
   id                  String                        @id @default(uuid())
   name                String                        @unique
-  creatorLanguages    CreatorLanguageRelation[]
-  guildLanguages      GuildLanguageRelation[]
+  creator_languages   CreatorLanguageRelation[]
+  guild_languages     GuildLanguageRelation[]
 
   @@index([name])
 }
 
 model CreatorLanguageRelation {
   id                  String                        @id @default(uuid())
-  creatorId           String                        
-  languageId          String     
-  creator             Creator                       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  language            Language                      @relation(fields: [languageId], references: [id], onDelete: Cascade)                   
+  creator_id           String                        
+  language_id          String     
+  creator             Creator                       @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  language            Language                      @relation(fields: [language_id], references: [id], onDelete: Cascade)                   
 
-  @@index([creatorId])
-  @@index([languageId])
+  @@index([creator_id])
+  @@index([language_id])
 }
 
 model GuildLanguageRelation {
   id                  String                        @id @default(uuid())
-  guildId             String                        
-  languageId          String                        
-  guild               Guild                         @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  language            Language                      @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  guild_id             String                        
+  language_id          String                        
+  guild               Guild                         @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  language            Language                      @relation(fields: [language_id], references: [id], onDelete: Cascade)
   
 
-  @@index([guildId])
-  @@index([languageId])
+  @@index([guild_id])
+  @@index([language_id])
 }
 
 //multiple regions can be linked to multiple different guilds
 model Region {
   id                  String                        @id @default(cuid())
   name                String                        @unique
-  guildsRegion        GuildRegionRelation[]
+  guilds_region       GuildRegionRelation[]
 
   @@index([name])
 }
 
 model GuildRegionRelation {
   id                  String                        @id @default(uuid())
-  guildId             String
-  regionId            String
-  guild               Guild                       @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  region              Region                      @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  guild_id            String
+  region_id           String
+  guild               Guild                        @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  region              Region                       @relation(fields: [region_id], references: [id], onDelete: Cascade)
 
-  @@index([guildId])
-  @@index([regionId])
+  @@index([guild_id])
+  @@index([region_id])
 }
 
 enum ContentStatus {

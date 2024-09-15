@@ -8,7 +8,7 @@ import { CustomError } from '../../types/custom-error';
 import responseHandler from '../../middleware/response-handler.middleware';
 
 const signInUser = async (req: Request, res: Response, next: NextFunction) => {
-  let { email, password } = req.body;
+  const { email, password } = req.body;
 
   const userDB = await prismaClient.user.findUnique({
     where: { email: email },

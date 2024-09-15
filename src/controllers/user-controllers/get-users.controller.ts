@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import getUsersDB from '../../services/db-services/user-db-services/get-users.service';
 import responseHandler from '../../middleware/response-handler.middleware';
 import { CustomError } from '../../types/custom-error';
-
+//TODO add explicit query params after filling in required fields
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { pagination, users } = await getUsersDB(req.query);

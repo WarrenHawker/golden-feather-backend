@@ -1,10 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prismaClient from '../../../lib/prisma/client.prisma';
-import { GetCreatorSearchParams } from '../../../types/creator';
+import { CreatorSearchParams } from '../../../types/creator';
 
-export const getAdminCreatorsDB = async (
-  options: GetCreatorSearchParams = {}
-) => {
+export const getAdminCreatorsDB = async (options: CreatorSearchParams = {}) => {
   const { page = 1, limit = 12, name, languages, tags, status } = options;
 
   const searchData: Prisma.CreatorWhereInput = {

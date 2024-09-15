@@ -13,7 +13,7 @@ export type CreatorCreationData = {
   userId?: string;
 };
 
-export type GetCreatorSearchParams = {
+export type CreatorSearchParams = {
   page?: number;
   limit?: number;
   name?: string;

@@ -7,7 +7,7 @@ import { CustomError } from '../../types/custom-error';
 import responseHandler from '../../middleware/response-handler.middleware';
 
 const signUpUser = async (req: Request, res: Response, next: NextFunction) => {
-  let { username, email, password, repeatPassword } = req.body;
+  const { username, email, password, repeatPassword } = req.body;
 
   if (password != repeatPassword.trim()) {
     return next(new CustomError('Passwords do not match.', 400));

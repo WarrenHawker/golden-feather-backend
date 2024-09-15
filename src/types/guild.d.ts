@@ -5,7 +5,7 @@ export type GuildCreationData = {
   name: string;
   description: string;
   excerpt: string;
-  guild_leader?: string;
+  guildLeader?: string;
   status: ContentStatus;
   languages: string[];
   tags: string[];
@@ -15,7 +15,7 @@ export type GuildCreationData = {
   videoUrl: string;
 };
 
-export type GetGuildSearchParams = {
+export type GuildSearchParams = {
   page?: number;
   limit?: number;
   name?: string;
@@ -29,7 +29,7 @@ export type GuildUpdateData = {
   name?: string;
   description?: string;
   excerpt?: string;
-  guild_leader?: string;
+  guildLeader?: string;
   status?: ContentStatus;
   languages?: string[];
   tags?: string[];

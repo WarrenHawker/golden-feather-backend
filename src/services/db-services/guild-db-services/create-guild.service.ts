@@ -38,7 +38,7 @@ const createGuildDB = async (options: GuildCreationData) => {
         .replace(/\s+/g, '-'),
       description: options.description,
       excerpt: options.excerpt,
-      guild_leader: options.guild_leader,
+      guildLeader: options.guildLeader,
       videoUrl: options.videoUrl,
       status: options.status,
       ...(options.tags.length > 0 && {

@@ -53,7 +53,7 @@ const getFields: RequiredField[] = [
     paramType: 'query',
   },
   {
-    name: 'regions',
+    name: 'region',
     type: 'string array',
     optional: true,
     paramType: 'query',

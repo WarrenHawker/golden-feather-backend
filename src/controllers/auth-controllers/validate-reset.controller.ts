@@ -12,7 +12,7 @@ const validateReset = async (
   res: Response,
   next: NextFunction
 ) => {
-  let { email, password, repeatPassword, token } = req.body;
+  const { email, password, repeatPassword, token } = req.body;
 
   try {
     const data = await getResetTokenRedis(token);

@@ -9,8 +9,13 @@ const createCreatorTag = async (
   res: Response,
   next: NextFunction
 ) => {
+  const createData: TagCreationData = {
+    name: req.body.name,
+    description: req.body.description,
+  };
+
   try {
-    const tag = await createCreatorTagDB(req.body);
+    const tag = await createCreatorTagDB(createData);
     return responseHandler(req, res, 201, tag);
   } catch (error) {
     const statusCode = (error as any).statusCode || 500;

@@ -6,6 +6,9 @@ import getAdminGuildsDB from '../../services/db-services/guild-db-services/get-a
 import getPublicGuildsDB from '../../services/db-services/guild-db-services/get-public-guilds.service';
 import responseHandler from '../../middleware/response-handler.middleware';
 import { CustomError } from '../../types/custom-error';
+import queryToArray from '../../utils/functions/query-to-array.function';
+import { ContentStatus } from '@prisma/client';
+import { GuildSearchParams } from '../../types/guild';
 
 const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
   //if no search params are given, try fetching the default guilds from redis.
@@ -42,7 +45,17 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   //if there are any search params, validate and sanitise, then fetch data from main database
-  let { admin } = req.query;
+  const { admin, page, limit, name, lang, tag, status, region } = req.query;
+
+  const queryData: GuildSearchParams = {
+    page: page ? parseInt(page as string) : undefined,
+    limit: limit ? parseInt(limit as string) : undefined,
+    name: name ? (name as string) : undefined,
+    languages: queryToArray(lang),
+    tags: queryToArray(tag),
+    status: status ? (status as ContentStatus) : undefined,
+    regions: queryToArray(region),
+  };
 
   //fetch data from main database. If admin search param is true,
   //fetch admin guilds, otherwise fetch public guilds
@@ -69,7 +82,7 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
         );
       }
 
-      const { pagination, guilds } = await getAdminGuildsDB(req.query);
+      const { pagination, guilds } = await getAdminGuildsDB(queryData);
       const data = {
         currentPage: pagination.currentPage,
         totalPages: pagination.totalPages,
@@ -79,7 +92,7 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
       };
       return responseHandler(req, res, 200, data);
     } else {
-      const { pagination, guilds } = await getPublicGuildsDB(req.query);
+      const { pagination, guilds } = await getPublicGuildsDB(queryData);
       const data = {
         currentPage: pagination.currentPage,
         totalPages: pagination.totalPages,

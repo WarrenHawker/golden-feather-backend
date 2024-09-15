@@ -5,6 +5,7 @@ import updateCreatorDB from '../../services/db-services/creator-db-services/upda
 import { isValidCuid } from '../../utils/functions/validate-input.function';
 import { CustomError } from '../../types/custom-error';
 import responseHandler from '../../middleware/response-handler.middleware';
+import { CreatorUpdateData } from '../../types/creator';
 
 const updateCreator = async (
   req: Request,
@@ -53,10 +54,35 @@ const updateCreator = async (
   }
 
   //assuming session is valid, continue with rest of function
+
+  const {
+    name,
+    description,
+    excerpt,
+    videoUrl,
+    socials,
+    tags,
+    languages,
+    status,
+    userId,
+  } = req.body;
+
+  const updateData: CreatorUpdateData = {
+    name: name ? (name as string) : undefined,
+    description: description ? (description as string) : undefined,
+    excerpt: excerpt ? (excerpt as string) : undefined,
+    videoUrl: videoUrl ? (videoUrl as string) : undefined,
+    socials: socials ? socials : undefined,
+    tags: tags ? tags : undefined,
+    languages: languages ? languages : undefined,
+    status: status ? status : undefined,
+    userId: userId ? userId : undefined,
+  };
+
   try {
     const { updatedCreator, warningMessage } = await updateCreatorDB(
       creatorId as string,
-      req.body
+      updateData
     );
 
     return responseHandler(req, res, 200, { updatedCreator, warningMessage });

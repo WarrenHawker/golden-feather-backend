@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { isEmail, normalizeEmail } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
 import crypto from 'crypto';
 import formatDate from '../../utils/functions/format-date.function';
@@ -14,7 +13,7 @@ const requestPassword = async (
   res: Response,
   next: NextFunction
 ) => {
-  let { email } = req.body;
+  const { email } = req.body;
 
   try {
     const user = await prismaClient.user.findUnique({

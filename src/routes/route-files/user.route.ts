@@ -46,6 +46,18 @@ const updateFields: RequiredField[] = [
     optional: true,
     paramType: 'body',
   },
+  {
+    name: 'guildId',
+    type: 'id',
+    optional: true,
+    paramType: 'body',
+  },
+  {
+    name: 'creatorId',
+    type: 'id',
+    optional: true,
+    paramType: 'body',
+  },
 ];
 
 export const router = express.Router();
