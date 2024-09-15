@@ -12,9 +12,41 @@ import createGuildTag from '../../controllers/tag-controllers/guild-tag-controll
 import deleteGuildTag from '../../controllers/tag-controllers/guild-tag-controllers/delete-guild-tag.controller';
 import getGuildTags from '../../controllers/tag-controllers/guild-tag-controllers/get-guild-tags.controller';
 import updateGuildTag from '../../controllers/tag-controllers/guild-tag-controllers/update-guild-tag.controller';
-import validateFields from '../../middleware/validate-fields.middleware';
+import validateFields, {
+  RequiredField,
+} from '../../middleware/validate-fields.middleware';
 
 export const router = express.Router();
+
+const createFields: RequiredField[] = [
+  {
+    name: 'name',
+    type: 'string',
+    optional: false,
+    paramType: 'body',
+  },
+  {
+    name: 'description',
+    type: 'string',
+    optional: true,
+    paramType: 'body',
+  },
+];
+
+const updateFields: RequiredField[] = [
+  {
+    name: 'name',
+    type: 'string',
+    optional: true,
+    paramType: 'body',
+  },
+  {
+    name: 'description',
+    type: 'string',
+    optional: true,
+    paramType: 'body',
+  },
+];
 
 router.get('/creator', getCreatorTags);
 router.get('/guild', getGuildTags);
@@ -24,15 +56,11 @@ router.use(checkSession());
 router.use(checkRole('admin'));
 router.use(checkStatus('active'));
 
-router.post(
-  '/creator',
-  validateFields(['name', 'description']),
-  createCreatorTag
-);
-router.post('/guild', validateFields(['name', 'description']), createGuildTag);
+router.post('/creator', validateFields(createFields), createCreatorTag);
+router.post('/guild', validateFields(createFields), createGuildTag);
 
-router.patch('/creator/:id', updateCreatorTag);
-router.patch('/guild/:id', updateGuildTag);
+router.patch('/creator/:id', validateFields(updateFields), updateCreatorTag);
+router.patch('/guild/:id', validateFields(updateFields), updateGuildTag);
 
 router.delete('/creator/:id', deleteCreatorTag);
 router.delete('/guild/:id', deleteGuildTag);

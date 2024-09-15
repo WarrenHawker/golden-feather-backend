@@ -1,29 +1,34 @@
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '../../types/custom-error';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
 import deleteRegionDB from '../../services/db-services/region-db-services/delete-region.service';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const deleteRegion = async (req: Request, res: Response) => {
+const deleteRegion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   if (!isValidCuid(id)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'invalid id',
-      params: ['id'],
-    };
-    return res.status(error.code).json(error);
+    return next(
+      new CustomError('Invalid ID.', 400, `Invalid CUID provided: ${id}`)
+    );
   }
   try {
     const deletedRegion = await deleteRegionDB(id as string);
-    return res.status(200).json(deletedRegion);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, deletedRegion);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

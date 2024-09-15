@@ -1,9 +1,11 @@
+//TODO Change authprovider password if password is passed as options
+
 import { Prisma, UserStatus, UserRole } from '@prisma/client';
 import prismaClient from '../../../lib/prisma/client.prisma';
 import { UserUpdateData } from '../../../types/user';
 
 const updateUserDB = async (userId: string, options: UserUpdateData) => {
-  let { name, email, password, role, status, guildId, creatorId } = options;
+  let { username, email, password, role, status, guildId, creatorId } = options;
   try {
     /*
       if either guildId or creatorId is given, check those records exist 
@@ -49,9 +51,8 @@ const updateUserDB = async (userId: string, options: UserUpdateData) => {
     }
 
     const updateData: Prisma.UserUpdateInput = {
-      name: name ? name : undefined,
+      username: username ? username : undefined,
       email: email ? email : undefined,
-      password: password ? password : undefined,
       status: status ? (status as UserStatus) : undefined,
       role: role ? (role as UserRole) : undefined,
       updated_on: new Date(),

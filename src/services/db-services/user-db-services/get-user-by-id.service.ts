@@ -6,7 +6,7 @@ const getUserByIdDB = async (id: string) => {
       where: { id: id },
       select: {
         id: true,
-        name: true,
+        username: true,
         email: true,
         role: true,
         status: true,

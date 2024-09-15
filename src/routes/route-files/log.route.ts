@@ -5,12 +5,18 @@ import {
   checkSession,
   checkStatus,
 } from '../../middleware/require-auth.middleware';
+import validateFields, {
+  RequiredField,
+} from '../../middleware/validate-fields.middleware';
 
 export const router = express.Router();
+
+//TODO fill in required fields
+const getFields: RequiredField[] = [];
 
 //all log-related routes require admin access
 router.use(checkSession());
 router.use(checkRole('admin'));
 router.use(checkStatus('active'));
 
-router.get('/', getLogs);
+router.get('/', validateFields(getFields), getLogs);

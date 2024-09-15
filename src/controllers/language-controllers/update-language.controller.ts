@@ -1,33 +1,35 @@
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
+import { NextFunction, Request, Response } from 'express';
 import { isValidCuid } from '../../utils/functions/validate-input.function';
 import updateLanguageDB from '../../services/db-services/language-db-services/update-language.service';
-import { escape } from 'validator';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const updateLanguage = async (req: Request, res: Response) => {
-  let { id } = req.query;
-  let { name } = req.body;
+const updateLanguage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id: langId } = req.params;
+  const { name } = req.body;
 
-  if (!isValidCuid(id as string)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'invalid id',
-      params: ['id'],
-    };
-    return res.status(error.code).json(error);
+  if (!isValidCuid(langId)) {
+    return next(
+      new CustomError('Invalid ID.', 400, `Invalid CUID provided: ${langId}`)
+    );
   }
-
-  if (name) name = escape(name).trim();
   try {
-    const updatedLanguage = await updateLanguageDB(id as string, name);
-    return res.status(200).json(updatedLanguage);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    const updatedLanguage = await updateLanguageDB(langId as string, name);
+    return responseHandler(req, res, 200, updatedLanguage);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

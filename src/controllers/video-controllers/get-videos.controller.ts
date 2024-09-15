@@ -2,8 +2,9 @@ const { google } = require('googleapis');
 import axios from 'axios';
 import { redisClient } from '../../lib/redis/client.redis';
 import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
 const youtube = google.youtube({
   version: 'v3',
@@ -70,21 +71,28 @@ const getLatestTwitch = async (channelId: string) => {
   }
 };
 
-const getHomepageVideos = async (req: Request, res: Response) => {
+const getHomepageVideos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const youtubeId = process.env.YOUTUBE_CHANNEL_ID || '';
   const twitchId = process.env.TWITCH_CHANNEL_NAME || '';
 
   try {
     const latestYoutube = await getLatestYoutube(youtubeId);
     const latestTwitch = await getLatestTwitch(twitchId);
-    res.status(200).json({ latestYoutube, latestTwitch });
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, { latestYoutube, latestTwitch });
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

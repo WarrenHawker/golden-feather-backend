@@ -8,15 +8,54 @@ import {
   checkSession,
   checkStatus,
 } from '../../middleware/require-auth.middleware';
+import validateFields, {
+  RequiredField,
+} from '../../middleware/validate-fields.middleware';
+
+//TODO fill in required fields
+const getFields: RequiredField[] = [];
+
+const updateFields: RequiredField[] = [
+  {
+    name: 'username',
+    type: 'string',
+    optional: true,
+    paramType: 'body',
+  },
+  {
+    name: 'email',
+    type: 'email',
+    optional: true,
+    paramType: 'body',
+  },
+  {
+    name: 'password',
+    type: 'password',
+    optional: true,
+    paramType: 'body',
+  },
+  {
+    name: 'role',
+    type: 'user role',
+    optional: true,
+    paramType: 'body',
+  },
+  {
+    name: 'status',
+    type: 'user status',
+    optional: true,
+    paramType: 'body',
+  },
+];
 
 export const router = express.Router();
-router.patch('/:id', updateUser);
+router.patch('/:id', checkSession(), validateFields(updateFields), updateUser);
 
 //fetching or deleting users can only be done by active admins
 router.use(checkSession());
 router.use(checkRole('admin'));
 router.use(checkStatus('active'));
 
-router.get('/', getUsers);
+router.get('/', validateFields(getFields), getUsers);
 router.get('/:id', getUserById);
 router.delete('/:id', deleteUser);

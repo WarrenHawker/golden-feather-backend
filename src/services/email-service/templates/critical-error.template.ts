@@ -1,4 +1,4 @@
-import { LogData } from '../../lib/mongoose/log-model.mongoose';
+import { LogData } from '../../../lib/mongoose/log-model.mongoose';
 
 const criticalErrorTemplate = (logData: LogData) => {
   const text = `

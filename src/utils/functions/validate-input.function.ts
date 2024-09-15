@@ -35,6 +35,12 @@ export const isNumber = (input: string): boolean => {
   } else return true;
 };
 
+export const isPosNumber = (input: string): boolean => {
+  if (Number.isNaN(parseInt(input)) && parseInt(input) > 0) {
+    return true;
+  } else return true;
+};
+
 //returns true if the input is a valid content status, else returns false
 export const isContentStatus = (input: string): boolean => {
   if (input == 'public' || input == 'private' || input == 'deleted') {

@@ -3,12 +3,12 @@ import { GetUserSearchParams } from '../../../types/user';
 import prismaClient from '../../../lib/prisma/client.prisma';
 
 const getUsersDB = async (options: GetUserSearchParams = {}) => {
-  const { page = 1, limit = 10, name, role, status } = options;
+  const { page = 1, limit = 10, username, role, status } = options;
 
   const searchData: Prisma.UserWhereInput = {
-    ...(name && {
-      name: {
-        contains: name,
+    ...(username && {
+      username: {
+        contains: username,
         mode: 'insensitive',
       },
     }),
@@ -32,7 +32,7 @@ const getUsersDB = async (options: GetUserSearchParams = {}) => {
       take: limit,
       select: {
         id: true,
-        name: true,
+        username: true,
         email: true,
         role: true,
         status: true,

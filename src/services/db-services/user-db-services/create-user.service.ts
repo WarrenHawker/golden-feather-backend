@@ -3,9 +3,8 @@ import { UserCreationData } from '../../../types/user';
 
 const createUserDB = async (options: UserCreationData) => {
   const newUserData = {
-    name: options.name,
+    username: options.username,
     email: options.email,
-    password: options.password,
     role: options.role,
     status: options.status,
   };
@@ -14,12 +13,21 @@ const createUserDB = async (options: UserCreationData) => {
       data: newUserData,
       select: {
         id: true,
-        name: true,
+        username: true,
         email: true,
         role: true,
         status: true,
       },
     });
+
+    await prismaClient.authProvider.create({
+      data: {
+        userId: newUser.id,
+        provider: 'credentials',
+        password: options.password,
+      },
+    });
+
     return newUser;
   } catch (error) {
     throw error;

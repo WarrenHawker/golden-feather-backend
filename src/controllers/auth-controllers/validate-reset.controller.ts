@@ -1,62 +1,44 @@
-import { Request, Response } from 'express';
-import { isEmail, isStrongPassword, normalizeEmail } from 'validator';
+import { NextFunction, Request, Response } from 'express';
 import prismaClient from '../../lib/prisma/client.prisma';
 import bcrypt from 'bcrypt';
 import getResetTokenRedis from '../../services/redis-services/auth-redis-services/get-reset-token-redis.services';
 import deleteKeyRedis from '../../services/redis-services/delete-key-redis.service';
 import updateUserDB from '../../services/db-services/user-db-services/update-user.service';
-import { ErrorReturn } from '../../types/error-return';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const validateReset = async (req: Request, res: Response) => {
+const validateReset = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   let { email, password, repeatPassword, token } = req.body;
 
   try {
-    if (!isEmail(email)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid email',
-        params: ['email'],
-      };
-      return res.status(error.code).json(error);
-    }
-
     const data = await getResetTokenRedis(token);
 
     if (!data) {
-      const error: ErrorReturn = {
-        code: 404,
-        message: 'token data not found',
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'The reset link is invalid or has expired.',
+          400,
+          `Invalid or expired reset token: ${token}`
+        )
+      );
     }
 
-    if (!isStrongPassword(password)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Password not strong enough',
-        params: ['password'],
-      };
-      return res.status(error.code).json(error);
+    if (password != repeatPassword.trim()) {
+      return next(new CustomError('Passwords do not match.', 400));
     }
-
-    if (password != repeatPassword) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Passwords do not match',
-        params: ['password', 'repeatPassword'],
-      };
-      return res.status(error.code).json(error);
-    }
-
-    email = normalizeEmail(email, { gmail_remove_dots: false });
 
     if (data.email != email) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'request body email does not match token email',
-        params: ['email'],
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'The reset link is invalid or has expired.',
+          400,
+          `Email mismatch: token email ${data.email} does not match provided email ${email}.`
+        )
+      );
     }
 
     const user = await prismaClient.user.findUnique({
@@ -64,11 +46,13 @@ const validateReset = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      const error: ErrorReturn = {
-        code: 404,
-        message: 'user not found',
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'Unable to reset password. Please try again later.',
+          400,
+          `User with email ${email} not found during password reset process.`
+        )
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -78,14 +62,17 @@ const validateReset = async (req: Request, res: Response) => {
     });
 
     await deleteKeyRedis(`passwordReset:token:${token}`);
-    return res.status(200).json({ message: 'success' });
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

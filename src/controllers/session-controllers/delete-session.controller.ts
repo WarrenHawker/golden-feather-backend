@@ -1,43 +1,25 @@
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
+//TODO fill in function
 
-const deleteSession = async (req: Request, res: Response) => {
-  const sessionId = req.params.id;
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '../../types/custom-error';
 
-  const missingParams = [];
-  if (!sessionId) {
-    missingParams.push('userId');
+const deleteSession = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
-  if (missingParams.length > 0) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Missing url parameters',
-      params: missingParams,
-    };
-    return res.status(error.code).json(error);
-  }
-
-  if (!req.sessionStore) {
-    const error: ErrorReturn = {
-      code: 404,
-      message: 'Session store not found.',
-    };
-    return res.status(error.code).json(error);
-  }
-
-  req.sessionStore.destroy(sessionId, (err) => {
-    if (err) {
-      const error: ErrorReturn = {
-        code: (err as any).statusCode || (err as any).status || 500,
-        message: (err as Error).message,
-        stack: (err as Error).stack,
-      };
-      return res.status(error.code).json(error);
-    }
-    return res
-      .sendStatus(200)
-      .json({ message: 'session destroyed successfully' });
-  });
 };
 
 export default deleteSession;

@@ -1,58 +1,90 @@
-import validator from 'validator';
 import bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { redisClient } from '../../lib/redis/client.redis';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
-import { ErrorReturn } from '../../types/error-return';
+import lockAccount from '../../services/auth-services/lock-account.service';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
-
-const signInUser = async (req: Request, res: Response) => {
+const signInUser = async (req: Request, res: Response, next: NextFunction) => {
   let { email, password } = req.body;
-
-  if (!isEmail(email)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Invalid email',
-      params: ['email'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  if (!isStrongPassword(password)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Password not strong enough',
-      params: ['password'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  email = escape(email).trim();
-  email = normalizeEmail(email, { gmail_remove_dots: false });
-  password = password.trim();
 
   const userDB = await prismaClient.user.findUnique({
     where: { email: email },
+    include: {
+      authProviders: {
+        where: { provider: 'credentials' },
+        select: {
+          password: true,
+        },
+      },
+    },
   });
+
+  const userPassword = userDB?.authProviders[0].password;
+
   if (!userDB) {
-    const error: ErrorReturn = {
-      code: 404,
-      message: 'User not found',
-      params: ['email'],
-    };
-    return res.status(error.code).json(error);
+    return next(
+      new CustomError(
+        'Invalid credentials.',
+        401,
+        `User with email ${email} not found in the database.`
+      )
+    );
   }
 
-  const match = await bcrypt.compare(password, userDB.password);
+  if (!userPassword) {
+    return next(
+      new CustomError(
+        'Invalid credentials.',
+        401,
+        `Password not found for user with email ${email}.`
+      )
+    );
+  }
+
+  if (userDB.status == 'locked') {
+    return next(
+      new CustomError(
+        'Account is locked.',
+        403,
+        `User with email ${email} is locked due to suspicious activity.`
+      )
+    );
+  }
+
+  const match = await bcrypt.compare(password, userPassword);
   if (!match) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Wrong password',
-      params: ['password'],
-    };
-    return res.status(error.code).json(error);
+    const timeout = 10;
+    const response = await redisClient
+      .multi()
+      .incr(`${userDB.email}_attempts`)
+      .exec();
+    const attempts = response[0];
+
+    if (attempts == 1) {
+      await redisClient.expire(`${userDB.email}_attempts`, timeout);
+    }
+
+    if ((attempts as number) > 5) {
+      await lockAccount(userDB);
+      return next(
+        new CustomError(
+          'Account is locked.',
+          403,
+          `User with email ${email} is locked due to too many failed signin attempts.`
+        )
+      );
+    } else {
+      return next(
+        new CustomError(
+          'Invalid credentials.',
+          401,
+          `Password doesn't match user with email ${email}.`
+        )
+      );
+    }
   }
 
   try {
@@ -69,20 +101,23 @@ const signInUser = async (req: Request, res: Response) => {
 
     const user = {
       id: userDB.id,
-      name: userDB.name,
+      username: userDB.username,
       email: userDB.email,
       role: userDB.role,
       status: userDB.status,
     };
 
-    return res.status(200).json(user);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, user);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

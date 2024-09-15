@@ -1,28 +1,38 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ISession } from '../../types/express-session';
 import getUserByIdDB from '../../services/db-services/user-db-services/get-user-by-id.service';
-import { ErrorReturn } from '../../types/error-return';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const getUserProfile = async (req: Request, res: Response) => {
+const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = (req.session as ISession).user.id;
   try {
     const user = await getUserByIdDB(userId);
 
     if (!user) {
-      const error: ErrorReturn = {
-        code: 404,
-        message: `User with ID ${userId} not found`,
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'The requested resource could not be found.',
+          404,
+          `User with id ${userId} not found in database.`
+        )
+      );
     }
-    return res.status(200).json(user);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, user);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

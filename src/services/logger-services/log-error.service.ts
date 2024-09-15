@@ -16,6 +16,7 @@ const logError = async (data: LogsCreateData) => {
       ip: req.ip,
       userId: (req.session as ISession)?.user?.id || '',
       message: error?.message || 'An unknown error occurred',
+      detailedMessage: error?.detailedMessage || '',
       headers: {
         userAgent: req.headers['user-agent'] || '',
         referer: req.headers['referer'] || '',

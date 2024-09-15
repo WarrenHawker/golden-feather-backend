@@ -18,6 +18,7 @@ export interface LogData {
     authorization?: 'present' | 'absent';
   };
   message?: string;
+  detailedMessage?: string;
   ip?: string;
   body?: any;
   userId?: string;

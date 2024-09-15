@@ -1,17 +1,20 @@
 //TODO fill in function
 
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '../../types/custom-error';
 
-const getForms = async (req: Request, res: Response) => {
+const getForms = async (req: Request, res: Response, next: NextFunction) => {
   try {
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

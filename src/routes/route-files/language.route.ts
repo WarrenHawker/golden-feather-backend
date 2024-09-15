@@ -8,9 +8,20 @@ import {
   checkSession,
   checkStatus,
 } from '../../middleware/require-auth.middleware';
-import validateFields from '../../middleware/validate-fields.middleware';
+import validateFields, {
+  RequiredField,
+} from '../../middleware/validate-fields.middleware';
 
 export const router = express.Router();
+
+const fields: RequiredField[] = [
+  {
+    name: 'name',
+    type: 'string',
+    optional: false,
+    paramType: 'body',
+  },
+];
 
 router.get('/', getLanguages);
 
@@ -19,6 +30,6 @@ router.use(checkSession());
 router.use(checkRole('admin'));
 router.use(checkStatus('active'));
 
-router.post('/', validateFields(['name']), createLanguage);
-router.patch('/:id', updateLanguage);
+router.post('/', validateFields(fields), createLanguage);
+router.patch('/:id', validateFields(fields), updateLanguage);
 router.delete('/:id', deleteLanguage);

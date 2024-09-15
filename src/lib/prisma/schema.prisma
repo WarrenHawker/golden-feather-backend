@@ -40,19 +40,49 @@ datasource db {
 //each user can be linked to a single guild and single creator profile
 model User {
   id                  String                        @id @default(cuid())
-  name                String
+  username            String                        @unique
   email               String                        @unique
-  password            String
   role                UserRole
   status              UserStatus
   created_on          DateTime                      @default(now())
   updated_on          DateTime?                     @updatedAt 
   guild               Guild?
   creator             Creator?
+  devices             UserDevice[]
+  authProviders       AuthProvider[] 
 
   @@index([created_on])
   @@index([email])
-  @@index([name])
+  @@index([username])
+}
+
+//Users can sign in either with email and password, or any supported OAUTH 2.0 provider. 
+//
+//accounts are linked so each email address will only ever have a single account, but can use
+//any supported provider they like to sign in. 
+model AuthProvider {
+  id                  String             @id @default(uuid())
+  userId              String
+  provider            String
+  providerUserId      String?           
+  password            String?            
+  created_on          DateTime           @default(now())
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])   
+}
+
+model UserDevice {
+  id                  String             @id @default(uuid())
+  userId              String
+  deviceName          String
+  userAgent           String
+  ipAddress           String
+  lastSignin          DateTime
+  sessionId           String
+  created_on          DateTime           @default(now())
+  active              Boolean            @default(true) 
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 //each guild can be linked to multiple languages, regions and tags
@@ -68,7 +98,7 @@ model Guild {
   updated_on          DateTime?                     @updatedAt
   socials             Json?    
   status              ContentStatus
-  regions              GuildRegionRelation[]       
+  regions             GuildRegionRelation[]       
   tags                GuildTagRelation[]
   userId              String?                       @unique
   user                User?                         @relation(fields: [userId], references: [id])

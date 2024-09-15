@@ -1,33 +1,22 @@
 //TODO save contact form in mongodb
 
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
-import axios from 'axios';
-import { isEmail, escape, normalizeEmail } from 'validator';
-import sendEmail from '../../services/email.service';
+import { NextFunction, Request, Response } from 'express';
+import sendEmail from '../../services/email-service/email.service';
 import {
-  contactFormAdminTemplate,
   contactFormUserTemplate,
-} from '../../utils/templates/contact-form.template';
+  contactFormAdminTemplate,
+} from '../../services/email-service/templates/contact-form.template';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const receiveContactForm = async (req: Request, res: Response) => {
-  let { name, email, message } = req.body;
+const receiveContactForm = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, email, message } = req.body;
 
   try {
-    if (!isEmail(email)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid email',
-        params: ['email'],
-      };
-      return res.status(error.code).json(error);
-    }
-
-    email = escape(email).trim();
-    email = normalizeEmail(email, { gmail_remove_dots: false });
-    name = escape(name).trim();
-    message = escape(message).trim();
-
     const { text: textUser, html: htmlUser } = contactFormUserTemplate(
       name,
       email,
@@ -47,14 +36,17 @@ const receiveContactForm = async (req: Request, res: Response) => {
     );
     await sendEmail(email, 'Thank You for Contacting Us', textUser, htmlUser);
 
-    return res.status(200).json(req.body);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

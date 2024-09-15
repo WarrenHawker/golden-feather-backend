@@ -1,83 +1,25 @@
-import { Request, Response } from 'express';
-import { escape } from 'validator';
-import {
-  isContentStatus,
-  isValidCuid,
-  isValidVideoUrl,
-} from '../../utils/functions/validate-input.function';
-import { GuildCreationData } from '../../types/guild';
-import sanitiseArray from '../../utils/functions/sanitise-array.function';
-import sanitiseObject from '../../utils/functions/sanitise-socials.function';
+import { NextFunction, Request, Response } from 'express';
 import createGuildDB from '../../services/db-services/guild-db-services/create-guild.service';
-import { ErrorReturn } from '../../types/error-return';
-import trimExcerpt from '../../utils/functions/trim-excerpt.function';
+import responseHandler from '../../middleware/response-handler.middleware';
+import { CustomError } from '../../types/custom-error';
 
-const createGuild = async (req: Request, res: Response) => {
-  let {
-    name,
-    description,
-    excerpt,
-    guild_leader,
-    videoUrl,
-    status,
-    languages,
-    tags,
-    regions,
-    userId,
-    socials,
-  } = req.body;
-
-  if (!isContentStatus(status)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'invalid content status',
-      params: ['status'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  if (!isValidCuid(userId)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'invalid userId',
-      params: ['userId'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  if (!isValidVideoUrl(videoUrl)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'videoUrl must be a valid url',
-      params: ['videoUrl'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  const createData: GuildCreationData = {
-    name: escape(name).trim(),
-    description: escape(description).trim(),
-    excerpt: trimExcerpt(escape(excerpt).trim()),
-    videoUrl,
-    socials: sanitiseObject(socials),
-    tags: sanitiseArray(tags),
-    languages: sanitiseArray(languages),
-    regions: sanitiseArray(regions),
-    status,
-    userId,
-    guild_leader: escape(guild_leader).trim(),
-  };
-
+const createGuild = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { newGuild, warningMessage } = await createGuildDB(createData);
-    return res.status(201).json({ creator: newGuild, warningMessage });
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    const { newGuild, warningMessage } = await createGuildDB(req.body);
+    return responseHandler(req, res, 201, {
+      creator: newGuild,
+      warningMessage,
+    });
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

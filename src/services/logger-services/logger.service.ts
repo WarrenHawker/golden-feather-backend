@@ -1,4 +1,4 @@
-import { ErrorReturn } from '../../types/error-return';
+import { CustomError } from '../../types/custom-error';
 import { Request, Response } from 'express';
 import logCritical from './log-critical.service';
 import logError from './log-error.service';
@@ -7,7 +7,7 @@ import logInfo from './log-info.service';
 const logger = async (
   req: Request,
   res: Response,
-  error: ErrorReturn | null = null
+  error: CustomError | null = null
 ) => {
   const statusCode = res.statusCode;
 

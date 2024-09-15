@@ -1,20 +1,14 @@
-import { Request, Response } from 'express';
-import { UserUpdateData } from '../../types/user';
-import {
-  isUserRole,
-  isUserStatus,
-  isValidCuid,
-} from '../../utils/functions/validate-input.function';
-import isEmail from 'validator/lib/isEmail';
-import { normalizeEmail, escape, isStrongPassword } from 'validator';
+import { NextFunction, Request, Response } from 'express';
+import { isValidCuid } from '../../utils/functions/validate-input.function';
 import bcrypt from 'bcrypt';
 import { ISession } from '../../types/express-session';
 import updateUserDB from '../../services/db-services/user-db-services/update-user.service';
-import { ErrorReturn } from '../../types/error-return';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const updateUser = async (req: Request, res: Response) => {
-  let { id: userId } = req.query;
-  let { name, email, password, role, status, guildId, creatorId } = req.body;
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  const { id: userId } = req.params;
+  let { password, role, status, guildId, creatorId } = req.body;
 
   /* 
     user profiles can only be updated by admins or the signed in user.
@@ -23,167 +17,126 @@ const updateUser = async (req: Request, res: Response) => {
     In addition, only admins can change the guildId, creatorId, role and status of a user.
   */
 
-  if (!isValidCuid(userId as string)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'invalid user id',
-      params: ['id'],
-    };
-    return res.status(error.code).json(error);
+  if (!isValidCuid(userId)) {
+    return next(
+      new CustomError('Invalid ID.', 400, `Invalid CUID provided: ${userId}`)
+    );
   }
 
   const sessionUser = (req.session as ISession).user;
   try {
-    if (!sessionUser) {
-      const error: ErrorReturn = {
-        code: 401,
-        message: 'no session found',
-      };
-      return res.status(error.code).json(error);
-    }
-
     if (
       sessionUser.id != userId &&
       !(sessionUser.role == 'admin' && sessionUser.status == 'active')
     ) {
-      const error: ErrorReturn = {
-        code: 403,
-        message: 'unorthorised access',
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'You do not have permission to access this resource.',
+          403,
+          `User id ${userId}, role ${sessionUser.role} and status ${sessionUser.status} cannot access that resource.`
+        )
+      );
     }
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: 500,
-      message: (err as Error).message,
-    };
-    return res.status(error.code).json(error);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 
   try {
-    const updateData: UserUpdateData = {};
     if (guildId) {
       //check for valid admin session
       if (!(sessionUser.role == 'admin' && sessionUser.status == 'active')) {
-        const error: ErrorReturn = {
-          code: 403,
-          message: 'unorthorised access',
-        };
-        return res.status(error.code).json(error);
+        return next(
+          new CustomError(
+            'You do not have permission to change this resource.',
+            403,
+            `User id ${userId}, role ${sessionUser.role} and status ${sessionUser.status} cannot change that resource.`
+          )
+        );
       } else if (!isValidCuid(guildId as string)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid guild id',
-          params: ['guildId'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.guildId = guildId;
+        return next(
+          new CustomError(
+            'You do not have permission to change this resource.',
+            403,
+            `GuildId ${guildId} is invalid.`
+          )
+        );
       }
     }
 
     if (creatorId) {
       //check for valid admin session
       if (!(sessionUser.role == 'admin' && sessionUser.status == 'active')) {
-        const error: ErrorReturn = {
-          code: 403,
-          message: 'unorthorised access',
-        };
-        return res.status(error.code).json(error);
+        return next(
+          new CustomError(
+            'You do not have permission to change this resource.',
+            403,
+            `User id ${userId}, role ${sessionUser.role} and status ${sessionUser.status} cannot change that resource.`
+          )
+        );
       } else if (!isValidCuid(creatorId as string)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid creator id',
-          params: ['creatorId'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.creatorId = creatorId;
+        return next(
+          new CustomError(
+            'You do not have permission to change this resource.',
+            403,
+            `creatorId ${creatorId} is invalid.`
+          )
+        );
       }
     }
 
     if (status) {
       //check for valid admin session
       if (!(sessionUser.role == 'admin' && sessionUser.status == 'active')) {
-        const error: ErrorReturn = {
-          code: 403,
-          message: 'unorthorised access',
-        };
-        return res.status(error.code).json(error);
-      } else if (!isUserStatus(status)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid status',
-          params: ['status'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.status = status;
+        return next(
+          new CustomError(
+            'You do not have permission to change this resource.',
+            403,
+            `User id ${userId}, role ${sessionUser.role} and status ${sessionUser.status} cannot change that resource.`
+          )
+        );
       }
     }
 
     if (role) {
       //check for valid admin session
       if (!(sessionUser.role == 'admin' && sessionUser.status == 'active')) {
-        const error: ErrorReturn = {
-          code: 403,
-          message: 'unorthorised access',
-        };
-        return res.status(error.code).json(error);
-      } else if (!isUserRole(role)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid role',
-          params: ['role'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.role = role;
-      }
-    }
-
-    if (email) {
-      if (!isEmail(email)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid email',
-          params: ['email'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.email =
-          normalizeEmail(email, { gmail_remove_dots: false }) || undefined;
+        return next(
+          new CustomError(
+            'You do not have permission to change this resource.',
+            403,
+            `User id ${userId}, role ${sessionUser.role} and status ${sessionUser.status} cannot change that resource.`
+          )
+        );
       }
     }
 
     if (password) {
-      if (!isStrongPassword(password)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'Password not strong enough',
-          params: ['password'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        updateData.password = hashedPassword;
-      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      password = hashedPassword;
     }
 
-    if (name) updateData.name = escape(name).trim();
-
     const { updatedUser, warningMessage1, warningMessage2 } =
-      await updateUserDB(userId as string, updateData);
-    return res
-      .status(200)
-      .json({ updatedUser, warnings: [warningMessage1, warningMessage2] });
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+      await updateUserDB(userId as string, req.body);
+    const data = { updatedUser, warnings: [warningMessage1, warningMessage2] };
+    return responseHandler(req, res, 200, data);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

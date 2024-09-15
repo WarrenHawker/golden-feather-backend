@@ -1,38 +1,40 @@
-import { Request, Response } from 'express';
-import { ErrorReturn } from '../../types/error-return';
+import { NextFunction, Request, Response } from 'express';
 import getRegionsDB from '../../services/db-services/region-db-services/get-regions.service';
 import getRegionsRedis from '../../services/redis-services/region-redis-services/get-regions-redis.service';
 import { ISession } from '../../types/express-session';
+import responseHandler from '../../middleware/response-handler.middleware';
+import { CustomError } from '../../types/custom-error';
 
-const getregions = async (req: Request, res: Response) => {
-  const { admin } = req.query;
+const getregions = async (req: Request, res: Response, next: NextFunction) => {
   const userSession = req.session as ISession;
   const isAdmin =
-    admin === 'true' &&
-    userSession.user.role === 'admin' &&
-    userSession.user.status === 'active';
+    userSession.user.role === 'admin' && userSession.user.status === 'active';
   //try fetching from redis. If that fails, get from main database
   try {
     const { publicRegions, allRegions } = await getRegionsRedis();
     if (isAdmin) {
-      return res.status(200).json(allRegions);
+      return responseHandler(req, res, 200, allRegions);
     }
-    return res.status(200).json(publicRegions);
+    return responseHandler(req, res, 200, publicRegions);
   } catch (error) {
     //fetch from main database
     try {
       const { publicRegions, allRegions } = await getRegionsDB();
       if (isAdmin) {
-        return res.status(200).json(allRegions);
+        return responseHandler(req, res, 200, allRegions);
       }
-      return res.status(200).json(publicRegions);
+      return responseHandler(req, res, 200, publicRegions);
     } catch (err) {
-      const error: ErrorReturn = {
-        code: (err as any).statusCode || (err as any).status || 500,
-        message: (err as Error).message,
-        stack: (err as Error).stack,
-      };
-      return res.status(error.code).json(error);
+      const statusCode = (error as any).statusCode || 500;
+      const detailedMessage =
+        (error as any).message || 'Unknown error occurred';
+      return next(
+        new CustomError(
+          'An unexpected error occurred. Please try again later.',
+          statusCode,
+          detailedMessage
+        )
+      );
     }
   }
 };

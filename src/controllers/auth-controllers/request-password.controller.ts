@@ -1,38 +1,31 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { isEmail, normalizeEmail } from 'validator';
 import prismaClient from '../../lib/prisma/client.prisma';
 import crypto from 'crypto';
-import passwordResetEmailTemplate from '../../utils/templates/password-reset.template';
 import formatDate from '../../utils/functions/format-date.function';
-import sendEmail from '../../services/email.service';
+import sendEmail from '../../services/email-service/email.service';
 import storeResetTokenRedis from '../../services/redis-services/auth-redis-services/store-reset-token-redis.services';
-import { ErrorReturn } from '../../types/error-return';
+import passwordResetEmailTemplate from '../../services/email-service/templates/password-reset.template';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const requestPassword = async (req: Request, res: Response) => {
+const requestPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   let { email } = req.body;
 
   try {
-    if (!isEmail(email)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'Invalid email',
-        params: ['email'],
-      };
-      return res.status(error.code).json(error);
-    }
-
-    email = normalizeEmail(email, { gmail_remove_dots: false });
-
     const user = await prismaClient.user.findUnique({
       where: { email: email },
     });
 
     if (!user) {
-      const error: ErrorReturn = {
-        code: 404,
-        message: 'user not found',
-      };
-      return res.status(error.code).json(error);
+      return responseHandler(req, res, 200, {
+        message:
+          'If an account with that email exists, we have sent instructions to reset your password.',
+      });
     }
 
     const token = crypto.randomBytes(32).toString('hex');
@@ -44,14 +37,20 @@ const requestPassword = async (req: Request, res: Response) => {
     const { text, html } = passwordResetEmailTemplate(resetUrl, userIP, now);
     await sendEmail(email, 'password reset request', html, text);
 
-    return res.status(201).json({ message: 'success' });
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, {
+      message:
+        'If an account with that email exists, we have sent instructions to reset your password.',
+    });
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

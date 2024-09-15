@@ -1,8 +1,8 @@
 import { LogData } from '../../lib/mongoose/log-model.mongoose';
 import { ISession } from '../../types/express-session';
 import { LogsCreateData } from '../../types/log';
-import criticalErrorTemplate from '../../utils/templates/critical-error.template';
-import sendEmail from '../email.service';
+import sendEmail from '../email-service/email.service';
+import criticalErrorTemplate from '../email-service/templates/critical-error.template';
 import createLogMongo from '../mongo-services/create-log-mongo.service';
 
 const logCritical = async (data: LogsCreateData) => {
@@ -18,6 +18,7 @@ const logCritical = async (data: LogsCreateData) => {
       ip: req.ip,
       userId: (req.session as ISession)?.user?.id || '',
       message: error?.message || 'An unknown error occurred',
+      detailedMessage: error?.detailedMessage || '',
       headers: {
         userAgent: req.headers['user-agent'] || '',
         referer: req.headers['referer'] || '',

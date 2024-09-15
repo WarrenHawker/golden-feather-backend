@@ -1,7 +1,7 @@
 import { UserRole, UserStatus } from '@prisma/client';
 
 export type UserCreationData = {
-  name: string;
+  username: string;
   email: string;
   password: string;
   role: UserRole;
@@ -11,13 +11,13 @@ export type UserCreationData = {
 export type GetUserSearchParams = {
   page?: number;
   limit?: number;
-  name?: string;
+  username?: string;
   role?: UserRole;
   status?: UserStatus;
 };
 
 export type UserUpdateData = {
-  name?: string;
+  username?: string;
   email?: string;
   password?: string;
   role?: UserRole;

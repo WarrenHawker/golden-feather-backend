@@ -1,63 +1,33 @@
-import validator from 'validator';
 import bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { UserRole, UserStatus } from '@prisma/client';
 import prismaClient from '../../lib/prisma/client.prisma';
 import createUserDB from '../../services/db-services/user-db-services/create-user.service';
-import { ErrorReturn } from '../../types/error-return';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const { isEmail, isStrongPassword, normalizeEmail, escape } = validator;
+const signUpUser = async (req: Request, res: Response, next: NextFunction) => {
+  let { username, email, password, repeatPassword } = req.body;
 
-const signUpUser = async (req: Request, res: Response) => {
-  let { name, email, password, repeatPassword } = req.body;
-
-  if (!isEmail(email)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Invalid email',
-      params: ['email'],
-    };
-    return res.status(error.code).json(error);
+  if (password != repeatPassword.trim()) {
+    return next(new CustomError('Passwords do not match.', 400));
   }
-
-  if (!isStrongPassword(password)) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Password not strong enough',
-      params: ['password'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  if (password != repeatPassword) {
-    const error: ErrorReturn = {
-      code: 400,
-      message: 'Passwords do not match',
-      params: ['password', 'repeatPassword'],
-    };
-    return res.status(error.code).json(error);
-  }
-
-  name = escape(name).trim();
-  email = escape(email).trim();
-  email = normalizeEmail(email, { gmail_remove_dots: false });
-  password = password.trim();
-  repeatPassword = repeatPassword.trim();
 
   const user = await prismaClient.user.findUnique({ where: { email: email } });
   if (user) {
-    const error: ErrorReturn = {
-      code: 409,
-      message: 'User with that email already exists',
-      params: ['email'],
-    };
-    return res.status(error.code).json(error);
+    return next(
+      new CustomError(
+        'Unable to process your request. Please try again later.',
+        400,
+        `User with email ${email} already exists.`
+      )
+    );
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUserData = {
-    name: name,
+    username: username,
     email: email,
     password: hashedPassword,
     created_on: new Date(),
@@ -67,14 +37,17 @@ const signUpUser = async (req: Request, res: Response) => {
 
   try {
     const user = await createUserDB(newUserData);
-    return res.status(201).json(user);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 201, user);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

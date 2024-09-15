@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { redisClient } from '../lib/redis/client.redis';
-import { ErrorReturn } from '../types/error-return';
+import { CustomError } from '../types/custom-error';
 /* 
   This rate limiter takes in a limit, a time (in milliseconds) and an 
   optional endpoint, used for more restricted endpoints like /signin.
@@ -34,11 +34,13 @@ const rateLimiter = (
         const endpointCount = endpointResponse[0];
 
         if ((endpointCount as number) > limit) {
-          const error: ErrorReturn = {
-            code: 429,
-            message: 'Too many requests (endpoint)',
-          };
-          return res.status(429).json(error);
+          return next(
+            new CustomError(
+              'Too many requests. Please slow down and try again later.',
+              429,
+              `Rate limit exceeded from IP ${ip} at endpoint ${endpoint}.`
+            )
+          );
         }
       } else {
         const generalResponse = await redisClient
@@ -50,20 +52,27 @@ const rateLimiter = (
         const generalCount = generalResponse[0];
 
         if ((generalCount as number) > defaultLimit) {
-          const error: ErrorReturn = {
-            code: 429,
-            message: 'Too many requests (general)',
-          };
-          return res.status(429).json(error);
+          return next(
+            new CustomError(
+              'Too many requests. Please slow down and try again later.',
+              429,
+              `General Rate limit exceeded from IP ${ip}.`
+            )
+          );
         }
       }
       return next();
     } catch (error) {
-      console.error('Rate limiter error:', error);
-      return res.status(500).json({
-        code: 500,
-        message: 'Internal server error',
-      });
+      const statusCode = (error as any).statusCode || 500;
+      const detailedMessage =
+        (error as any).message || 'Unknown error occurred';
+      return next(
+        new CustomError(
+          'An unexpected error occurred. Please try again later.',
+          statusCode,
+          detailedMessage
+        )
+      );
     }
   };
 };

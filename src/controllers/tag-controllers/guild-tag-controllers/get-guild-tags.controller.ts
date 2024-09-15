@@ -1,25 +1,27 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import getGuildTagsRedis from '../../../services/redis-services/tag-redis-services/get-guild-tags.service';
-import { ErrorReturn } from '../../../types/error-return';
 import { ISession } from '../../../types/express-session';
 import getGuildTagsDB from '../../../services/db-services/tag-db-services/guild-tag-db-services/get-guild-tags.service';
+import { CustomError } from '../../../types/custom-error';
+import responseHandler from '../../../middleware/response-handler.middleware';
 
-const getGuildTags = async (req: Request, res: Response) => {
-  const { admin } = req.query;
+const getGuildTags = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userSession = req.session as ISession;
   const isAdmin =
-    admin === 'true' &&
-    userSession.user.role === 'admin' &&
-    userSession.user.status === 'active';
+    userSession.user.role === 'admin' && userSession.user.status === 'active';
 
   //try fetching tags from redis. If that fails, get tags from main database
   try {
     const { publicTags, allTags } = await getGuildTagsRedis();
 
     if (isAdmin) {
-      return res.status(200).json(allTags);
+      return responseHandler(req, res, 200, allTags);
     }
-    return res.status(200).json(publicTags);
+    return responseHandler(req, res, 200, publicTags);
   } catch (error) {
     //fetch tags from main database
     try {
@@ -29,16 +31,20 @@ const getGuildTags = async (req: Request, res: Response) => {
         is a valid active admin session.  
       */
       if (isAdmin) {
-        return res.status(200).json(allTags);
+        return responseHandler(req, res, 200, allTags);
       }
-      return res.status(200).json(publicTags);
+      return responseHandler(req, res, 200, publicTags);
     } catch (err) {
-      const error: ErrorReturn = {
-        code: (err as any).statusCode || (err as any).status || 500,
-        message: (err as Error).message,
-        stack: (err as Error).stack,
-      };
-      return res.status(error.code).json(error);
+      const statusCode = (error as any).statusCode || 500;
+      const detailedMessage =
+        (error as any).message || 'Unknown error occurred';
+      return next(
+        new CustomError(
+          'An unexpected error occurred. Please try again later.',
+          statusCode,
+          detailedMessage
+        )
+      );
     }
   }
 };

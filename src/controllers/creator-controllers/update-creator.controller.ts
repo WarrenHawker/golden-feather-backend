@@ -1,32 +1,23 @@
-import { Request, Response } from 'express';
-import { escape } from 'validator';
-import {
-  isContentStatus,
-  isValidCuid,
-  isValidVideoUrl,
-} from '../../utils/functions/validate-input.function';
-import { CreatorUpdateData } from '../../types/creator';
-import sanitiseSocials from '../../utils/functions/sanitise-socials.function';
-import sanitiseArray from '../../utils/functions/sanitise-array.function';
+import { NextFunction, Request, Response } from 'express';
 import { ISession } from '../../types/express-session';
 import getUserContent from '../../services/db-services/user-db-services/get-user-content.service';
 import updateCreatorDB from '../../services/db-services/creator-db-services/update-creator.service';
-import { ErrorReturn } from '../../types/error-return';
-import trimExcerpt from '../../utils/functions/trim-excerpt.function';
+import { isValidCuid } from '../../utils/functions/validate-input.function';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const updateCreator = async (req: Request, res: Response) => {
-  let { id: creatorId } = req.query;
-  let {
-    name,
-    description,
-    excerpt,
-    videoUrl,
-    socials,
-    tags,
-    languages,
-    status,
-    userId,
-  } = req.body;
+const updateCreator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id: creatorId } = req.params;
+
+  if (!isValidCuid(creatorId)) {
+    return next(
+      new CustomError('Invalid ID.', 400, `Invalid CUID provided: ${creatorId}`)
+    );
+  }
 
   /* 
     creator profiles can only be updated by admins or the linked user.
@@ -35,117 +26,50 @@ const updateCreator = async (req: Request, res: Response) => {
   try {
     const sessionUser = (req.session as ISession).user;
 
-    if (!sessionUser) {
-      const error: ErrorReturn = {
-        code: 401,
-        message: 'no session found',
-      };
-      return res.status(error.code).json(error);
-    }
-
     const { userCreatorId } = await getUserContent(sessionUser.id);
     if (
       !userCreatorId ||
       userCreatorId != creatorId ||
       !(sessionUser.role == 'admin' && sessionUser.status == 'active')
     ) {
-      const error: ErrorReturn = {
-        code: 403,
-        message: 'unorthorised access',
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'You do not have permission to access this resource.',
+          403,
+          `User id ${userCreatorId}, role ${sessionUser.role} and status ${sessionUser.status} cannot access that resource.`
+        )
+      );
     }
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 
   //assuming session is valid, continue with rest of function
   try {
-    if (!isValidCuid(creatorId as string)) {
-      const error: ErrorReturn = {
-        code: 400,
-        message: 'invalid creator id',
-        params: ['id'],
-      };
-      return res.status(error.code).json(error);
-    }
-
-    const updateData: CreatorUpdateData = {};
-
-    if (userId) {
-      if (!isValidCuid(userId as string)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid user id',
-          params: ['userId'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.userId = userId;
-      }
-    }
-
-    if (videoUrl) {
-      if (!isValidVideoUrl(videoUrl)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid videoUrl',
-          params: ['videoUrl'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.videoUrl = videoUrl;
-      }
-    }
-
-    if (status) {
-      if (!isContentStatus(status)) {
-        const error: ErrorReturn = {
-          code: 400,
-          message: 'invalid status',
-          params: ['status'],
-        };
-        return res.status(error.code).json(error);
-      } else {
-        updateData.status = status;
-      }
-    }
-
-    if (name) updateData.name = escape(name).trim();
-    if (description) updateData.description = escape(description).trim();
-    if (excerpt) updateData.excerpt = trimExcerpt(escape(excerpt).trim());
-    if (languages && Array.isArray(languages) && languages.length > 0) {
-      updateData.languages = sanitiseArray(languages);
-    }
-    if (tags && Array.isArray(tags) && tags.length > 0) {
-      updateData.tags = sanitiseArray(tags);
-    }
-    if (
-      socials &&
-      typeof socials === 'object' &&
-      Object.keys(socials).length > 0
-    ) {
-      updateData.socials = sanitiseSocials(socials);
-    }
-
     const { updatedCreator, warningMessage } = await updateCreatorDB(
       creatorId as string,
-      updateData
+      req.body
     );
 
-    return res.status(200).json({ updatedCreator, warningMessage });
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, { updatedCreator, warningMessage });
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

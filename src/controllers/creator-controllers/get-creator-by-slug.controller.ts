@@ -1,20 +1,30 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ISession } from '../../types/express-session';
 import { getCreatorBySlugDB } from '../../services/db-services/creator-db-services/get-creator-by-slug.service';
-import { ErrorReturn } from '../../types/error-return';
+import { escape } from 'validator';
+import { CustomError } from '../../types/custom-error';
+import responseHandler from '../../middleware/response-handler.middleware';
 
-const getCreatorBySlug = async (req: Request, res: Response) => {
-  const { slug } = req.params;
+const getCreatorBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  let { slug } = req.params;
+
+  slug = escape(slug).trim();
 
   try {
     const creator = await getCreatorBySlugDB(slug as string);
 
     if (!creator) {
-      const error: ErrorReturn = {
-        code: 404,
-        message: 'creator not found',
-      };
-      return res.status(error.code).json(error);
+      return next(
+        new CustomError(
+          'The requested resource could not be found.',
+          404,
+          `Creator with slug ${slug} not found in database.`
+        )
+      );
     }
 
     /*
@@ -30,22 +40,27 @@ const getCreatorBySlug = async (req: Request, res: Response) => {
         sessionUser.role != 'admin' ||
         sessionUser.status != 'active'
       ) {
-        const error: ErrorReturn = {
-          code: 404,
-          message: 'creator not found',
-        };
-        return res.status(error.code).json(error);
+        return next(
+          new CustomError(
+            'The requested resource could not be found.',
+            404,
+            `User doesn't have access to Creator with slug ${slug}.`
+          )
+        );
       }
     }
 
-    return res.status(200).json(creator);
-  } catch (err) {
-    const error: ErrorReturn = {
-      code: (err as any).statusCode || (err as any).status || 500,
-      message: (err as Error).message,
-      stack: (err as Error).stack,
-    };
-    return res.status(error.code).json(error);
+    return responseHandler(req, res, 200, creator);
+  } catch (error) {
+    const statusCode = (error as any).statusCode || 500;
+    const detailedMessage = (error as any).message || 'Unknown error occurred';
+    return next(
+      new CustomError(
+        'An unexpected error occurred. Please try again later.',
+        statusCode,
+        detailedMessage
+      )
+    );
   }
 };
 

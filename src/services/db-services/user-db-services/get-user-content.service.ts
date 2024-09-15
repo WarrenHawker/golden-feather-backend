@@ -4,7 +4,10 @@ const getUserContent = async (userId: string) => {
   try {
     const user = await prismaClient.user.findUnique({
       where: { id: userId },
-      include: { guild: true, creator: true },
+      include: {
+        guild: true,
+        creator: true,
+      },
     });
 
     if (!user) {

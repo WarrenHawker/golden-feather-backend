@@ -2,7 +2,6 @@ import { ContentStatus, Prisma } from '@prisma/client';
 import { unescape } from 'validator';
 import prismaClient from '../../../lib/prisma/client.prisma';
 import { CreatorUpdateData } from '../../../types/creator';
-import { findUniqueStrings } from '../../../utils/functions/compare-arays.function';
 import updateCreatorRelations from './update-creator-relations.service';
 
 const updateCreatorDB = async (
