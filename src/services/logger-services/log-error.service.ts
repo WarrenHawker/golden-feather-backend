@@ -5,6 +5,7 @@ import createLogMongo from '../mongo-services/create-log-mongo.service';
 
 const logError = async (data: LogsCreateData) => {
   const { req, res, error } = data;
+
   try {
     const newLogData: LogData = {
       logLevel: 'error',

@@ -24,8 +24,8 @@ app.listen(port, async () => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await initializeMongoDatabase();
 
-    await setStarterCreators();
-    await setStarterGuilds();
+    // await setStarterCreators();
+    // await setStarterGuilds();
 
     redisClient.flushAll();
 

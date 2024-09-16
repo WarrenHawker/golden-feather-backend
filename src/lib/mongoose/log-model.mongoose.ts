@@ -44,6 +44,7 @@ export const logSchema = new Schema<LogDocument>(
       authorization: { type: String },
     },
     message: { type: String },
+    detailedMessage: { type: String },
     ip: { type: String },
     body: { type: mongoose.Schema.Types.Mixed },
     userId: { type: String },
