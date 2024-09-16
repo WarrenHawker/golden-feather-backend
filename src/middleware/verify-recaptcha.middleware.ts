@@ -39,16 +39,15 @@ const verifyRecaptcha = async (
     });
   }
 
-  // Helper function to handle errors
+  // Helper function to handle errors and set captcha result
   const handleRecaptchaFailure = async (
     message: string,
     logMessage: string,
     statusCode: number,
     result: string
   ) => {
-    res.on('finish', () => {
-      res.locals.captchaResult = result;
-    });
+    // Set the captcha result early in res.locals so the logger can pick it up
+    res.locals.captchaResult = result;
 
     const failures = await redisClient.incr(
       `captchaFailures:${email || req.ip}`
@@ -104,6 +103,7 @@ const verifyRecaptcha = async (
 
       const score = captchaResponse.data.score;
       if (score !== undefined && score < 0.4) {
+        res.locals.captchaResult = `captchaV3 score: ${score}`;
         return handleRecaptchaFailure(
           'reCAPTCHA verification failed. Please try again.',
           `reCAPTCHA v3 score too low (${score}) for token: ${captchaTokenV3}`,
@@ -113,6 +113,7 @@ const verifyRecaptcha = async (
       }
 
       if (score >= 0.4 && score <= 0.7) {
+        res.locals.captchaResult = `captchaV3 score: ${score}`;
         return handleRecaptchaFailure(
           'Please verify that you are not a robot.',
           `Suspicious reCAPTCHA v3 score: ${score}. Further verification needed.`,
@@ -121,7 +122,8 @@ const verifyRecaptcha = async (
         );
       }
 
-      // If score > 0.7, verification passes, proceed to next
+      // If score > 0.7, captcha verification succeeds, set result
+      res.locals.captchaResult = `captchaV3 score: ${score} (success)`;
     } catch (error) {
       return next(
         new CustomError(
@@ -141,6 +143,7 @@ const verifyRecaptcha = async (
       const captchaResponse = await axios.post(recaptchaVerifyUrl);
 
       if (!captchaResponse.data.success) {
+        res.locals.captchaResult = 'captchaV2 failed';
         return handleRecaptchaFailure(
           'Failed to verify reCAPTCHA. Please try again.',
           `reCAPTCHA v2 verification failed for token: ${captchaTokenV2}`,
@@ -148,6 +151,9 @@ const verifyRecaptcha = async (
           'captchaV2 failed'
         );
       }
+
+      // If verification succeeds, set result
+      res.locals.captchaResult = 'captchaV2 success';
     } catch (error) {
       return next(
         new CustomError(
