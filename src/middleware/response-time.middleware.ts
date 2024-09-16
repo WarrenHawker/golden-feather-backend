@@ -9,8 +9,8 @@ export const measureResponseTime = (
 
   res.on('finish', () => {
     const diff = process.hrtime(start); // Get the time difference
-    const responseTimeMs = diff[0] * 1e3 + diff[1] * 1e-6; // Convert seconds and nanoseconds to milliseconds
-    req['responseTimeMs'] = responseTimeMs; // Attach the response time to the request object
+    const responseTimeMs = diff[0] * 1e3 + diff[1] * 1e-6; // Convert to milliseconds
+    res.locals.responseTimeMs = responseTimeMs; // Attach the response time to res.locals
   });
 
   next();

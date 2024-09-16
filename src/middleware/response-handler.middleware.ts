@@ -9,11 +9,9 @@ const responseHandler = async (
   data: any | null = null,
   error: CustomError | null = null
 ) => {
-  const isError = error !== null;
+  res.statusCode = statusCode;
 
-  await logger(req, res, isError ? error : null);
-
-  if (isError) {
+  if (error) {
     const errorResponse = {
       code: error!.statusCode,
       message: error!.message,
@@ -21,9 +19,14 @@ const responseHandler = async (
       ...(error!.recaptchaScore && { recaptchaScore: error!.recaptchaScore }),
     };
 
-    return res.status(statusCode).json(errorResponse);
+    res.status(statusCode).json(errorResponse);
+  } else {
+    res.status(statusCode).json(data || { message: 'success' });
   }
-  return res.status(statusCode).json(data || { message: 'success' });
+
+  res.on('finish', async () => {
+    await logger(req, res, error);
+  });
 };
 
 export default responseHandler;

@@ -11,7 +11,7 @@ const logCritical = async (data: LogsCreateData) => {
     const newLogData: LogData = {
       logLevel: 'critical',
       timestamp: new Date().toISOString(),
-      responseTimeMS: req.responseTimeMs ?? null,
+      responseTimeMS: res.locals.responseTimeMs || null,
       url: req.originalUrl,
       method: req.method,
       code: res.statusCode,

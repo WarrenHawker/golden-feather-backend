@@ -25,10 +25,6 @@ app.use(measureResponseTime);
 
 app.use(router);
 
-app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
-  return responseHandler(req, res, err.statusCode || 500, null, err);
-});
-
 //catch-all if the requested route or method doesn't exist.
 app.use((req: Request, res: Response, next: NextFunction) => {
   return next(
@@ -38,4 +34,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
       `There is no ${req.method} endpoint at ${req.originalUrl}`
     )
   );
+});
+
+app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
+  return responseHandler(req, res, err.statusCode || 500, null, err);
 });
