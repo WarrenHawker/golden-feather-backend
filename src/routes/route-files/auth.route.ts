@@ -16,6 +16,7 @@ import getUserProfile from '../../controllers/auth-controllers/get-user-profile.
 import rateLimiter from '../../middleware/rate-limiter.middleware';
 import verifyRecaptcha from '../../middleware/verify-recaptcha.middleware';
 import responseHandler from '../../middleware/response-handler.middleware';
+import { ISession } from '../../types/express-session';
 
 export const router = express.Router();
 
@@ -116,6 +117,11 @@ router.get(
     responseHandler(req, res, 200);
   }
 );
+
+router.get('/session', (req, res) => {
+  const session = (req.session as ISession) || null;
+  responseHandler(req, res, 200, session);
+});
 
 router.post(
   '/signin',
