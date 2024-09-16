@@ -4,15 +4,15 @@ import getLanguagesDB from '../../services/db-services/language-db-services/get-
 import { ISession } from '../../types/express-session';
 import responseHandler from '../../middleware/response-handler.middleware';
 import { CustomError } from '../../types/custom-error';
+import checkActiveAdmin from '../../utils/functions/check-admin.function';
 
 const getLanguages = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const userSession = req.session as ISession;
-  const isAdmin =
-    userSession.user.role == 'admin' && userSession.user.status == 'active';
+  const isAdmin = checkActiveAdmin(req);
+
   //try fetching from redis. If that fails, get from main database
   try {
     const { publicLangs, allLangs } = await getLanguagesRedis();

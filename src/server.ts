@@ -27,21 +27,23 @@ app.listen(port, async () => {
     // await setStarterCreators();
     // await setStarterGuilds();
 
-    redisClient.flushAll();
+    if (process.env.NODE_ENV === 'production') {
+      console.log('hello');
+      redisClient.flushAll();
 
-    await generateTwitchToken();
+      await generateTwitchToken();
 
-    await storeCreatorsRedis();
-    await storeGuildsRedis();
-    await storeGuildTagsRedis();
-    await storeCreatorTagsRedis();
-    await storeLanguagesRedis();
-    await storeRegionsRedis();
+      await storeCreatorsRedis();
+      await storeGuildsRedis();
+      await storeGuildTagsRedis();
+      await storeCreatorTagsRedis();
+      await storeLanguagesRedis();
+      await storeRegionsRedis();
 
-    //scheduled tasks
-    maintainTwitchToken();
-    syncRedis();
-
+      // Scheduled tasks (for production)
+      maintainTwitchToken();
+      syncRedis();
+    }
     console.log(
       `server running on port ${port}, Is redis client connected? ${redisClient.isOpen}`
     );

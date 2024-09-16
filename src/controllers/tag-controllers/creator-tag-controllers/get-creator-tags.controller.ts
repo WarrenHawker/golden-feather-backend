@@ -1,18 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 import getCreatorTagsRedis from '../../../services/redis-services/tag-redis-services/get-creator-tags-redis.service';
-import { ISession } from '../../../types/express-session';
 import getCreatorTagsDB from '../../../services/db-services/tag-db-services/creator-tag-db-services/get-creator-tags.service';
 import responseHandler from '../../../middleware/response-handler.middleware';
 import { CustomError } from '../../../types/custom-error';
+import checkActiveAdmin from '../../../utils/functions/check-admin.function';
 
 const getCreatorTags = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const userSession = req.session as ISession;
-  const isAdmin =
-    userSession.user.role == 'admin' && userSession.user.status == 'active';
+  const isAdmin = checkActiveAdmin(req);
   //try fetching from redis. If that fails, get from main database
   try {
     const { publicTags, allTags } = await getCreatorTagsRedis();
