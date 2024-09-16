@@ -43,8 +43,13 @@ const verifyRecaptcha = async (
   const handleRecaptchaFailure = async (
     message: string,
     logMessage: string,
-    statusCode = 400
+    statusCode: number,
+    result: string
   ) => {
+    res.on('finish', () => {
+      res.locals.captchaResult = result;
+    });
+
     const failures = await redisClient.incr(
       `captchaFailures:${email || req.ip}`
     );
@@ -91,7 +96,9 @@ const verifyRecaptcha = async (
       if (!captchaResponse.data.success) {
         return handleRecaptchaFailure(
           'Failed to verify reCAPTCHA. Please try again.',
-          `reCAPTCHA v3 verification failed for token: ${captchaTokenV3}`
+          `reCAPTCHA v3 verification failed for token: ${captchaTokenV3}`,
+          400,
+          'captchaV3 failed'
         );
       }
 
@@ -100,7 +107,8 @@ const verifyRecaptcha = async (
         return handleRecaptchaFailure(
           'reCAPTCHA verification failed. Please try again.',
           `reCAPTCHA v3 score too low (${score}) for token: ${captchaTokenV3}`,
-          403
+          403,
+          `captchaV3 score: ${score}`
         );
       }
 
@@ -108,7 +116,8 @@ const verifyRecaptcha = async (
         return handleRecaptchaFailure(
           'Please verify that you are not a robot.',
           `Suspicious reCAPTCHA v3 score: ${score}. Further verification needed.`,
-          401
+          401,
+          `captchaV3 score: ${score}`
         );
       }
 
@@ -134,7 +143,9 @@ const verifyRecaptcha = async (
       if (!captchaResponse.data.success) {
         return handleRecaptchaFailure(
           'Failed to verify reCAPTCHA. Please try again.',
-          `reCAPTCHA v2 verification failed for token: ${captchaTokenV2}`
+          `reCAPTCHA v2 verification failed for token: ${captchaTokenV2}`,
+          400,
+          'captchaV2 failed'
         );
       }
     } catch (error) {

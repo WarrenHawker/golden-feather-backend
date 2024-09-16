@@ -24,6 +24,7 @@ const logCritical = async (data: LogsCreateData) => {
         referer: req.headers['referer'] || '',
         contentType: req.headers['content-type'] || '',
       },
+      captchaResult: res.locals.captchaResult || null,
     };
 
     if (req.headers['authorization']) {

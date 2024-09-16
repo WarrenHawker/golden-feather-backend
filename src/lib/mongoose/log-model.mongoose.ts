@@ -23,6 +23,7 @@ export interface LogData {
   body?: any;
   userId?: string;
   stackTrace?: string;
+  captchaResult?: string;
 }
 
 // LogDocument that extends mongoose.Document and LogData
@@ -45,6 +46,7 @@ export const logSchema = new Schema<LogDocument>(
     },
     message: { type: String },
     detailedMessage: { type: String },
+    captchaResult: { type: String },
     ip: { type: String },
     body: { type: mongoose.Schema.Types.Mixed },
     userId: { type: String },

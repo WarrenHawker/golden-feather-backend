@@ -17,6 +17,7 @@ const logInfo = async (data: LogsCreateData) => {
         userAgent: req.headers['user-agent'] || '',
         referer: req.headers['referer'] || '',
       },
+      captchaResult: res.locals.captchaResult || null,
     };
 
     if (error) {
