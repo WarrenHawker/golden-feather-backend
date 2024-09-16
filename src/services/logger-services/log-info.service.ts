@@ -47,6 +47,14 @@ const logInfo = async (data: LogsCreateData) => {
       }
     }
 
+    if (req.body.captchaTokenV3) {
+      newLogData.body.captchaTokenV3 = '--REDACTED--';
+    }
+
+    if (req.body.captchaTokenV2) {
+      newLogData.body.captchaTokenV2 = '--REDACTED--';
+    }
+
     await createLogMongo(newLogData);
   } catch (error) {
     throw error;
