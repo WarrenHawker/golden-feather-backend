@@ -40,6 +40,14 @@ const logCritical = async (data: LogsCreateData) => {
       newLogData.body.repeatPassword = '--REDACTED--';
     }
 
+    if (req.body.captchaTokenV3) {
+      newLogData.body.captchaTokenV3 = '--REDACTED--';
+    }
+
+    if (req.body.captchaTokenV2) {
+      newLogData.body.captchaTokenV2 = '--REDACTED--';
+    }
+
     if (error?.stack) {
       newLogData.stackTrace = error.stack || '';
     }
