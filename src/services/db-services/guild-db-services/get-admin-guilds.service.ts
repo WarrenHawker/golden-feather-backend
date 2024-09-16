@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
-import { GetGuildSearchParams } from '../../../types/guild';
+import { GuildSearchParams } from '../../../types/guild';
 import prismaClient from '../../../lib/prisma/client.prisma';
 
-const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
+const getAdminGuildsDB = async (options: GuildSearchParams = {}) => {
   const {
     page = 1,
     limit = 12,
@@ -75,7 +75,7 @@ const getAdminGuildsDB = async (options: GetGuildSearchParams = {}) => {
   try {
     const guilds = await prismaClient.guild.findMany({
       where: searchData,
-      orderBy: { created_on: 'desc' },
+      orderBy: { createdOn: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
       include: {

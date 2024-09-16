@@ -10,84 +10,84 @@ import responseHandler from '../../middleware/response-handler.middleware';
 const signInUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
-  const userDB = await prismaClient.user.findUnique({
-    where: { email: email },
-    include: {
-      authProviders: {
-        where: { provider: 'credentials' },
-        select: {
-          password: true,
+  try {
+    const userDB = await prismaClient.user.findUnique({
+      where: { email: email },
+      include: {
+        authProviders: {
+          where: { provider: 'credentials' },
+          select: {
+            password: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  const userPassword = userDB?.authProviders[0].password;
-
-  if (!userDB) {
-    return next(
-      new CustomError(
-        'Invalid credentials.',
-        401,
-        `User with email ${email} not found in the database.`
-      )
-    );
-  }
-
-  if (!userPassword) {
-    return next(
-      new CustomError(
-        'Invalid credentials.',
-        401,
-        `Password not found for user with email ${email}.`
-      )
-    );
-  }
-
-  if (userDB.status == 'locked') {
-    return next(
-      new CustomError(
-        'Account is locked.',
-        403,
-        `User with email ${email} is locked due to suspicious activity.`
-      )
-    );
-  }
-
-  const match = await bcrypt.compare(password, userPassword);
-  if (!match) {
-    const timeout = 10;
-    const response = await redisClient
-      .multi()
-      .incr(`${userDB.email}_attempts`)
-      .exec();
-    const attempts = response[0];
-
-    if (attempts == 1) {
-      await redisClient.expire(`${userDB.email}_attempts`, timeout);
-    }
-
-    if ((attempts as number) > 5) {
-      await lockAccount(userDB);
-      return next(
-        new CustomError(
-          'Account is locked.',
-          403,
-          `User with email ${email} is locked due to too many failed signin attempts.`
-        )
-      );
-    } else {
+    if (!userDB) {
       return next(
         new CustomError(
           'Invalid credentials.',
           401,
-          `Password doesn't match user with email ${email}.`
+          `User with email ${email} not found in the database.`
         )
       );
     }
-  }
 
-  try {
+    const userPassword = userDB?.authProviders[0]?.password;
+
+    if (!userPassword) {
+      return next(
+        new CustomError(
+          'Invalid credentials.',
+          401,
+          `Password not found for user with email ${email}.`
+        )
+      );
+    }
+
+    if (userDB.status == 'locked') {
+      return next(
+        new CustomError(
+          'Account is locked.',
+          403,
+          `User with email ${email} is locked due to suspicious activity.`
+        )
+      );
+    }
+
+    const match = await bcrypt.compare(password, userPassword);
+    if (!match) {
+      const timeout = 10;
+      const response = await redisClient
+        .multi()
+        .incr(`${userDB.email}_attempts`)
+        .exec();
+      const attempts = response[0];
+
+      if (attempts == 1) {
+        await redisClient.expire(`${userDB.email}_attempts`, timeout);
+      }
+
+      if ((attempts as number) > 5) {
+        await lockAccount(userDB);
+        return next(
+          new CustomError(
+            'Account is locked.',
+            403,
+            `User with email ${email} is locked due to too many failed signin attempts.`
+          )
+        );
+      } else {
+        return next(
+          new CustomError(
+            'Invalid credentials.',
+            401,
+            `Password doesn't match user with email ${email}.`
+          )
+        );
+      }
+    }
+
     (req.session as ISession).user = {
       id: userDB.id,
       role: userDB.role,

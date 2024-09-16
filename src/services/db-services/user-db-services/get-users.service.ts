@@ -27,7 +27,7 @@ const getUsersDB = async (options: GetUserSearchParams = {}) => {
   try {
     const users = await prismaClient.user.findMany({
       where: searchData,
-      orderBy: { created_on: 'desc' },
+      orderBy: { createdOn: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
       select: {
@@ -36,8 +36,8 @@ const getUsersDB = async (options: GetUserSearchParams = {}) => {
         email: true,
         role: true,
         status: true,
-        created_on: true,
-        updated_on: true,
+        createdOn: true,
+        updatedOn: true,
         guild: {
           select: {
             name: true,

@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import prismaClient from '../../../lib/prisma/client.prisma';
-import { GetCreatorSearchParams } from '../../../types/creator';
+import { CreatorSearchParams } from '../../../types/creator';
 
 export const getPublicCreatorsDB = async (
-  options: GetCreatorSearchParams = {}
+  options: CreatorSearchParams = {}
 ) => {
   const { page = 1, limit = 12, name, languages, tags } = options;
 
@@ -50,7 +50,7 @@ export const getPublicCreatorsDB = async (
   try {
     const creators = await prismaClient.creator.findMany({
       where: searchData,
-      orderBy: { created_on: 'desc' },
+      orderBy: { createdOn: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
       select: {

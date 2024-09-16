@@ -10,7 +10,7 @@ const updateGuildDB = async (guildId: string, options: GuildUpdateData) => {
     description,
     excerpt,
     videoUrl,
-    guild_leader,
+    guildLeader,
     regions,
     socials,
     tags,
@@ -55,10 +55,10 @@ const updateGuildDB = async (guildId: string, options: GuildUpdateData) => {
       excerpt: excerpt ? excerpt : undefined,
       videoUrl: videoUrl ? videoUrl : undefined,
       socials: socials ? socials : undefined,
-      guild_leader: guild_leader ? guild_leader : undefined,
+      guildLeader: guildLeader ? guildLeader : undefined,
       status: status ? (status as ContentStatus) : undefined,
       user: user && !user.creator ? { connect: { id: userId } } : undefined,
-      updated_on: new Date(),
+      updatedOn: new Date(),
     };
 
     if (tags) {

@@ -52,7 +52,7 @@ export const getAdminCreatorsDB = async (options: CreatorSearchParams = {}) => {
   try {
     const creators = await prismaClient.creator.findMany({
       where: searchData,
-      orderBy: { created_on: 'desc' },
+      orderBy: { createdOn: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
       include: {

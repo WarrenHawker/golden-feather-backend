@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
-import { GetGuildSearchParams } from '../../../types/guild';
+import { GuildSearchParams } from '../../../types/guild';
 import prismaClient from '../../../lib/prisma/client.prisma';
 
-const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
+const getPublicGuildsDB = async (options: GuildSearchParams = {}) => {
   const { page = 1, limit = 12, name, languages, tags, regions } = options;
 
   const searchData: Prisma.GuildWhereInput = {
@@ -63,7 +63,7 @@ const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
   try {
     const guilds = await prismaClient.guild.findMany({
       where: searchData,
-      orderBy: { created_on: 'desc' },
+      orderBy: { createdOn: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
       select: {
@@ -72,7 +72,7 @@ const getPublicGuildsDB = async (options: GetGuildSearchParams = {}) => {
         slug: true,
         description: true,
         excerpt: true,
-        guild_leader: true,
+        guildLeader: true,
         socials: true,
         videoUrl: true,
         tags: {

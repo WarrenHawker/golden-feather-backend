@@ -55,7 +55,7 @@ const updateUserDB = async (userId: string, options: UserUpdateData) => {
       email: email ? email : undefined,
       status: status ? (status as UserStatus) : undefined,
       role: role ? (role as UserRole) : undefined,
-      updated_on: new Date(),
+      updatedOn: new Date(),
       guild: guild && !guild.user ? { connect: { id: guildId } } : undefined,
       creator:
         creator && !creator.user ? { connect: { id: creatorId } } : undefined,

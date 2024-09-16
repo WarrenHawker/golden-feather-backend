@@ -10,8 +10,8 @@ const getUserByIdDB = async (id: string) => {
         email: true,
         role: true,
         status: true,
-        created_on: true,
-        updated_on: true,
+        createdOn: true,
+        updatedOn: true,
       },
     });
 

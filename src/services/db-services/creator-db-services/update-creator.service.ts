@@ -55,7 +55,7 @@ const updateCreatorDB = async (
       socials: socials ? socials : undefined,
       status: status ? (status as ContentStatus) : undefined,
       user: user && !user.creator ? { connect: { id: userId } } : undefined,
-      updated_on: new Date(),
+      updatedOn: new Date(),
     };
 
     if (tags) {
