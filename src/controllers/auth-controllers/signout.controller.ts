@@ -3,6 +3,7 @@ import responseHandler from '../../middleware/response-handler.middleware';
 import { CustomError } from '../../types/custom-error';
 
 const signoutUser = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.session);
   try {
     req.session.destroy(() => {
       res.clearCookie('sessionId');
