@@ -1,8 +1,8 @@
-import { redisClient } from '../../../lib/redis/client.redis';
+import { IOredisClient } from '../../../lib/redis/client.redis';
 
 const getRegionsRedis = async () => {
   try {
-    const result = await redisClient.hGetAll('regions');
+    const result = await IOredisClient.hgetall('regions');
     const publicRegions = JSON.parse(result.public_regions);
     const allRegions = JSON.parse(result.all_regions);
 

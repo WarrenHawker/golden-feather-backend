@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 import axios from 'axios';
-import { redisClient } from '../../lib/redis/client.redis';
+import { IOredisClient } from '../../lib/redis/client.redis';
 import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token.service';
 import { NextFunction, Request, Response } from 'express';
 import { CustomError } from '../../types/custom-error';
@@ -46,7 +46,7 @@ const getLatestYoutube = async (channelId: string) => {
 const getLatestTwitch = async (channelId: string) => {
   try {
     //check for token in redis database - if token doesn't exist then generate a new token
-    const token = await redisClient.HGET('twitch_token', 'token_id');
+    const token = await IOredisClient.hget('twitch_token', 'token_id');
     if (!token) {
       await generateTwitchToken();
     }

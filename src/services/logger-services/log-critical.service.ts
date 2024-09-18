@@ -16,13 +16,13 @@ const logCritical = async (data: LogsCreateData) => {
       method: req.method,
       code: res.statusCode,
       ip: req.ip,
-      userId: (req.session as ISession)?.user?.id || '',
+      userId: (req.session as ISession)?.user?.id || '--unknown--',
       message: error?.message || 'An unknown error occurred',
-      detailedMessage: error?.detailedMessage || '',
+      detailedMessage: error?.detailedMessage || '--unknown--',
       headers: {
-        userAgent: req.headers['user-agent'] || '',
-        referer: req.headers['referer'] || '',
-        contentType: req.headers['content-type'] || '',
+        userAgent: req.headers['user-agent'] || '--unknown--',
+        referer: req.headers['referer'] || '--unknown--',
+        contentType: req.headers['content-type'] || '--unknown--',
       },
       captchaResult: res.locals.captchaResult || null,
     };
@@ -50,7 +50,7 @@ const logCritical = async (data: LogsCreateData) => {
     }
 
     if (error?.stack) {
-      newLogData.stackTrace = error.stack || '';
+      newLogData.stackTrace = error.stack || '--unknown--';
     }
 
     await createLogMongo(newLogData);

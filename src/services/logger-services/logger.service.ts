@@ -9,6 +9,10 @@ const logger = async (
   res: Response,
   error: CustomError | null = null
 ) => {
+  if (req.headers['x-test-request']) {
+    // Skip logging for test requests
+    return;
+  }
   const statusCode = res.statusCode;
 
   //successful requests (level: info)

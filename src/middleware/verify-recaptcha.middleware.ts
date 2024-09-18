@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { CustomError } from '../types/custom-error';
-import { redisClient } from '../lib/redis/client.redis';
+import { IOredisClient } from '../lib/redis/client.redis';
 import lockAccount from '../services/auth-services/lock-account.service';
 import prismaClient from '../lib/prisma/client.prisma';
 
@@ -31,7 +31,7 @@ const verifyRecaptcha = async (
 ) => {
   const { captchaTokenV3, captchaTokenV2, email } = req.body;
 
-  const isBlacklisted = await redisClient.get(`ip_blacklist:${req.ip}`);
+  const isBlacklisted = await IOredisClient.get(`ip_blacklist:${req.ip}`);
   if (isBlacklisted) {
     return res.status(403).json({
       message:
@@ -49,12 +49,12 @@ const verifyRecaptcha = async (
     // Set the captcha result early in res.locals so the logger can pick it up
     res.locals.captchaResult = result;
 
-    const failures = await redisClient.incr(
+    const failures = await IOredisClient.incr(
       `captchaFailures:${email || req.ip}`
     );
 
     if (failures === 1) {
-      await redisClient.expire(`captchaFailures:${email || req.ip}`, 60 * 60); // 1-hour expiration
+      await IOredisClient.expire(`captchaFailures:${email || req.ip}`, 60 * 60); // 1-hour expiration
     }
 
     const maxCaptchaFailures = 5;
@@ -70,9 +70,12 @@ const verifyRecaptcha = async (
           )
         );
       } else {
-        await redisClient.set(`ip_blacklist:${req.ip}`, 'blacklisted', {
-          EX: 24 * 60 * 60,
-        }); // Blacklist for 24 hours
+        await IOredisClient.set(
+          `ip_blacklist:${req.ip}`,
+          'blacklisted',
+          'EX',
+          24 * 60 * 60
+        ); // Blacklist for 24 hours
         return next(
           new CustomError(
             'Your IP has been temporarily blacklisted due to too many failed attempts. Try again later.',

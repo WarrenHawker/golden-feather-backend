@@ -1,9 +1,9 @@
-import { redisClient } from '../../../lib/redis/client.redis';
+import { IOredisClient } from '../../../lib/redis/client.redis';
 import { Pagination } from '../../../types/pagination';
 
 const getGuildsRedis = async () => {
   try {
-    const result = await redisClient.hGetAll('guilds');
+    const result = await IOredisClient.hgetall('guilds');
     const pagination: Pagination = JSON.parse(result.pagination);
     const guilds: any = [];
 

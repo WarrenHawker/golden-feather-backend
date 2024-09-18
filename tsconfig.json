@@ -11,7 +11,7 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "src/tests/**/*", "src/lib/jest/**/*"],
   "include": [
     "src/**/*",
     "src/types/**/*.d.ts" // Make sure this includes your declaration files

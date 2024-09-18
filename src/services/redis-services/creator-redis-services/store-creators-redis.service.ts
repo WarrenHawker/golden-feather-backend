@@ -1,4 +1,4 @@
-import { redisClient } from '../../../lib/redis/client.redis';
+import { IOredisClient } from '../../../lib/redis/client.redis';
 import { Pagination } from '../../../types/pagination';
 import { getPublicCreatorsDB } from '../../db-services/creator-db-services/get-public-creators.service';
 import deleteKeyRedis from '../delete-key-redis.service';
@@ -14,14 +14,14 @@ const storeCreatorsRedis = async (options: Params = {}) => {
     if (!options.creators || !options.pagination) {
       const { pagination, creators } = await getPublicCreatorsDB();
       creators.forEach((creator: any) => {
-        redisClient.hSet('creators', creator.id, JSON.stringify(creator));
+        IOredisClient.hset('creators', creator.id, JSON.stringify(creator));
       });
-      redisClient.hSet('creators', 'pagination', JSON.stringify(pagination));
+      IOredisClient.hset('creators', 'pagination', JSON.stringify(pagination));
     } else {
       options.creators.forEach((creator: any) => {
-        redisClient.hSet('creators', creator.id, JSON.stringify(creator));
+        IOredisClient.hset('creators', creator.id, JSON.stringify(creator));
       });
-      redisClient.hSet(
+      IOredisClient.hset(
         'creators',
         'pagination',
         JSON.stringify(options.pagination)

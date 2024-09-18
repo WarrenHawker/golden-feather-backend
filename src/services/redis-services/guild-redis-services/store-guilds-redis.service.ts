@@ -1,4 +1,4 @@
-import { redisClient } from '../../../lib/redis/client.redis';
+import { IOredisClient } from '../../../lib/redis/client.redis';
 import { Pagination } from '../../../types/pagination';
 import getPublicGuildsDB from '../../db-services/guild-db-services/get-public-guilds.service';
 import deleteKeyRedis from '../delete-key-redis.service';
@@ -14,14 +14,14 @@ const storeGuildsRedis = async (options: Params = {}) => {
     if (!options.guilds || !options.pagination) {
       const { pagination, guilds } = await getPublicGuildsDB();
       guilds.forEach((guild: any) => {
-        redisClient.hSet('guilds', guild.id, JSON.stringify(guild));
+        IOredisClient.hset('guilds', guild.id, JSON.stringify(guild));
       });
-      redisClient.hSet('guilds', 'pagination', JSON.stringify(pagination));
+      IOredisClient.hset('guilds', 'pagination', JSON.stringify(pagination));
     } else {
       options.guilds.forEach((guild: any) => {
-        redisClient.hSet('guilds', guild.id, JSON.stringify(guild));
+        IOredisClient.hset('guilds', guild.id, JSON.stringify(guild));
       });
-      redisClient.hSet(
+      IOredisClient.hset(
         'guilds',
         'pagination',
         JSON.stringify(options.pagination)

@@ -1,4 +1,4 @@
-import { redisClient } from '../../../lib/redis/client.redis';
+import { IOredisClient } from '../../../lib/redis/client.redis';
 
 const storeResetTokenRedis = async (
   token: string,
@@ -9,7 +9,7 @@ const storeResetTokenRedis = async (
     const redisKey = `passwordReset:token:${token}`;
     const data = JSON.stringify({ email, id });
 
-    await redisClient.set(redisKey, data, { EX: 3600 });
+    await IOredisClient.set(redisKey, data, 'EX', 3600);
   } catch (error) {
     throw error;
   }

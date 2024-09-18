@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
-import { redisClient } from '../../lib/redis/client.redis';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { ISession } from '../../types/express-session';
 import lockAccount from '../../services/auth-services/lock-account.service';
 import { CustomError } from '../../types/custom-error';
 import responseHandler from '../../middleware/response-handler.middleware';
+import { IOredisClient } from '../../lib/redis/client.redis';
 
 const signInUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
@@ -58,17 +58,23 @@ const signInUser = async (req: Request, res: Response, next: NextFunction) => {
     const match = await bcrypt.compare(password, userPassword);
     if (!match) {
       const timeout = 10;
-      const response = await redisClient
-        .multi()
+      const response = await IOredisClient.multi()
         .incr(`${userDB.email}_attempts`)
         .exec();
-      const attempts = response[0];
+      if (response === null) {
+        throw new Error('Redis multi-exec failed');
+      }
+      const [error, attempts] = response[0];
 
-      if (attempts == 1) {
-        await redisClient.expire(`${userDB.email}_attempts`, timeout);
+      if (error) {
+        throw new Error('Error incrementing attempts in Redis');
       }
 
-      if ((attempts as number) > 5) {
+      if (attempts == 1) {
+        await IOredisClient.expire(`${userDB.email}_attempts`, timeout);
+      }
+
+      if (parseInt(attempts as string) > 5) {
         await lockAccount(userDB);
         return next(
           new CustomError(
@@ -97,7 +103,7 @@ const signInUser = async (req: Request, res: Response, next: NextFunction) => {
       agent: req.headers['user-agent'] || '',
     };
 
-    redisClient.sAdd(`sessions:${userDB.email}`, req.sessionID);
+    IOredisClient.sadd(`sessions:${userDB.email}`, req.sessionID);
 
     const user = {
       id: userDB.id,

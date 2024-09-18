@@ -14,8 +14,8 @@ const logInfo = async (data: LogsCreateData) => {
       method: req.method,
       code: res.statusCode,
       headers: {
-        userAgent: req.headers['user-agent'] || '',
-        referer: req.headers['referer'] || '',
+        userAgent: req.headers['user-agent'] || '--unknown--',
+        referer: req.headers['referer'] || '--unknown--',
       },
       captchaResult: res.locals.captchaResult || null,
     };
@@ -30,8 +30,9 @@ const logInfo = async (data: LogsCreateData) => {
       req.method == 'DELETE'
     ) {
       newLogData.ip = req.ip;
-      newLogData.userId = (req.session as ISession)?.user?.id || '';
-      newLogData.headers.contentType = req.headers['content-type'] || '';
+      newLogData.userId = (req.session as ISession)?.user?.id || '--unknown--';
+      newLogData.headers.contentType =
+        req.headers['content-type'] || '--unknown--';
 
       if (req.headers['authorization']) {
         newLogData.headers.authorization = 'present';

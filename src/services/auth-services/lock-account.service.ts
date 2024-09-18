@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 import prismaClient from '../../lib/prisma/client.prisma';
-import { redisClient } from '../../lib/redis/client.redis';
+import { IOredisClient } from '../../lib/redis/client.redis';
 import sendEmail from '../email-service/email.service';
 import accountLockedTemplate from '../email-service/templates/account-locked-template';
 import crypto from 'crypto';
@@ -13,12 +13,14 @@ const lockAccount = async (user: User) => {
       data: { status: 'locked' },
     });
 
-    const activeSessions = await redisClient.sMembers(`sessions:${user.email}`);
+    const activeSessions = await IOredisClient.smembers(
+      `sessions:${user.email}`
+    );
     for (const sessionId of activeSessions) {
-      await redisClient.del(`sess:${sessionId}`);
+      await IOredisClient.del(`sess:${sessionId}`);
     }
 
-    await redisClient.del(`sessions:${user.email}`);
+    await IOredisClient.del(`sessions:${user.email}`);
 
     const token = crypto.randomBytes(32).toString('hex');
     await storeResetTokenRedis(token, user.email, user.id);
