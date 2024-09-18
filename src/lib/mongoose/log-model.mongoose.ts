@@ -65,13 +65,13 @@ export const getLogModelForMonth = async (
 
   try {
     // Check if the collection exists
-    const collections = await db
+    const collections = await db!
       .listCollections({ name: collectionName })
       .toArray();
 
     if (collections.length === 0) {
       // Create the collection with zstd compression
-      await db.createCollection(collectionName, {
+      await db!.createCollection(collectionName, {
         storageEngine: {
           wiredTiger: {
             configString: 'block_compressor=zstd',

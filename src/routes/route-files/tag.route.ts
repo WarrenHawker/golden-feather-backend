@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   checkSession,
   checkRole,
@@ -15,7 +14,7 @@ import updateGuildTag from '../../controllers/tag-controllers/guild-tag-controll
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 const createFields: RequiredField[] = [

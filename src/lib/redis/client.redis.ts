@@ -23,6 +23,6 @@ export const closeRedisConnection = async () => {
   try {
     await IOredisClient.quit();
   } catch (err) {
-    console.error('Error closing Redis connections:', err);
+    console.error('Error closing Redis connection:', err);
   }
 };

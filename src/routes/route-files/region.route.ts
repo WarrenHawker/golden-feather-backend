@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   checkRole,
   checkSession,
@@ -11,7 +10,7 @@ import deleteRegion from '../../controllers/region-controllers/delete-region.con
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 const fields: RequiredField[] = [

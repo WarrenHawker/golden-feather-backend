@@ -1,4 +1,3 @@
-import express from 'express';
 import deleteSession from '../../controllers/session-controllers/delete-session.controller';
 import getSessions from '../../controllers/session-controllers/get-sessions.controller';
 import {
@@ -9,7 +8,7 @@ import {
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 //TODO fill in required fields

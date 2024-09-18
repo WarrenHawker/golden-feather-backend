@@ -1,4 +1,3 @@
-import express from 'express';
 import deleteUser from '../../controllers/user-controllers/delete-user.controller';
 import getUserById from '../../controllers/user-controllers/get-user-by-id.controller';
 import getUsers from '../../controllers/user-controllers/get-users.controller';
@@ -11,6 +10,8 @@ import {
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
+import express from 'express';
+export const router = express.Router();
 
 //TODO fill in required fields
 const getFields: RequiredField[] = [];
@@ -60,7 +61,6 @@ const updateFields: RequiredField[] = [
   },
 ];
 
-export const router = express.Router();
 router.patch('/:id', checkSession(), validateFields(updateFields), updateUser);
 
 //fetching or deleting users can only be done by active admins

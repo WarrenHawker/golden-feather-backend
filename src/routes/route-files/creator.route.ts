@@ -1,4 +1,3 @@
-import express from 'express';
 import createCreator from '../../controllers/creator-controllers/create-creator.controller';
 import deleteCreator from '../../controllers/creator-controllers/delete-creator.controller';
 import getCreatorBySlug from '../../controllers/creator-controllers/get-creator-by-slug.controller';
@@ -12,7 +11,7 @@ import {
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 const getFields: RequiredField[] = [

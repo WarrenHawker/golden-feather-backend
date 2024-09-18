@@ -15,6 +15,7 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
   if (Object.keys(req.query).length == 0) {
     try {
       const redisGuilds = await getGuildsRedis();
+
       return responseHandler(req, res, 200, redisGuilds);
     } catch (error) {
       //if fetching data from redis fails, try fetching data from main database
@@ -28,6 +29,7 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
           totalEntries: pagination.totalEntries,
           guilds,
         };
+
         return responseHandler(req, res, 200, data);
       } catch (error) {
         const statusCode = (error as any).statusCode || 500;
@@ -90,6 +92,7 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
         totalEntries: pagination.totalEntries,
         guilds,
       };
+
       return responseHandler(req, res, 200, data);
     } else {
       const { pagination, guilds } = await getPublicGuildsDB(queryData);
@@ -100,6 +103,7 @@ const getGuilds = async (req: Request, res: Response, next: NextFunction) => {
         totalEntries: pagination.totalEntries,
         guilds,
       };
+
       return responseHandler(req, res, 200, data);
     }
   } catch (error) {

@@ -1,4 +1,3 @@
-import express from 'express';
 import createGuild from '../../controllers/guild-controllers/create-guild.controller';
 import deleteGuild from '../../controllers/guild-controllers/delete-guild.controller';
 import getGuildBySlug from '../../controllers/guild-controllers/get-guild-by-slug.controller';
@@ -12,7 +11,7 @@ import {
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 const getFields: RequiredField[] = [

@@ -1,4 +1,3 @@
-import express from 'express';
 import signInUser from '../../controllers/auth-controllers/signin.controller';
 import signoutUser from '../../controllers/auth-controllers/signout.controller';
 import signUpUser from '../../controllers/auth-controllers/signup.controller';
@@ -17,7 +16,7 @@ import rateLimiter from '../../middleware/rate-limiter.middleware';
 import verifyRecaptcha from '../../middleware/verify-recaptcha.middleware';
 import responseHandler from '../../middleware/response-handler.middleware';
 import { ISession } from '../../types/express-session';
-
+import express from 'express';
 export const router = express.Router();
 
 const signinFields: RequiredField[] = [

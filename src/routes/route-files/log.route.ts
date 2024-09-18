@@ -1,4 +1,3 @@
-import express from 'express';
 import getLogs from '../../controllers/log-controllers/get-logs.controller';
 import {
   checkRole,
@@ -8,7 +7,7 @@ import {
 import validateFields, {
   RequiredField,
 } from '../../middleware/validate-fields.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 //TODO fill in required fields

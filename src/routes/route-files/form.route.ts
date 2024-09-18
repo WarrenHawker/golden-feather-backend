@@ -1,5 +1,3 @@
-import express from 'express';
-
 import {
   checkRole,
   checkSession,
@@ -12,7 +10,7 @@ import validateFields, {
 import receiveContactForm from '../../controllers/form-controllers/recieve-contact-form.controller';
 import rateLimiter from '../../middleware/rate-limiter.middleware';
 import verifyRecaptcha from '../../middleware/verify-recaptcha.middleware';
-
+import express from 'express';
 export const router = express.Router();
 
 //sending a contact form is rate limited to 3 requests per minute
