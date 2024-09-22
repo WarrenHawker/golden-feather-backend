@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { Worker } from 'bullmq';
-import { IOredisClient } from '../../../lib/redis/client.redis';
+import { IOredisClient } from '../../lib/redis/client.redis';
 import axios from 'axios';
 
 const redisConnect = {

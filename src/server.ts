@@ -4,7 +4,7 @@ import storeCreatorTagsRedis from './services/redis-services/tag-redis-services/
 import storeCreatorsRedis from './services/redis-services/creator-redis-services/store-creators-redis.service';
 import storeGuildTagsRedis from './services/redis-services/tag-redis-services/store-guild-tags-redis.service';
 import storeGuildsRedis from './services/redis-services/guild-redis-services/store-guilds-redis.service';
-import { generateTwitchToken } from './services/scheduled-tasks/tasks/twitch-token-task.service';
+import { generateTwitchToken } from './services/scheduled-tasks/twitch-token-task.service';
 import storeLanguagesRedis from './services/redis-services/language-redis-services/store-languages-redis.service';
 import {
   setStarterCreators,
@@ -14,7 +14,7 @@ import storeRegionsRedis from './services/redis-services/region-redis-services/s
 import startScheduledTasks from './services/scheduled-tasks/scheduled-tasks.service';
 import { IOredisClient } from './lib/redis/client.redis';
 import { initializePrisma } from './lib/prisma/client.prisma';
-import syncRedis from './services/scheduled-tasks/tasks/sync-redis-task.service';
+import syncRedis from './services/scheduled-tasks/sync-redis-task.service';
 
 const port = process.env.PORT || 0;
 
