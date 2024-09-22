@@ -9,7 +9,7 @@ let syncRedisQueue: Queue;
 let healthCheckQueue: Queue;
 let logReportQueue: Queue;
 
-const startScheduledTasks = () => {
+const startScheduledTasks = async () => {
   twitchTokenQueue = new Queue('twitchValidationQueue');
   syncRedisQueue = new Queue('redisSyncQueue');
   healthCheckQueue = new Queue('healthCheckQueue');
@@ -55,9 +55,9 @@ const startScheduledTasks = () => {
     }
   );
 
-  syncRedisTask();
-  twitchTokenTask();
-  healthCheckTask();
-  logReportTask();
+  await syncRedisTask();
+  await twitchTokenTask();
+  await healthCheckTask();
+  await logReportTask();
 };
 export default startScheduledTasks;
