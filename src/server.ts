@@ -1,6 +1,5 @@
 import { app } from './app';
 import initializeMongoDatabase from './lib/mongoose/config.mongoose';
-import { IOredisClient } from './lib/redis/client.redis';
 import storeCreatorTagsRedis from './services/redis-services/tag-redis-services/store-creator-tags-redis.service';
 import storeCreatorsRedis from './services/redis-services/creator-redis-services/store-creators-redis.service';
 import storeGuildTagsRedis from './services/redis-services/tag-redis-services/store-guild-tags-redis.service';
@@ -13,20 +12,23 @@ import {
 } from './utils/starter-data/set-data';
 import storeRegionsRedis from './services/redis-services/region-redis-services/store-regions-redis.service';
 import startScheduledTasks from './services/scheduled-tasks/scheduled-tasks.service';
+import { IOredisClient } from './lib/redis/client.redis';
+import { initializePrisma } from './lib/prisma/client.prisma';
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 0;
 
-export const startServer = async (port: number) => {
+app.listen(port, async () => {
   try {
-    // Initialize MongoDB and Redis before starting the server
+    //Initialize and connect to databases
     await initializeMongoDatabase();
     await IOredisClient.connect();
+    await initializePrisma();
 
     // await setStarterCreators();
     // await setStarterGuilds();
 
     // Run these operations only in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV == 'production') {
       await IOredisClient.flushall();
 
       await generateTwitchToken();
@@ -36,16 +38,14 @@ export const startServer = async (port: number) => {
       await storeCreatorTagsRedis();
       await storeLanguagesRedis();
       await storeRegionsRedis();
-
       startScheduledTasks();
     }
-
-    return server; // Return the server instance for further use (e.g., in tests)
+    console.log(`Server started on port: ${port}`);
   } catch (error) {
     console.error('Error starting server:', error);
-    throw error; // Re-throw error for proper error handling
   }
-};
+});
 
-// Use this function to start the server
-export const server: any = startServer(port as number);
+export const testing1 = () => {
+  console.log('testing1');
+};

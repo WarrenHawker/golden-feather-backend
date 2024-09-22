@@ -25,7 +25,8 @@ const rateLimiter = (
       const ip = req.ip || 'unknown';
 
       if (endpoint) {
-        const endpointResponse = await IOredisClient.multi()
+        const endpointResponse = await IOredisClient!
+          .multi()
           .incr(`${ip}_${endpoint}`)
           .expire(`${ip}_${endpoint}`, time)
           .exec();
@@ -42,7 +43,8 @@ const rateLimiter = (
           );
         }
       } else {
-        const generalResponse = await IOredisClient.multi()
+        const generalResponse = await IOredisClient!
+          .multi()
           .incr(`${ip}_general`)
           .expire(`${ip}_general`, defaultTime)
           .exec();

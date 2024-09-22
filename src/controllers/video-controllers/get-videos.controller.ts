@@ -46,7 +46,7 @@ const getLatestYoutube = async (channelId: string) => {
 const getLatestTwitch = async (channelId: string) => {
   try {
     //check for token in redis database - if token doesn't exist then generate a new token
-    const token = await IOredisClient.hget('twitch_token', 'token_id');
+    const token = await IOredisClient!.hget('twitch_token', 'token_id');
     if (!token) {
       await generateTwitchToken();
     }

@@ -2,7 +2,7 @@ import { IOredisClient } from '../../lib/redis/client.redis';
 
 const deleteKeyRedis = async (key: string) => {
   try {
-    const result = await IOredisClient.del(key);
+    const result = await IOredisClient!.del(key);
 
     if (result === 1) {
       return true;

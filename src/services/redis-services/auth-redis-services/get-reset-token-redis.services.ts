@@ -3,7 +3,7 @@ import { IOredisClient } from '../../../lib/redis/client.redis';
 const getResetTokenRedis = async (token: string) => {
   const redisKey = `passwordReset:token:${token}`;
   try {
-    const tokenData = await IOredisClient.get(redisKey);
+    const tokenData = await IOredisClient!.get(redisKey);
 
     if (tokenData) {
       const parsedData = JSON.parse(tokenData);

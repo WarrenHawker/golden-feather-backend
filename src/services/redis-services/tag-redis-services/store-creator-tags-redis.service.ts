@@ -7,12 +7,12 @@ const storeCreatorTagsRedis = async () => {
     await deleteKeyRedis('creator_tags');
     const { publicTags, allTags } = await getCreatorTagsDB();
 
-    IOredisClient.hset(
+    IOredisClient!.hset(
       'creator_tags',
       'public_tags',
       JSON.stringify(publicTags)
     );
-    IOredisClient.hset('creator_tags', 'all_tags', JSON.stringify(allTags));
+    IOredisClient!.hset('creator_tags', 'all_tags', JSON.stringify(allTags));
   } catch (error) {
     throw error;
   }

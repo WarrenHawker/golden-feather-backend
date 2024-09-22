@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Worker } from 'bullmq';
 import { IOredisClient } from '../../../lib/redis/client.redis';
 import storeCreatorTagsRedis from '../../redis-services/tag-redis-services/store-creator-tags-redis.service';

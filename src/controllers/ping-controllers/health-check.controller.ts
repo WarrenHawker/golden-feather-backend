@@ -41,7 +41,7 @@ const checkServerHealth = async (
     //redis check
     let redisHealth = 'disconnected';
     try {
-      const redisPing = await IOredisClient.ping();
+      const redisPing = await IOredisClient!.ping();
       redisHealth = redisPing === 'PONG' ? 'connected' : 'disconnected';
     } catch (error) {
       console.error('Redis connection error:', error);
@@ -50,7 +50,7 @@ const checkServerHealth = async (
     // Check twitch api
     let twitchHealth = 'disconnected';
     try {
-      let token = await IOredisClient.hget('twitch_token', 'token_id');
+      let token = await IOredisClient!.hget('twitch_token', 'token_id');
       if (!token) {
         token = await generateTwitchToken();
       }

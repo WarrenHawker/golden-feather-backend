@@ -7,8 +7,12 @@ const storeGuildTagsRedis = async () => {
     await deleteKeyRedis('guild_tags');
     const { publicTags, allTags } = await getGuildTagsDB();
 
-    IOredisClient.hset('guild_tags', 'public_tags', JSON.stringify(publicTags));
-    IOredisClient.hset('guild_tags', 'all_tags', JSON.stringify(allTags));
+    IOredisClient!.hset(
+      'guild_tags',
+      'public_tags',
+      JSON.stringify(publicTags)
+    );
+    IOredisClient!.hset('guild_tags', 'all_tags', JSON.stringify(allTags));
   } catch (error) {
     throw error;
   }

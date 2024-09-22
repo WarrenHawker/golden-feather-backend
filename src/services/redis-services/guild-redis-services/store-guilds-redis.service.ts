@@ -14,14 +14,14 @@ const storeGuildsRedis = async (options: Params = {}) => {
     if (!options.guilds || !options.pagination) {
       const { pagination, guilds } = await getPublicGuildsDB();
       guilds.forEach((guild: any) => {
-        IOredisClient.hset('guilds', guild.id, JSON.stringify(guild));
+        IOredisClient!.hset('guilds', guild.id, JSON.stringify(guild));
       });
-      IOredisClient.hset('guilds', 'pagination', JSON.stringify(pagination));
+      IOredisClient!.hset('guilds', 'pagination', JSON.stringify(pagination));
     } else {
       options.guilds.forEach((guild: any) => {
-        IOredisClient.hset('guilds', guild.id, JSON.stringify(guild));
+        IOredisClient!.hset('guilds', guild.id, JSON.stringify(guild));
       });
-      IOredisClient.hset(
+      IOredisClient!.hset(
         'guilds',
         'pagination',
         JSON.stringify(options.pagination)

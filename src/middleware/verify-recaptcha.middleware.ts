@@ -31,7 +31,7 @@ const verifyRecaptcha = async (
 ) => {
   const { captchaTokenV3, captchaTokenV2, email } = req.body;
 
-  const isBlacklisted = await IOredisClient.get(`ip_blacklist:${req.ip}`);
+  const isBlacklisted = await IOredisClient!.get(`ip_blacklist:${req.ip}`);
   if (isBlacklisted) {
     return res.status(403).json({
       message:
@@ -49,12 +49,15 @@ const verifyRecaptcha = async (
     // Set the captcha result early in res.locals so the logger can pick it up
     res.locals.captchaResult = result;
 
-    const failures = await IOredisClient.incr(
+    const failures = await IOredisClient!.incr(
       `captchaFailures:${email || req.ip}`
     );
 
     if (failures === 1) {
-      await IOredisClient.expire(`captchaFailures:${email || req.ip}`, 60 * 60); // 1-hour expiration
+      await IOredisClient!.expire(
+        `captchaFailures:${email || req.ip}`,
+        60 * 60
+      ); // 1-hour expiration
     }
 
     const maxCaptchaFailures = 5;
@@ -70,7 +73,7 @@ const verifyRecaptcha = async (
           )
         );
       } else {
-        await IOredisClient.set(
+        await IOredisClient!.set(
           `ip_blacklist:${req.ip}`,
           'blacklisted',
           'EX',

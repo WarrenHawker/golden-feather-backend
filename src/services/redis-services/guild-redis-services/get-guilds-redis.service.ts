@@ -3,7 +3,7 @@ import { Pagination } from '../../../types/pagination';
 
 const getGuildsRedis = async () => {
   try {
-    const result = await IOredisClient.hgetall('guilds');
+    const result = await IOredisClient!.hgetall('guilds');
     const pagination: Pagination = JSON.parse(result.pagination);
     const guilds: any = [];
 

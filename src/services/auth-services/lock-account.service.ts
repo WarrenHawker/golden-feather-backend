@@ -13,14 +13,14 @@ const lockAccount = async (user: User) => {
       data: { status: 'locked' },
     });
 
-    const activeSessions = await IOredisClient.smembers(
+    const activeSessions = await IOredisClient!.smembers(
       `sessions:${user.email}`
     );
     for (const sessionId of activeSessions) {
-      await IOredisClient.del(`sess:${sessionId}`);
+      await IOredisClient!.del(`sess:${sessionId}`);
     }
 
-    await IOredisClient.del(`sessions:${user.email}`);
+    await IOredisClient!.del(`sessions:${user.email}`);
 
     const token = crypto.randomBytes(32).toString('hex');
     await storeResetTokenRedis(token, user.email, user.id);

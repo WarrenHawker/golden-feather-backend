@@ -6,12 +6,12 @@ const storeRegionsRedis = async () => {
   try {
     await deleteKeyRedis('regions');
     const { publicRegions, allRegions } = await getRegionsDB();
-    IOredisClient.hset(
+    IOredisClient!.hset(
       'regions',
       'public_regions',
       JSON.stringify(publicRegions)
     );
-    IOredisClient.hset('regions', 'all_regions', JSON.stringify(allRegions));
+    IOredisClient!.hset('regions', 'all_regions', JSON.stringify(allRegions));
   } catch (error) {
     throw error;
   }

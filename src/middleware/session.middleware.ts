@@ -2,7 +2,10 @@ import RedisStore from 'connect-redis';
 import session from 'express-session';
 
 // Create the session middleware configuration
-export const createSessionConfig = (redisStore: RedisStore) => {
+export const createSessionConfig = (redisStore: RedisStore | null) => {
+  if (!redisStore) {
+    throw new Error('cannot create sessionConfig: no redisStore found');
+  }
   return session({
     store: redisStore,
     secret: process.env.SECRET || '', // Ensure you have a secret set in the environment

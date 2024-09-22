@@ -58,7 +58,8 @@ const signInUser = async (req: Request, res: Response, next: NextFunction) => {
     const match = await bcrypt.compare(password, userPassword);
     if (!match) {
       const timeout = 10;
-      const response = await IOredisClient.multi()
+      const response = await IOredisClient!
+        .multi()
         .incr(`${userDB.email}_attempts`)
         .exec();
       if (response === null) {
@@ -71,7 +72,7 @@ const signInUser = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       if (attempts == 1) {
-        await IOredisClient.expire(`${userDB.email}_attempts`, timeout);
+        await IOredisClient!.expire(`${userDB.email}_attempts`, timeout);
       }
 
       if (parseInt(attempts as string) > 5) {
@@ -103,7 +104,7 @@ const signInUser = async (req: Request, res: Response, next: NextFunction) => {
       agent: req.headers['user-agent'] || '',
     };
 
-    IOredisClient.sadd(`sessions:${userDB.email}`, req.sessionID);
+    IOredisClient!.sadd(`sessions:${userDB.email}`, req.sessionID);
 
     const user = {
       id: userDB.id,

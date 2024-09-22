@@ -14,14 +14,14 @@ const storeCreatorsRedis = async (options: Params = {}) => {
     if (!options.creators || !options.pagination) {
       const { pagination, creators } = await getPublicCreatorsDB();
       creators.forEach((creator: any) => {
-        IOredisClient.hset('creators', creator.id, JSON.stringify(creator));
+        IOredisClient!.hset('creators', creator.id, JSON.stringify(creator));
       });
-      IOredisClient.hset('creators', 'pagination', JSON.stringify(pagination));
+      IOredisClient!.hset('creators', 'pagination', JSON.stringify(pagination));
     } else {
       options.creators.forEach((creator: any) => {
-        IOredisClient.hset('creators', creator.id, JSON.stringify(creator));
+        IOredisClient!.hset('creators', creator.id, JSON.stringify(creator));
       });
-      IOredisClient.hset(
+      IOredisClient!.hset(
         'creators',
         'pagination',
         JSON.stringify(options.pagination)

@@ -6,12 +6,12 @@ const storeLanguagesRedis = async () => {
   try {
     await deleteKeyRedis('languages');
     const { publicLangs, allLangs } = await getLanguagesDB();
-    IOredisClient.hset(
+    IOredisClient!.hset(
       'languages',
       'public_languages',
       JSON.stringify(publicLangs)
     );
-    IOredisClient.hset('languages', 'all_languages', JSON.stringify(allLangs));
+    IOredisClient!.hset('languages', 'all_languages', JSON.stringify(allLangs));
   } catch (error) {
     throw error;
   }
