@@ -18,15 +18,11 @@ export const redisStore = new RedisStore({
   client: IOredisClient,
 });
 
+// Function to close Redis connections
 export const closeRedisConnection = async () => {
-  if (!IOredisClient) {
-    console.log('No redis client found.');
-    return;
-  }
-
   try {
     await IOredisClient.quit();
   } catch (err) {
-    console.error('Error closing Redis connection:', err);
+    console.error('Error closing Redis connections:', err);
   }
 };
