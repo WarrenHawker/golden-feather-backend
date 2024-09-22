@@ -18,6 +18,7 @@ import { initializePrisma } from './lib/prisma/client.prisma';
 const port = process.env.PORT || 0;
 
 app.listen(port, async () => {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   try {
     //Initialize and connect to databases
     await initializeMongoDatabase();
