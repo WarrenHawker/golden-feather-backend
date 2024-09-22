@@ -5,7 +5,7 @@ import { Queue } from 'bullmq';
 import mongoose from 'mongoose';
 import prismaClient from '../../lib/prisma/client.prisma';
 import { IOredisClient } from '../../lib/redis/client.redis';
-import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token-task.service';
+import { generateTwitchToken } from '../../services/scheduled-tasks/tasks/twitch-token-task.service';
 
 const checkServerHealth = async (
   req: Request,

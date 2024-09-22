@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 import axios from 'axios';
 import { IOredisClient } from '../../lib/redis/client.redis';
-import { generateTwitchToken } from '../../services/scheduled-tasks/twitch-token-task.service';
+import { generateTwitchToken } from '../../services/scheduled-tasks/tasks/twitch-token-task.service';
 import { NextFunction, Request, Response } from 'express';
 import { CustomError } from '../../types/custom-error';
 import responseHandler from '../../middleware/response-handler.middleware';

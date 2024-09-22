@@ -1,8 +1,8 @@
 import { Queue } from 'bullmq';
-import syncRedisTask from './sync-redis-task.service';
-import { twitchTokenTask } from './twitch-token-task.service';
-import healthCheckTask from './health-check-task.service';
-import logReportTask from './log-report-task.service';
+import syncRedisTask from './tasks/sync-redis-task.service';
+import { twitchTokenTask } from './tasks/twitch-token-task.service';
+import healthCheckTask from './tasks/health-check-task.service';
+import logReportTask from './tasks/log-report-task.service';
 import { IOredisClient } from '../../lib/redis/client.redis';
 
 let twitchTokenQueue: Queue;
@@ -60,9 +60,9 @@ const startScheduledTasks = () => {
     }
   );
 
-  // syncRedisTask();
-  // twitchTokenTask();
-  // healthCheckTask();
-  // logReportTask();
+  syncRedisTask();
+  twitchTokenTask();
+  healthCheckTask();
+  logReportTask();
 };
 export default startScheduledTasks;
