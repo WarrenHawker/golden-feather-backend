@@ -49,21 +49,3 @@ export const startServer = async (port: number) => {
 
 // Use this function to start the server
 export const server: any = startServer(port as number);
-
-const getBaseUrl = (server: any) => {
-  // Start the server after initialization is complete
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-
-  // Get the hostname
-  const host =
-    server.address().address === '::' ? 'localhost' : server.address().address;
-
-  // Get the port
-  const port =
-    process.env.NODE_ENV === 'production' ? '' : server.address().port;
-
-  // Construct the base URL
-  return `${protocol}://${host}:${port}`;
-};
-
-export const baseUrl = getBaseUrl(server);
