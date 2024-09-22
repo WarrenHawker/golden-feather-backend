@@ -9,6 +9,7 @@ import { router as userRoutes } from './route-files/user.route';
 import { router as languageRoutes } from './route-files/language.route';
 import { router as regionRoutes } from './route-files/region.route';
 import { router as formRoutes } from './route-files/form.route';
+import { router as pingRoutes } from './route-files/ping.route';
 import { Router } from 'express';
 
 export const router = Router();
@@ -26,3 +27,4 @@ router.use(`${apiBasePath}/user`, userRoutes);
 router.use(`${apiBasePath}/language`, languageRoutes);
 router.use(`${apiBasePath}/region`, regionRoutes);
 router.use(`${apiBasePath}/form`, formRoutes);
+router.use(`${apiBasePath}/ping`, pingRoutes);

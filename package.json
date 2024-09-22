@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "nodemon - exec 'ts-node' --esm api/server.ts",
     "build": "npx tsc --project ./",
-    "start": "node dist/server.js",
-    "test": "mocha"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,7 @@
     "connect-redis": "^7.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cron-parser": "^4.9.0",
     "express": "^4.18.2",
     "express-session": "^1.18.0",
     "googleapis": "^140.0.1",

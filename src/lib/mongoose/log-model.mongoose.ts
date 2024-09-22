@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 // LogData interface that matches the structure of the logSchema
 export interface LogData {
   logLevel: 'info' | 'error' | 'critical';
-  timestamp: string;
+  timestamp: Date;
   responseTimeMS: number | null;
   url: string;
   method: string;
@@ -33,7 +33,7 @@ interface LogDocument extends mongoose.Document, LogData {}
 export const logSchema = new Schema<LogDocument>(
   {
     logLevel: { type: String, required: true },
-    timestamp: { type: String, required: true },
+    timestamp: { type: Date, required: true },
     responseTimeMS: { type: Number || null },
     url: { type: String, required: true },
     method: { type: String, required: true },

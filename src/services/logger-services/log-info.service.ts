@@ -8,7 +8,7 @@ const logInfo = async (data: LogsCreateData) => {
   try {
     const newLogData: LogData = {
       logLevel: 'info',
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
       responseTimeMS: res.locals.responseTimeMs || null,
       url: req.originalUrl,
       method: req.method,

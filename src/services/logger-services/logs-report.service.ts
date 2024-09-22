@@ -4,14 +4,18 @@ import {
   replaceUrlSlug,
   arrayContainsName,
   calculateStatistics,
-  getMonthsBetweenDates,
 } from '../../utils/functions/log-report-utils.function';
 import getLogsMongo from '../mongo-services/get-logs-mongo.service';
 
-const createLogsReport = async (start: Date, end: Date, threshold: number) => {
+const createLogsReport = async (
+  start?: Date,
+  end?: Date,
+  threshold?: number
+) => {
+  threshold = threshold || 500;
   const data: LogReport = {
-    startDate: start,
-    endDate: end,
+    startDate: start || 'test',
+    endDate: end || 'test',
     totalRequests: 0,
     logTypes: {
       info: 0,
@@ -34,8 +38,6 @@ const createLogsReport = async (start: Date, end: Date, threshold: number) => {
     endpoints: [],
   };
   const responseTimes: number[] = [];
-
-  const months = getMonthsBetweenDates(start, end);
 
   const logs: LogData[] = await getLogsMongo();
 

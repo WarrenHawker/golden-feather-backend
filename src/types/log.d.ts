@@ -25,7 +25,7 @@ type ResCode = 200 | 201 | 400 | 401 | 403 | 404 | 500 | 502 | 503;
 */
 export interface logDataBasic {
   logLevel: LogLevel = 'info';
-  timestamp: string;
+  timestamp: Date;
   responseTimeMS: number | null;
   url: string;
   method: ReqMethod;
@@ -73,4 +73,13 @@ export type LogsCreateData = {
   req: Request;
   res: Response;
   error?: ErrorReturn;
+};
+
+export type LogSearchParams = {
+  page?: number | 'all';
+  limit?: number | 'all';
+  levels?: string[] | 'all';
+  months?: string[];
+  startDate?: Date;
+  endDate?: Date;
 };

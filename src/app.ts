@@ -10,6 +10,7 @@ import rateLimiter from './middleware/rate-limiter.middleware';
 import { CustomError } from './types/custom-error';
 import responseHandler from './middleware/response-handler.middleware';
 import { router } from './routes/index';
+import createLogsReport from './services/logger-services/logs-report.service';
 
 export const app = express();
 
@@ -24,6 +25,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(measureResponseTime);
 
 app.use(router);
+
+app.use('/api/v1/test', async (req, res) => {
+  try {
+    const report = await createLogsReport();
+    responseHandler(req, res, 201, report);
+  } catch (error) {
+    new CustomError('There was a problem', 500);
+  }
+});
 
 //catch-all if the requested route or method doesn't exist.
 app.use((req: Request, res: Response, next: NextFunction) => {

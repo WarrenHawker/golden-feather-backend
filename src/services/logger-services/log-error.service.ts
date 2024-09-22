@@ -9,7 +9,7 @@ const logError = async (data: LogsCreateData) => {
   try {
     const newLogData: LogData = {
       logLevel: 'error',
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
       responseTimeMS: res.locals.responseTimeMs || null,
       url: req.originalUrl,
       method: req.method,

@@ -5,17 +5,14 @@ import storeCreatorTagsRedis from './services/redis-services/tag-redis-services/
 import storeCreatorsRedis from './services/redis-services/creator-redis-services/store-creators-redis.service';
 import storeGuildTagsRedis from './services/redis-services/tag-redis-services/store-guild-tags-redis.service';
 import storeGuildsRedis from './services/redis-services/guild-redis-services/store-guilds-redis.service';
-import {
-  maintainTwitchToken,
-  generateTwitchToken,
-} from './services/scheduled-tasks/twitch-token.service';
+import { generateTwitchToken } from './services/scheduled-tasks/tasks/twitch-token-task.service';
 import storeLanguagesRedis from './services/redis-services/language-redis-services/store-languages-redis.service';
-import syncRedis from './services/scheduled-tasks/sync-database';
 import {
   setStarterCreators,
   setStarterGuilds,
 } from './utils/starter-data/set-data';
 import storeRegionsRedis from './services/redis-services/region-redis-services/store-regions-redis.service';
+import startScheduledTasks from './services/scheduled-tasks/scheduled-tasks.service';
 
 const port = process.env.PORT || 5000;
 
@@ -40,15 +37,8 @@ export const startServer = async (port: number) => {
       await storeLanguagesRedis();
       await storeRegionsRedis();
 
-      // Start scheduled tasks
-      maintainTwitchToken();
-      syncRedis();
+      startScheduledTasks();
     }
-
-    // Start the server after initialization is complete
-    const server = app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
 
     return server; // Return the server instance for further use (e.g., in tests)
   } catch (error) {
@@ -58,4 +48,22 @@ export const startServer = async (port: number) => {
 };
 
 // Use this function to start the server
-export const server = startServer(port as number);
+export const server: any = startServer(port as number);
+
+const getBaseUrl = (server: any) => {
+  // Start the server after initialization is complete
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+
+  // Get the hostname
+  const host =
+    server.address().address === '::' ? 'localhost' : server.address().address;
+
+  // Get the port
+  const port =
+    process.env.NODE_ENV === 'production' ? '' : server.address().port;
+
+  // Construct the base URL
+  return `${protocol}://${host}:${port}`;
+};
+
+export const baseUrl = getBaseUrl(server);
