@@ -14,6 +14,7 @@ import storeRegionsRedis from './services/redis-services/region-redis-services/s
 import startScheduledTasks from './services/scheduled-tasks/scheduled-tasks.service';
 import { IOredisClient } from './lib/redis/client.redis';
 import { initializePrisma } from './lib/prisma/client.prisma';
+import syncRedis from './services/scheduled-tasks/tasks/sync-redis-task.service';
 
 const port = process.env.PORT || 0;
 
@@ -38,14 +39,12 @@ app.listen(port, async () => {
       await storeCreatorTagsRedis();
       await storeLanguagesRedis();
       await storeRegionsRedis();
-      startScheduledTasks();
+      // startScheduledTasks();
+
+      syncRedis();
     }
     console.log(`Server started on port: ${port}`);
   } catch (error) {
     console.error('Error starting server:', error);
   }
 });
-
-export const testing1 = () => {
-  console.log('testing1');
-};
