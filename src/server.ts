@@ -38,7 +38,7 @@ app.listen(port, async () => {
       await storeCreatorTagsRedis();
       await storeLanguagesRedis();
       await storeRegionsRedis();
-      await startScheduledTasks();
+      startScheduledTasks();
     }
     console.log(`Server started on port: ${port}`);
   } catch (error) {
